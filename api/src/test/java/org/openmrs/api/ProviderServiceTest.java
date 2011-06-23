@@ -35,7 +35,6 @@ import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.util.OpenmrsConstants;
-import org.springframework.test.annotation.ExpectedException;
 
 /**
  * This test class (should) contain tests for all of the ProviderService
@@ -115,8 +114,8 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	public void getCountOfProviders_shouldFetchNumberOfProviderMatchingGivenQuery() throws Exception {
 		assertEquals(1, service.getCountOfProviders("Hippo").intValue());
 		Person person = Context.getPersonService().getPerson(502);
-		Set names = person.getNames();
-		for (Iterator iterator = names.iterator(); iterator.hasNext();) {
+		Set<PersonName> names = person.getNames();
+		for (Iterator<PersonName> iterator = names.iterator(); iterator.hasNext();) {
 			PersonName name = (PersonName) iterator.next();
 			name.setVoided(true);
 			
@@ -186,15 +185,6 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		
 		assertEquals(0, service.getProviders("Ron", 0, null).size());
 		assertEquals(2, service.getProviders("Rona", 0, null).size());
-	}
-	
-	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
-	 * @verifies fetch provider with given identifier with case in sensitive
-	 */
-	@Test
-	public void getProviders_shouldFetchProviderWithGivenIdentifierWithCaseInSensitive() throws Exception {
-		assertEquals(2, service.getProviders("8c7", 0, null).size());
 	}
 	
 	/**

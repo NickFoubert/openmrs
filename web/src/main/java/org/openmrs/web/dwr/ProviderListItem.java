@@ -60,13 +60,13 @@ public class ProviderListItem {
 	public String getDisplayName() {
 		return displayName;
 	}
-
+	
 	/**
 	 * 
 	 * @return the provider id
 	 * @should return the provider id 
 	 */
 	public Integer getProviderId() {
-	    return providerId;
-    }
+		return providerId;
+	}
 }

@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.ProviderService;
@@ -35,8 +33,6 @@ import org.openmrs.util.OpenmrsConstants;
 public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderService {
 	
 	private ProviderDAO dao;
-	
-	private final Log log = LogFactory.getLog(this.getClass());
 	
 	/**
 	 * Sets the data access object for Concepts. The dao is used for saving and getting concepts

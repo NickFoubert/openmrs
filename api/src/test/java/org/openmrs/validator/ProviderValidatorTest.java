@@ -110,14 +110,13 @@ public class ProviderValidatorTest {
 		Assert.assertTrue(errors.hasErrors());
 		Assert.assertEquals("Provider.error.name.identifier.required", errors.getFieldError("name").getCode());
 		
-
 		errors = new BindException(provider, "provider");
 		provider.setIdentifier("identifier");
 		provider.setName("name");
 		providerValidator.validate(provider, errors);
-
+		
 		Assert.assertFalse(errors.hasErrors());
-
+		
 	}
 	
 	/**

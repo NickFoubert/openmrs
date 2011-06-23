@@ -238,7 +238,6 @@
 				<prop key="admin/visits/visitType.form">visitTypeForm</prop>
 				<prop key="admin/visits/visitAttributeType.list">visitAttributeTypeList</prop>
 				<prop key="admin/visits/visitAttributeType.form">visitAttributeTypeForm</prop>
-				<prop key="admin/provider/provider.form">providerForm</prop>
 				<prop key="admin/provider/providerAttributeType.list">providerAttributeTypeList</prop>
 				<prop key="admin/provider/providerAttributeType.form">providerAttributeTypeForm</prop>				
 			</props>
@@ -1700,21 +1699,4 @@
 		>\r\n			<value>(.*)</value>\r\n		</property>
 		><value>$1</value></property>
 	-->
-	<!-- ** Provider      ** -->
-	<bean id="providerForm"
-		class="org.openmrs.web.controller.provider.ProviderFormController">
-		<property name="commandName">
-			<value>provider</value>
-		</property>
-		<property name="validator">
-			<ref bean="providerValidator" />
-		</property>
-		<property name="formView">
-			<value>/admin/provider/providerForm</value>
-		</property>
-		<property name="successView">
-			<value>provider.form</value>
-		</property>
-	</bean>
-	<!-- ** /Provider     ** -->
 </beans>

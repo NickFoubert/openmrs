@@ -16,25 +16,6 @@
 		white-space: nowrap;
 	}
 </style>
-<script type="text/javascript">
-
-/* 	$j(document).ready(function(){
-		
- 		var toggleRetired = function(){
-			var reason = $j("#retiredReason");
-			if ($j('#retire').is(':checked')) {
-				reason.show();
-			}
-			else {
-				reason.hide();
-			}	
-		};
-		
-		$j('#retire').click(toggleRetired);
-		toggleRetired();
-	}); */
-
-</script>
 
 <h2><spring:message code="Provider.manage.title"/></h2>
 

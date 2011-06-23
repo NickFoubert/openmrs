@@ -1,8 +1,6 @@
 package org.openmrs.web.controller.provider;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
@@ -11,87 +9,76 @@ import org.openmrs.Provider;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.propertyeditor.PersonEditor;
+import org.openmrs.validator.ProviderValidator;
 import org.openmrs.web.WebConstants;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-public class ProviderFormController extends SimpleFormController {
+@Controller
+@RequestMapping("/admin/provider/provider.form")
+public class ProviderFormController {
 	
-	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	/**
-	 * This is called prior to displaying a form for the first time. It tells Spring the
-	 * form/command object to load into the request
-	 * 
-	 * @see org.springframework.web.servlet.mvc.AbstractFormController#formBackingObject(javax.servlet.http.HttpServletRequest)
-	 */
-	
-	@Override
-	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-		super.initBinder(request, binder);
-		
+	@InitBinder
+	protected void initBinder(WebDataBinder binder) throws Exception {
 		binder.registerCustomEditor(org.openmrs.Person.class, new PersonEditor());
-		
 	}
 	
-	/**
-	 * The onSubmit function receives the form/command object that was modified by the input form
-	 * and saves it to the db
-	 * 
-	 * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest,
-	 *      javax.servlet.http.HttpServletResponse, java.lang.Object,
-	 *      org.springframework.validation.BindException)
-	 */
-	@Override
-	protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj,
-	                                BindException errors) throws Exception {
+	@RequestMapping(method = RequestMethod.POST)
+	public String onSubmit(HttpSession session, @RequestParam(required = false) String saveProviderButton,
+	                       @RequestParam(required = false) String retireProviderButton,
+	                       @RequestParam(required = false) String unretireProviderButton,
+	                       @ModelAttribute("provider") Provider provider, BindingResult errors) throws Exception {
+		new ProviderValidator().validate(provider, errors);
 		
-		String view = getFormView();
-		HttpSession httpSession = request.getSession();
-		try {
-			
+		if (!errors.hasErrors()) {
 			if (Context.isAuthenticated()) {
-				Provider provider = (Provider) obj;
 				ProviderService service = Context.getProviderService();
 				
 				String message = "Provider.saved";
-				if (request.getParameter("saveProviderButton") != null) {
+				if (saveProviderButton != null) {
 					service.saveProvider(provider);
-				} else if (request.getParameter("retireProviderButton") != null) {
+				} else if (retireProviderButton != null) {
 					service.retireProvider(provider, provider.getRetireReason());
 					message = "Provider.retired";
-				} else if (request.getParameter("unretireProviderButton") != null) {
+				} else if (unretireProviderButton != null) {
 					service.unretireProvider(provider);
 					message = "Provider.unretired";
 				}
 				
-				// post action
-				view = getSuccessView();
-				view = view + "?providerId=" + provider.getProviderId();
-				httpSession.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message);
-				
+				session.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message);
+				return showList();
 			}
 		}
-		catch (Exception e) {
-			log.error(e.getMessage());
-		}
-		return new ModelAndView(new RedirectView(view));
+		
+		return showForm();
 	}
 	
-	@Override
-	protected Object formBackingObject(HttpServletRequest request) throws ServletException {
+	@ModelAttribute("provider")
+	public Provider formBackingObject(@RequestParam(required = false) String providerId) throws ServletException {
 		Provider provider = new Provider();
-		
 		if (Context.isAuthenticated()) {
-			ProviderService ps = Context.getProviderService();
-			String providerId = request.getParameter("providerId");
-			return providerId != null ? ps.getProvider(Integer.valueOf(providerId)) : provider;
+			if (providerId != null) {
+				ProviderService ps = Context.getProviderService();
+				return ps.getProvider(Integer.valueOf(providerId));
+			}
 		}
 		return provider;
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public String showForm() {
+		return "admin/provider/providerForm";
+	}
+	
+	public String showList() {
+		return "redirect:index.htm";
+	}
 }
