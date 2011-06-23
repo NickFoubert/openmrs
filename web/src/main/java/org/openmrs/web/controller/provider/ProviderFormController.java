@@ -33,9 +33,9 @@ public class ProviderFormController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String onSubmit(HttpSession session, @RequestParam(required = false) String saveProviderButton,
-	                       @RequestParam(required = false) String retireProviderButton,
-	                       @RequestParam(required = false) String unretireProviderButton,
-	                       @ModelAttribute("provider") Provider provider, BindingResult errors) throws Exception {
+	        @RequestParam(required = false) String retireProviderButton,
+	        @RequestParam(required = false) String unretireProviderButton, @ModelAttribute("provider") Provider provider,
+	        BindingResult errors) throws Exception {
 		new ProviderValidator().validate(provider, errors);
 		
 		if (!errors.hasErrors()) {
@@ -54,7 +54,7 @@ public class ProviderFormController {
 				}
 				
 				session.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message);
-				return showList();
+				return showForm(provider.getProviderId());
 			}
 		}
 		
@@ -62,12 +62,12 @@ public class ProviderFormController {
 	}
 	
 	@ModelAttribute("provider")
-	public Provider formBackingObject(@RequestParam(required = false) String providerId) throws ServletException {
+	public Provider formBackingObject(@RequestParam(required = false) Integer providerId) throws ServletException {
 		Provider provider = new Provider();
 		if (Context.isAuthenticated()) {
 			if (providerId != null) {
 				ProviderService ps = Context.getProviderService();
-				return ps.getProvider(Integer.valueOf(providerId));
+				return ps.getProvider(providerId);
 			}
 		}
 		return provider;
@@ -78,7 +78,7 @@ public class ProviderFormController {
 		return "admin/provider/providerForm";
 	}
 	
-	public String showList() {
-		return "redirect:index.htm";
+	public String showForm(Integer providerId) {
+		return "redirect:provider.form?providerId=" + providerId;
 	}
 }
