@@ -14,13 +14,14 @@
 package org.openmrs;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.openmrs.attribute.Customizable;
 
 /**
  * Represents a person who may provide care to a patient during an encounter
  * 
  * @since 1.9
  */
-public class Provider extends BaseOpenmrsMetadata {
+public class Provider extends BaseCustomizableMetadata<ProviderAttribute> implements Auditable, Customizable<ProviderAttribute> {
 	
 	private Integer providerId;
 	
@@ -85,11 +86,4 @@ public class Provider extends BaseOpenmrsMetadata {
 		return identifier;
 	}
 	
-	/**
-	 * @see org.openmrs.BaseOpenmrsMetadata#setDescription(java.lang.String)
-	 */
-	@Override
-	public void setDescription(String description) {
-		throw new NotImplementedException();
-	}
 }

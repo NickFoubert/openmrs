@@ -14,7 +14,9 @@
 package org.openmrs.api.db.hibernate;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
@@ -28,6 +30,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.db.ProviderDAO;
+import org.openmrs.attribute.AttributeType;
 
 /**
  * Hibernate specific Provider related functions. This class should not be used directly. All calls
@@ -88,18 +91,21 @@ public class HibernateProviderDAO implements ProviderDAO {
 	}
 	
 	/**
-	 * @see org.openmrs.api.db.ProviderDAO#getProviders(java.lang.String,java.lang.Integer,
-	 *      java.lang.Integer)
+	 * @see org.openmrs.api.db.ProviderDAO#getProviders(String, java.util.Map
 	 */
 	@Override
-	public List<Provider> getProviders(String name, Integer start, Integer length) {
+	public List<Provider> getProviders(String name, Map<AttributeType, String> serializedAttributeValues, Integer start,
+	        Integer length) {
 		Criteria criteria = prepareProviderCriteria(name);
 		if (start != null)
 			criteria.setFirstResult(start);
 		if (length != null)
 			criteria.setMaxResults(length);
-		List list = criteria.list();
-		return list;
+		List<Provider> providers = criteria.list();
+		if (serializedAttributeValues != null) {
+			CollectionUtils.filter(providers, new AttributeMatcherPredicate<Provider>(serializedAttributeValues));
+		}
+		return providers;
 	}
 	
 	/**

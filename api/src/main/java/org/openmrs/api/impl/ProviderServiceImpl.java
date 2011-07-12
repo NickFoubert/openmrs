@@ -15,6 +15,7 @@ package org.openmrs.api.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Provider;
@@ -22,6 +23,7 @@ import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.ProviderDAO;
+import org.openmrs.attribute.AttributeType;
 import org.openmrs.util.OpenmrsConstants;
 
 /**
@@ -117,15 +119,17 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	}
 	
 	/**
-	 * @see org.openmrs.api.ProviderService#getProviders(java.lang.String, java.lang.Integer,
-	 *      java.lang.Integer)
+	 * @see org.openmrs.api.ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 */
 	@Override
-	public List<Provider> getProviders(String query, Integer start, Integer length) {
+	public List<Provider> getProviders(String query, Integer start, Integer length,
+	        Map<ProviderAttributeType, Object> attributeValues) {
 		if (StringUtils.isBlank(query) || query.length() < getMinSearchCharacters()) {
 			return Collections.emptyList();
 		}
-		return dao.getProviders(query, start, length);
+		Map<AttributeType, String> serializedAttributeValues = Context.getAttributeService().getSerializedAttributeValues(
+		    attributeValues);
+		return dao.getProviders(query, serializedAttributeValues, start, length);
 	}
 	
 	/**

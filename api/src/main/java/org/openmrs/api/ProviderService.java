@@ -14,9 +14,11 @@
 package org.openmrs.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openmrs.Provider;
 import org.openmrs.annotation.Authorized;
+import org.openmrs.attribute.AttributeType;
 import org.openmrs.util.PrivilegeConstants;
 import org.openmrs.ProviderAttributeType;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +116,7 @@ public interface ProviderService extends OpenmrsService {
 	 * @param query
 	 * @param start
 	 * @param length
+	 * @param attributes
 	 * @return the list of Providers given the query , current page and page length
 	 * @should force search string to be greater than minsearchcharacters global property
 	 * @should fetch provider with given identifier with case in sensitive
@@ -125,10 +128,13 @@ public interface ProviderService extends OpenmrsService {
 	 * @should fetch provider by matching query string with any unVoided Person's familyName
 	 * @should not fetch provider if the query string matches with any voided Person name for that
 	 *         Provider
+	 * @should get all visits with given attribute values
+	 * @should not find any visits if none have given attribute values
 	 */
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
-	public List<Provider> getProviders(String query, Integer start, Integer length);
+	public List<Provider> getProviders(String query, Integer start, Integer length,
+	        Map<ProviderAttributeType, Object> attributes);
 	
 	/**
 	 * @param query

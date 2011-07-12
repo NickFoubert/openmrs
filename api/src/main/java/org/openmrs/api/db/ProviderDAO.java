@@ -14,10 +14,12 @@
 package org.openmrs.api.db;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.ProviderService;
+import org.openmrs.attribute.AttributeType;
 
 /**
  * Data  Access function for  Provider
@@ -56,12 +58,14 @@ public interface ProviderDAO {
 	
 	/**
 	 * 
+	 *
 	 * @param name
-	 * @param start
-	 * @param length
-	 * @return List of  Providers
+	 * @param serializedAttributeValues
+	 *@param start
+	 * @param length   @return List of  Providers
 	 */
-	public List<Provider> getProviders(String name, Integer start, Integer length);
+	public List<Provider> getProviders(String name, Map<AttributeType, String> serializedAttributeValues, Integer start,
+	        Integer length);
 	
 	/**
 	 * 

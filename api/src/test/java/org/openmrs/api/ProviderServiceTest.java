@@ -19,9 +19,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import junit.framework.Assert;
 
@@ -172,23 +171,23 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies force search string to be greater than minsearchcharacters
 	 *           global property
 	 */
 	@Test
 	public void getProviders_shouldForceSearchStringToBeGreaterThanMinsearchcharactersGlobalProperty() throws Exception {
-		assertEquals(2, service.getProviders("Ron", 0, null).size());
+		assertEquals(2, service.getProviders("Ron", 0, null, null).size());
 		Context.clearSession();
 		Context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "4"));
 		
-		assertEquals(0, service.getProviders("Ron", 0, null).size());
-		assertEquals(2, service.getProviders("Rona", 0, null).size());
+		assertEquals(0, service.getProviders("Ron", 0, null, null).size());
+		assertEquals(2, service.getProviders("Rona", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies fetch provider with given name with case in sensitive
 	 */
 	@Test
@@ -196,11 +195,11 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		Provider provider = new Provider();
 		provider.setName("Catherin");
 		service.saveProvider(provider);
-		assertEquals(1, service.getProviders("Cath", 0, null).size());
+		assertEquals(1, service.getProviders("Cath", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies not fail when minimum search characters is null
 	 */
 	@Test
@@ -208,11 +207,11 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		Context.clearSession();
 		Context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, null));
-		assertEquals(2, service.getProviders("RON", 0, null).size());
+		assertEquals(2, service.getProviders("RON", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies not fail when minimum search characters is invalid integer
 	 */
 	@Test
@@ -220,48 +219,48 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		Context.clearSession();
 		Context.getAdministrationService().saveGlobalProperty(
 		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "A"));
-		assertEquals(1, service.getProviders("ROg", 0, null).size());
+		assertEquals(1, service.getProviders("ROg", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies fetch provider by matching query string with any unVoided
 	 *           PersonName's Given Name
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonNamesGivenName() throws Exception {
-		assertEquals(1, service.getProviders("COL", 0, null).size());
+		assertEquals(1, service.getProviders("COL", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies fetch provider by matching query string with any unVoided
 	 *           PersonName's middleName
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonNamesMiddleName() throws Exception {
-		assertEquals(4, service.getProviders("Tes", 0, null).size());
+		assertEquals(4, service.getProviders("Tes", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies fetch provider by matching query string with any unVoided
 	 *           Person's familyName
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonsFamilyName() throws Exception {
-		assertEquals(2, service.getProviders("Che", 0, null).size());
+		assertEquals(2, service.getProviders("Che", 0, null, null).size());
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String,Integer,Integer)
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
 	 * @verifies not fetch provider if the query string matches with any voided
 	 *           Person name for that
 	 */
 	@Test
 	public void getProviders_shouldNotFetchProviderIfTheQueryStringMatchesWithAnyVoidedPersonNameForThat() throws Exception {
-		assertEquals(0, service.getProviders("Hit", 0, null).size());
-		assertEquals(1, service.getProviders("coll", 0, null).size());
+		assertEquals(0, service.getProviders("Hit", 0, null, null).size());
+		assertEquals(1, service.getProviders("coll", 0, null, null).size());
 	}
 	
 	/**
@@ -282,7 +281,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void purgeProviderAttributeType_shouldDeleteAProviderAttributeType() throws Exception {
 		int size = service.getAllProviderAttributeTypes().size();
-		ProviderAttributeType providerAttributeType = service.getProviderAttributeType(1);
+		ProviderAttributeType providerAttributeType = service.getProviderAttributeType(2);
 		service.purgeProviderAttributeType(providerAttributeType);
 		assertEquals(size - 1, service.getAllProviderAttributeTypes().size());
 	}
@@ -389,6 +388,31 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		service.unretireProviderAttributeType(providerAttributeType);
 		assertFalse(providerAttributeType.isRetired());
 		assertNull(providerAttributeType.getRetireReason());
+	}
+	
+	/**
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @verifies get all providers with given attribute values
+	 */
+	@Test
+	public void getProviders_shouldGetAllProvidersWithGivenAttributeValues() throws Exception {
+		Map<ProviderAttributeType, Object> attributes = new HashMap<ProviderAttributeType, Object>();
+		attributes.put(service.getProviderAttributeType(1), new SimpleDateFormat("yyyy-MM-dd").parse("2011-04-25"));
+		List<Provider> providers = service.getProviders("RobertClive", 0, null, attributes);
+		Assert.assertEquals(1, providers.size());
+		Assert.assertEquals(Integer.valueOf(1), providers.get(0).getProviderId());
+	}
+	
+	/**
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
+	 * @verifies not find any providers if none have given attribute values
+	 */
+	@Test
+	public void getProviders_shouldNotFindAnyProvidersIfNoneHaveGivenAttributeValues() throws Exception {
+		Map<ProviderAttributeType, Object> attributes = new HashMap<ProviderAttributeType, Object>();
+		attributes.put(service.getProviderAttributeType(1), new SimpleDateFormat("yyyy-MM-dd").parse("1411-04-25"));
+		List<Provider> providers = service.getProviders("RobertClive", 0, null, attributes);
+		Assert.assertEquals(0, providers.size());
 	}
 	
 }
