@@ -57,5 +57,5 @@ public interface AttributeService extends OpenmrsService {
 	 */
 	AttributeHandler<?> getHandler(AttributeType<?> attributeType);
 	
-	public Map<AttributeType, String> getSerializedAttributeValues(Map<? extends BaseAttributeType, Object> attributeValues);
+	public Map<AttributeType, String> getSerializedAttributeValues(Map<? extends AttributeType, Object> attributeValues);
 }

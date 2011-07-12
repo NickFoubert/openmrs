@@ -30,8 +30,11 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
+import org.openmrs.User;
 import org.openmrs.api.context.Context;
+import org.openmrs.attribute.AttributeType;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.util.OpenmrsConstants;
 
@@ -62,7 +65,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void getAllProviderAttributeTypes_shouldGetAllProviderAttributeTypesExcludingRetired() throws Exception {
 		List<ProviderAttributeType> types = service.getAllProviderAttributeTypes(false);
-		assertEquals(1, types.size());
+		assertEquals(2, types.size());
 	}
 	
 	/**
@@ -72,7 +75,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void getAllProviderAttributeTypes_shouldGetAllProviderAttributeTypesIncludingRetired() throws Exception {
 		List<ProviderAttributeType> types = service.getAllProviderAttributeTypes(true);
-		assertEquals(2, types.size());
+		assertEquals(3, types.size());
 	}
 	
 	/**
@@ -82,7 +85,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void getAllProviderAttributeTypes_shouldGetAllProviderAttributeTypesIncludingRetiredByDefault() throws Exception {
 		List<ProviderAttributeType> types = service.getAllProviderAttributeTypes();
-		assertEquals(2, types.size());
+		assertEquals(3, types.size());
 	}
 	
 	/**
@@ -171,7 +174,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies force search string to be greater than minsearchcharacters
 	 *           global property
 	 */
@@ -187,7 +190,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies fetch provider with given name with case in sensitive
 	 */
 	@Test
@@ -199,7 +202,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies not fail when minimum search characters is null
 	 */
 	@Test
@@ -211,7 +214,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies not fail when minimum search characters is invalid integer
 	 */
 	@Test
@@ -223,7 +226,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies fetch provider by matching query string with any unVoided
 	 *           PersonName's Given Name
 	 */
@@ -233,7 +236,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies fetch provider by matching query string with any unVoided
 	 *           PersonName's middleName
 	 */
@@ -243,7 +246,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies fetch provider by matching query string with any unVoided
 	 *           Person's familyName
 	 */
@@ -253,7 +256,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies not fetch provider if the query string matches with any voided
 	 *           Person name for that
 	 */
@@ -310,10 +313,11 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		ProviderAttributeType providerAttributeType = service.getProviderAttributeType(1);
 		assertFalse(providerAttributeType.isRetired());
 		assertNull(providerAttributeType.getRetireReason());
+		assertEquals(2, service.getAllProviderAttributeTypes(false).size());
 		service.retireProviderAttributeType(providerAttributeType, "retire reason");
 		assertTrue(providerAttributeType.isRetired());
 		assertEquals("retire reason", providerAttributeType.getRetireReason());
-		assertEquals(0, service.getAllProviderAttributeTypes(false).size());
+		assertEquals(1, service.getAllProviderAttributeTypes(false).size());
 	}
 	
 	/**
@@ -348,6 +352,38 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		Assert.assertNotNull(provider.getDateCreated());
 		Assert.assertEquals(999, provider.getPerson().getId().intValue());
 		
+	}
+	
+	/**
+	 * @see ProviderService#saveProvider(Provider)
+	 * @verifies void the attribute if an attribute with same attribute type already exists
+	 */
+	@Test
+	public void saveProvider_shouldVoidTheAttributeIfAnAttributeWithSameAttributeTypeAlreadyExists() throws Exception {
+		Provider provider = new Provider();
+		provider.setName("test provider");
+		AttributeType<Provider> providerAttributeType = service.getProviderAttributeType(3);
+		provider.setAttribute(createProviderAttribute(providerAttributeType, "bangalore"));
+		provider.setAttribute(createProviderAttribute(providerAttributeType, "chennai"));
+		Assert.assertEquals(1, provider.getAttributes().size());
+		service.saveProvider(provider);
+		Assert.assertNotNull(provider.getId());
+		provider.setAttribute(createProviderAttribute(providerAttributeType, "seattle"));
+		Assert.assertEquals(2, provider.getAttributes().size());
+		ProviderAttribute firstAttribute = (ProviderAttribute) provider.getAttributes().toArray()[0];
+		Assert.assertTrue(firstAttribute.getVoided());
+	}
+	
+	private ProviderAttribute createProviderAttribute(AttributeType<Provider> providerAttributeType, Object value)
+	        throws Exception {
+		UserService us = Context.getUserService();
+		User user = us.getUserByUsername("admin");
+		ProviderAttribute providerAttribute = new ProviderAttribute();
+		providerAttribute.setAttributeType(providerAttributeType);
+		providerAttribute.setSerializedValue(value.toString());
+		providerAttribute.setCreator(user);
+		providerAttribute.setDateCreated(new Date());
+		return providerAttribute;
 	}
 	
 	/**
@@ -391,7 +427,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map
+	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies get all providers with given attribute values
 	 */
 	@Test

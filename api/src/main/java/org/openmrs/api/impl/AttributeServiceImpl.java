@@ -92,12 +92,12 @@ public class AttributeServiceImpl extends BaseOpenmrsService implements Attribut
 	}
 	
 	@Override
-	public Map<AttributeType, String> getSerializedAttributeValues(Map<? extends BaseAttributeType, Object> attributeValues) {
+	public Map<AttributeType, String> getSerializedAttributeValues(Map<? extends AttributeType, Object> attributeValues) {
 		Map<AttributeType, String> serializedAttributeValues = null;
 		if (attributeValues != null) {
 			serializedAttributeValues = new HashMap<AttributeType, String>();
 			AttributeService attrService = Context.getAttributeService();
-			for (Map.Entry<? extends BaseAttributeType, Object> e : attributeValues.entrySet()) {
+			for (Map.Entry<? extends AttributeType, Object> e : attributeValues.entrySet()) {
 				AttributeType vat = e.getKey();
 				serializedAttributeValues.put(vat, attrService.getHandler(vat).serialize(e.getValue()));
 			}

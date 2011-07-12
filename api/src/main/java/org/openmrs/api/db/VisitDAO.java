@@ -102,6 +102,7 @@ public interface VisitDAO {
 	 * @param maxStartDatetime the maximum visit start date to match against
 	 * @param minEndDatetime the minimum visit end date to match against
 	 * @param maxEndDatetime the maximum visit end date to match against
+	 * @param includeInactive specifies if inactive visits should be returned or not
 	 * @param includeVoided specifies if voided visits should also be returned
 	 * @return a list of visits
 	 * @throws DAOException

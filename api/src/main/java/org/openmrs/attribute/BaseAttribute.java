@@ -23,7 +23,7 @@ import org.openmrs.attribute.handler.AttributeHandler;
  * @param <OwningType>
  * @since 1.9
  */
-public abstract class BaseAttribute<OwningType extends Customizable<?>> extends BaseOpenmrsData implements Attribute<OwningType> {
+public abstract class BaseAttribute<OwningType extends Customizable<?>> extends BaseOpenmrsData implements Attribute<OwningType>, Comparable<BaseAttribute> {
 	
 	private OwningType owner;
 	
@@ -103,4 +103,13 @@ public abstract class BaseAttribute<OwningType extends Customizable<?>> extends 
 		return Context.getAttributeService().getHandler(getAttributeType());
 	}
 	
+	@Override
+	public int compareTo(BaseAttribute other) {
+		if (other == null || this.getAttributeType() == null)
+			return -1;
+		int attributeTypeCompare = ((Comparable) this.getAttributeType()).compareTo(other.getAttributeType());
+		if (attributeTypeCompare != 0)
+			return attributeTypeCompare;
+		return this.getSerializedValue().compareTo(other.getSerializedValue());
+	}
 }

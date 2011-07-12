@@ -17,7 +17,12 @@ import org.openmrs.attribute.Attribute;
 import org.openmrs.attribute.AttributeType;
 import org.openmrs.attribute.Customizable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Extension of {@link org.openmrs.BaseOpenmrsMetadata} for classes that support customization via user-defined attributes.
@@ -68,7 +73,7 @@ public abstract class BaseCustomizableMetadata<AttrType extends Attribute> exten
 	}
 	
 	/**
-	 * @see org.openmrs.attribute.Customizable#addAttribute(Object)
+	 * @see org.openmrs.attribute.Customizable#addAttribute(AttrType)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -81,17 +86,24 @@ public abstract class BaseCustomizableMetadata<AttrType extends Attribute> exten
 	}
 	
 	/**
-	 * @see org.openmrs.attribute.Customizable#setAttribute(Object)
+	 * @see org.openmrs.attribute.Customizable#setAttribute(AttrType)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAttribute(AttrType attribute) {
 		if (getAttributes() == null)
-			setAttributes(new HashSet<AttrType>());
+			setAttributes(new TreeSet<AttrType>());
 		// TODO validate
-		for (AttrType existing : getAttributes())
-			if (existing.getAttributeType().equals(attribute.getAttributeType()))
-				existing.setVoided(true);
+		for (Iterator<AttrType> iterator = getAttributes().iterator(); iterator.hasNext();) {
+			AttrType existing = iterator.next();
+			if (existing.getAttributeType().equals(attribute.getAttributeType())) {
+				if (existing.getId() != null) {
+					existing.setVoided(true);
+				} else {
+					iterator.remove();
+				}
+			}
+		}
 		getAttributes().add(attribute);
 		attribute.setOwner(this);
 	}

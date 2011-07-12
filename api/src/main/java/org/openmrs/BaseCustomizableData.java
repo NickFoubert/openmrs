@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.openmrs.attribute.Attribute;
 import org.openmrs.attribute.Customizable;
@@ -91,11 +92,18 @@ public abstract class BaseCustomizableData<AttrType extends Attribute> extends B
 	@Override
 	public void setAttribute(AttrType attribute) {
 		if (getAttributes() == null)
-			setAttributes(new HashSet<AttrType>());
+			setAttributes(new TreeSet<AttrType>());
 		// TODO validate
-		for (AttrType existing : getAttributes())
-			if (existing.getAttributeType().equals(attribute.getAttributeType()))
-				existing.setVoided(true);
+		for (Iterator<AttrType> iterator = getAttributes().iterator(); iterator.hasNext();) {
+			AttrType existing = iterator.next();
+			if (existing.getAttributeType().equals(attribute.getAttributeType())) {
+				if (existing.getId() != null) {
+					existing.setVoided(true);
+				} else {
+					iterator.remove();
+				}
+			}
+		}
 		getAttributes().add(attribute);
 		attribute.setOwner(this);
 	}

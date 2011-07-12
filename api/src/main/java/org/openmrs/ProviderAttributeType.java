@@ -21,7 +21,7 @@ import org.openmrs.attribute.BaseAttributeType;
  * 
  * @since 1.9
  */
-public class ProviderAttributeType extends BaseAttributeType<Visit> implements AttributeType<Visit> {
+public class ProviderAttributeType extends BaseAttributeType<Provider> implements AttributeType<Provider> {
 	
 	private Integer providerAttributeTypeId;
 	
