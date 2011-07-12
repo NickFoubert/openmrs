@@ -2,10 +2,10 @@
 
 <c:choose>
 	<c:when test="${visit.visitId == null}">
-		<openmrs:require privilege="Add Visits" otherwise="/login.htm" redirect="/admin/visits/visitForm.form" />
+		<openmrs:require privilege="Add Visits" otherwise="/login.htm" redirect="/admin/visits/visit.form" />
 	</c:when>
 	<c:otherwise>
-		<openmrs:require privilege="Edit Visits" otherwise="/login.htm" redirect="/admin/visits/visitForm.form" />
+		<openmrs:require privilege="Edit Visits" otherwise="/login.htm" redirect="/admin/visits/visit.form" />
 	</c:otherwise>
 </c:choose>
 
@@ -109,13 +109,17 @@ function removeEncounter(encounterId){
 }
 
 function addEncounterOption(encounterObj){
-	var option =  '<option id="encounterOption-'+encounterObj.encounterId+'" onclick="confirmAction(true, '+encounterObj.encounterId+')">' + encounterObj.encounterType + 
+	var option =  '<option id="encounterOption-'+encounterObj.encounterId+'" value="'+encounterObj.encounterId+'">' + encounterObj.encounterType + 
 	' @' + encounterObj.location + ' | ' +encounterObj.encounterDateString + ' | ' + encounterObj.providerName + '</option>';
 	
 	$j("select#encounterSelect").append(option);
 }
 
 function confirmAction(isAddition, encounterId){
+	//If the user selected the first empty value in the drop down, ignore
+	if(isAddition && document.getElementById("encounterSelect").selectedIndex == 0)
+		return;
+	
 	var dialogElement = document.getElementById(isAddition ? "add-enc-confirmation" : "remove-enc-confirmation");
 	$j(dialogElement).html("<br/>"+(isAddition ? addConfirmationMsg: removeConfirmationMsg));
 	$j(dialogElement).addClass("visit-dialog-content");
@@ -136,6 +140,9 @@ function confirmAction(isAddition, encounterId){
 							$j(this).dialog('close');
 						},
 				"<spring:message code="general.cancel"/>": function() {
+						if(isAddition)
+							document.getElementById("encounterSelect").selectedIndex = 0;
+					
 						$j(this).dialog('close');
 					}
 				}
@@ -203,6 +210,12 @@ $j(document).ready( function() {
 <openmrs:hasPrivilege privilege="Delete Visits">
 <c:if test="${visit.visitId != null && visit.voided}">
 <form:form action="unvoidVisit.htm" method="post" modelAttribute="visit">
+	<c:if test="${param.visitId != null}">
+		<input type="hidden" name="visitId" value="${param.visitId}"/>
+	</c:if>
+	<c:if test="${param.patientId != null}">
+		<input type="hidden" name="patientId" value="${param.patientId}"/>
+	</c:if>
 	<div class="voidedMessage">
 		<div>
 			<spring:message code="Visit.voidedMessage"/>
@@ -217,11 +230,17 @@ $j(document).ready( function() {
 </c:if>
 </openmrs:hasPrivilege>
 	
-<form:form method="post" action="visitForm.form" modelAttribute="visit">
+<form:form method="post" action="visit.form" modelAttribute="visit">
 	<c:if test="${visit.patient.patientId != null}">
 	<a href="<openmrs:contextPath/>/patientDashboard.form?patientId=${visit.patient.patientId}">
 		<spring:message code="PatientDashboard.backToPatientDashboard"/>
 	</a>
+	<c:if test="${param.visitId != null}">
+		<input type="hidden" name="visitId" value="${param.visitId}"/>
+	</c:if>
+	<c:if test="${param.patientId != null}">
+		<input type="hidden" name="patientId" value="${param.patientId}"/>
+	</c:if>
 	<br/><br/>
 	</c:if>
 	<fieldset>
@@ -248,6 +267,7 @@ $j(document).ready( function() {
 				<td>
 				<spring:bind path="visitType">
 					<select name="${status.expression}">
+					   <option value=""></option>
 					<c:forEach items="${visitTypes}" var="visitType">
 						<option value="${visitType.visitTypeId}" <c:if test="${visitType.visitTypeId == status.value}">selected="selected"</c:if>>
 							${visitType.name}
@@ -294,6 +314,18 @@ $j(document).ready( function() {
 					</spring:bind>
 				</td>
 			</tr>
+            <c:if test="${ not empty visitAttributeTypes }">
+    			<tr valign="top">
+    			    <th class="visitLabel"><spring:message code="Visit.attributes" /></th>
+	               	<td>
+			            <table>
+			                <c:forEach var="attrType" items="${ visitAttributeTypes }">
+			                   <openmrs_tag:attributesForType attributeType="${ attrType }" customizable="${ visit }" formFieldNamePrefix="attribute.${ attrType.visitAttributeTypeId }"/>
+			                </c:forEach>
+			            </table>
+			        </td>
+			    </tr>
+			</c:if>
 			<tr>
 				<td colspan="2">
 					<table cellpadding="0" cellspacing="20" align="center">
@@ -347,7 +379,7 @@ $j(document).ready( function() {
 					<input type="button" value='<spring:message code="general.remove"/>' class="smallButton" />
 				</td>
 			</tr>
-			<tr id="noneRow" class="<c:if test="${fn:length(visitEncounters) > 0}">hidden </c:if>evenRow">
+			<tr id="noneRow" class="evenRow" <c:if test="${fn:length(visitEncounters) > 0}">style="display:none"</c:if>>
 				<td colspan="5" style="text-align: center;"><spring:message code="general.none"/></td>
 			</tr>
 		</table>
@@ -360,11 +392,10 @@ $j(document).ready( function() {
 						onclick='javascript:$j(".addEncounterInputs").css("visibility", "visible")' />
 				</td>
 				<td>
-					<select id="encounterSelect" class="addEncounterInputs">
+					<select id="encounterSelect" class="addEncounterInputs" onchange="confirmAction(true, this.value)">
 						<option></option>
 						<c:forEach items="${encountersToAdd}" var="enc2" varStatus="enc2Status">
-							<option id="encounterOption-${enc2.encounterId}" onclick="confirmAction(true, ${enc2.encounterId})" 
-								<c:if test="${enc2.visit != null && enc2.visit.visitId == visit.visitId}">class="hidden"</c:if>>
+							<option id="encounterOption-${enc2.encounterId}" value="${enc2.encounterId}">
 								<openmrs:format encounter="${enc2}" />
 							</option>
 						</c:forEach>
@@ -372,7 +403,7 @@ $j(document).ready( function() {
 				</td>
 				<td class="addEncounterInputs">
 					<input type="button" value='<spring:message code="general.done"/>' 
-						onclick='javscript:$j(".addEncounterInputs").css("visibility", "hidden")' />
+						onclick='javascript:$j(".addEncounterInputs").css("visibility", "hidden")' />
 				</td>
 			</tr>
 		</table>
@@ -392,14 +423,18 @@ $j(document).ready( function() {
 			<input type="submit" value='<spring:message code="general.delete"/>' onclick="javascript:$j('#delete-dialog').dialog('open')"/>
 			<div id="delete-dialog" title="<spring:message code="general.delete"/> <spring:message code="Visit"/>">
 			<form:form action="voidVisit.htm" method="post" modelAttribute="visit">
+			<c:if test="${param.visitId != null}">
+				<input type="hidden" name="visitId" value="${param.visitId}"/>
+			</c:if>
+			<c:if test="${param.patientId != null}">
+				<input type="hidden" name="patientId" value="${param.patientId}"/>
+			</c:if>
 			<br/>
 			<table cellpadding="3" cellspacing="3" align="center">
 				<tr>
 					<th><spring:message code="general.reason"/></th>
 					<td>
-						<spring:bind path="visit.voidReason">
-						<input type="text" name="${status.expression}" value="${status.value}" size="40" />
-						</spring:bind>
+						<input type="text" name="voidReason" size="40" />
 					</td>
 				</tr>
 				<tr height="20"></tr>
@@ -419,6 +454,12 @@ $j(document).ready( function() {
 			<input type="button" value='<spring:message code="general.purge"/>' onclick="javascript:$j('#purge-dialog').dialog('open')" />
 			<div id="purge-dialog" title="<spring:message code="Visit.confirm.purge"/>">
 				<form:form action="purgeVisit.htm" method="post" modelAttribute="visit">
+				<c:if test="${param.visitId != null}">
+					<input type="hidden" name="visitId" value="${param.visitId}"/>
+				</c:if>
+				<c:if test="${param.patientId != null}">
+					<input type="hidden" name="patientId" value="${param.patientId}"/>
+				</c:if>
 				<br/>
 				<spring:message code="Visit.confirm.purgeMessage"/>
 				<br/>

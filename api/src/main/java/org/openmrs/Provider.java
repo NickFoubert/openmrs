@@ -22,13 +22,13 @@ import org.openmrs.attribute.Customizable;
  * @since 1.9
  */
 public class Provider extends BaseCustomizableMetadata<ProviderAttribute> {
-
+	
 	private Integer providerId;
-
+	
 	private Person person;
-
+	
 	private String identifier;
-
+	
 	/**
 	 * @see org.openmrs.OpenmrsObject#getId()
 	 */
@@ -36,54 +36,54 @@ public class Provider extends BaseCustomizableMetadata<ProviderAttribute> {
 	public Integer getId() {
 		return getProviderId();
 	}
-
+	
 	/**
 	 * @see org.openmrs.OpenmrsObject#setId(java.lang.Integer)
 	 */
 	@Override
 	public void setId(Integer id) {
 	}
-
+	
 	/**
 	 * @param providerId the providerId to set
 	 */
 	public void setProviderId(Integer providerId) {
 		this.providerId = providerId;
 	}
-
+	
 	/**
 	 * @return the providerId
 	 */
 	public Integer getProviderId() {
 		return providerId;
 	}
-
+	
 	/**
 	 * @param person the person to set
 	 */
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-
+	
 	/**
 	 * @return the person
 	 */
 	public Person getPerson() {
 		return person;
 	}
-
+	
 	/**
 	 * @param identifier the identifier to set
 	 */
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
-
+	
 	/**
 	 * @return the identifier
 	 */
 	public String getIdentifier() {
 		return identifier;
 	}
-
+	
 }

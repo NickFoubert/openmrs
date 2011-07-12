@@ -23,32 +23,32 @@ import org.openmrs.attribute.BaseAttribute;
  */
 public class ProviderAttribute extends BaseAttribute<Provider> implements Attribute<Provider> {
 	
-    private Integer providerAttributeId;
-
-    public Integer getProviderAttributeId() {
-        return providerAttributeId;
-    }
-
-    public void setProviderAttributeId(Integer providerAttributeId) {
-        this.providerAttributeId = providerAttributeId;
-    }
-
-    public Provider getProvider() {
-        return getOwner();
-    }
-
-    public void setProvider(Provider provider) {
-        setOwner(provider);
-    }
-
-    @Override
-    public Integer getId() {
-        return providerAttributeId;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.providerAttributeId = id;
-    }
-
+	private Integer providerAttributeId;
+	
+	public Integer getProviderAttributeId() {
+		return providerAttributeId;
+	}
+	
+	public void setProviderAttributeId(Integer providerAttributeId) {
+		this.providerAttributeId = providerAttributeId;
+	}
+	
+	public Provider getProvider() {
+		return getOwner();
+	}
+	
+	public void setProvider(Provider provider) {
+		setOwner(provider);
+	}
+	
+	@Override
+	public Integer getId() {
+		return providerAttributeId;
+	}
+	
+	@Override
+	public void setId(Integer id) {
+		this.providerAttributeId = id;
+	}
+	
 }

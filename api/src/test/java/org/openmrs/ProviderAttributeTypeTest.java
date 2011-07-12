@@ -18,39 +18,39 @@ import org.junit.Test;
  */
 
 public class ProviderAttributeTypeTest {
-
-    /**
-     * @verifies compares as equal if names are same
-     * @see ProviderAttributeType#compareTo(ProviderAttributeType)
-     */
-    @Test
-    public void compareTo_shouldCompareAsEqualIfNamesAreSame() {
-        ProviderAttributeType providerAttributeType1 = new ProviderAttributeType();
-        providerAttributeType1.setName("occupation");
-        providerAttributeType1.setDatatype("string");
-
-        ProviderAttributeType providerAttributeType2 = new ProviderAttributeType();
-        providerAttributeType2.setName("occupation");
-        providerAttributeType2.setDatatype("string");
-        Assert.assertEquals(0, providerAttributeType1.compareTo(providerAttributeType2));
-
-    }
-
-    /**
-     * @verifies compares based on names
-     * @see ProviderAttributeType#compareTo(ProviderAttributeType)
-     */
-    @Test
-    public void compareTo_shouldCompareBasedOnNames() {
-        ProviderAttributeType providerAttributeType1 = new ProviderAttributeType();
-        providerAttributeType1.setName("cityOfBirth");
-        providerAttributeType1.setDatatype("string");
-
-        ProviderAttributeType providerAttributeType2 = new ProviderAttributeType();
-        providerAttributeType2.setName("occupation");
-        providerAttributeType2.setDatatype("string");
-        Assert.assertTrue(providerAttributeType1.compareTo(providerAttributeType2) > 1);
-        Assert.assertTrue(providerAttributeType2.compareTo(providerAttributeType1) < 1);
-    }
-
+	
+	/**
+	 * @verifies compares as equal if names are same
+	 * @see ProviderAttributeType#compareTo(ProviderAttributeType)
+	 */
+	@Test
+	public void compareTo_shouldCompareAsEqualIfNamesAreSame() {
+		ProviderAttributeType providerAttributeType1 = new ProviderAttributeType();
+		providerAttributeType1.setName("occupation");
+		providerAttributeType1.setDatatype("string");
+		
+		ProviderAttributeType providerAttributeType2 = new ProviderAttributeType();
+		providerAttributeType2.setName("occupation");
+		providerAttributeType2.setDatatype("string");
+		Assert.assertEquals(0, providerAttributeType1.compareTo(providerAttributeType2));
+		
+	}
+	
+	/**
+	 * @verifies compares based on names
+	 * @see ProviderAttributeType#compareTo(ProviderAttributeType)
+	 */
+	@Test
+	public void compareTo_shouldCompareBasedOnNames() {
+		ProviderAttributeType providerAttributeType1 = new ProviderAttributeType();
+		providerAttributeType1.setName("cityOfBirth");
+		providerAttributeType1.setDatatype("string");
+		
+		ProviderAttributeType providerAttributeType2 = new ProviderAttributeType();
+		providerAttributeType2.setName("occupation");
+		providerAttributeType2.setDatatype("string");
+		Assert.assertTrue(providerAttributeType1.compareTo(providerAttributeType2) > 1);
+		Assert.assertTrue(providerAttributeType2.compareTo(providerAttributeType1) < 1);
+	}
+	
 }

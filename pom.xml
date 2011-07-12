@@ -206,6 +206,17 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${springVersion}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 
 			<!--
 			For the upgrade to Spring 3.0, antlr-runtime-3.2.jar is required. However, Hibernate 3.25 needs antlr_2.7.6.jar and they can
@@ -501,6 +512,7 @@
 					<configuration>
 						<target>${javaCompilerVersion}</target>
 						<source>${javaCompilerVersion}</source>
+						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -651,6 +663,13 @@
 		</plugins>
 	</build>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>3.0.5.RELEASE</version>
+		</dependency>
+	</dependencies>
 	<reporting>
 		<plugins>
 			<!-- docfilessubdirs config set to include image resource -->
@@ -724,7 +743,7 @@
       <openmrs.version.short>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${revisionNumber}-${parsedVersion.qualifier}</openmrs.version.short>
       <openmrs.version.shortnumericonly>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${revisionNumber}</openmrs.version.shortnumericonly>
 
-      <springVersion>3.0.2.RELEASE</springVersion>
+      <springVersion>3.0.5.RELEASE</springVersion>
    </properties>
    
 </project>

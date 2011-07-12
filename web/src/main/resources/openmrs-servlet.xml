@@ -45,13 +45,24 @@
 		<property name="mediaTypes">
 			<map>
 				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
 			</map>
 		</property>
 		<property name="defaultViews">
 			<list>
 				<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+           			<property name="marshaller" ref="xStreamMarshaller"/>
+        		</bean>
 			</list>
 		</property>
+	</bean>
+	
+	<bean id="xStreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller" />
+
+	<bean id="xmlMarshallingHttpMessageConverter" class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+ 		<property name="marshaller" ref="xStreamMarshaller" />
+		<property name="unmarshaller" ref="xStreamMarshaller" />
 	</bean>
 	
 	<bean id="defaultMethodParamResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
@@ -98,6 +109,7 @@
 				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
 				<bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
 				<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+				<ref bean="xmlMarshallingHttpMessageConverter" />
 			</list>
 		</property>
 	</bean>
@@ -177,8 +189,6 @@
 				<prop key="admin/hl7/hl7Source.list">hl7SourceList</prop>
 				<prop key="admin/hl7/hl7Source.form">hl7SourceForm</prop>
 
-				<prop key="migration.list">migrationController</prop>
-				<prop key="migration.form">migrationActionController</prop>
 				<prop key="options.form">optionsForm</prop>
 				<prop key="personDashboard.form">personDashboardForm</prop>
 
@@ -540,9 +550,6 @@
 	<!-- ** Encounter      ** -->
 	<bean id="encounterForm" class="org.openmrs.web.controller.encounter.EncounterFormController">
 		<property name="commandName"><value>encounter</value></property>
-		<property name="validator">
-			<ref bean="encounterValidator" />
-		</property>
 		<property name="formView"><value>/admin/encounters/encounterForm</value></property>
 		<property name="successView"><value>encounter.form</value></property>
 	</bean>
@@ -593,11 +600,11 @@
 	<!-- =====  Concept Sector  ===== -->
 	<!-- ============================ -->
 	<!-- ** Concept ** -->
-	<bean id="conceptValidator" class="org.openmrs.web.controller.ConceptFormValidator" />
+	<bean id="conceptFormValidator" class="org.openmrs.web.controller.ConceptFormValidator" />
 	<bean id="conceptForm" class="org.openmrs.web.controller.ConceptFormController">
 		<property name="commandName"><value>command</value></property>
 		<property name="validator">
-			<ref bean="conceptValidator" />
+			<ref bean="conceptFormValidator" />
 		</property>
 		<property name="formView"><value>/dictionary/conceptForm</value></property>
 		<property name="successView"><value>concept.form</value></property>
@@ -734,19 +741,6 @@
 	</bean>
 	<!--  ** /Concept Source ** -->	
 
-	<!-- ============================ -->
-	<!-- ===== Migration Sector ===== -->
-	<!-- ============================ -->
-	<!-- ** Migration ** -->
-			<bean id="migrationController" class="org.openmrs.web.controller.migration.MigrationController"/>
-			<bean id="migrationActionController" class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
-				<property name="methodNameResolver"><ref bean="defaultMethodParamResolver"/></property>
-				<property name="delegate"><ref bean="migrationController"/></property>
-			</bean>
-	<!-- ** /Migration ** -->
-	<!-- ============================ -->
-    <!-- ============================ -->
-		
 	<!-- ============================ -->
 	<!-- ===== Form Sector ===== -->
 	<!-- ============================ -->
@@ -1412,12 +1406,14 @@
 		<property name="nameMappings">
 			<props>
 				<prop key="countyDistrict">Location.district</prop>
+				<prop key="neighborhoodCell">Location.communityCouncil</prop>
 				<prop key="cityVillage">Location.village</prop>
 			</props>
 		</property>
 		<property name="sizeMappings">
 			<props>
 				<prop key="countyDistrict">40</prop>
+				<prop key="neighborhoodCell">40</prop>
 				<prop key="cityVillage">40</prop>
 			</props>
 		</property>
@@ -1429,6 +1425,7 @@
 		<property name="lineByLineFormat">
 			<list>
 				<value>countyDistrict</value>
+				<value>neighborhoodCell</value>
 				<value>cityVillage</value>
 			</list>
 		</property>

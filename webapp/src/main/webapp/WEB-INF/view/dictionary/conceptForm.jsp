@@ -147,7 +147,12 @@
 	<div class="retiredMessage">
 	<div><spring:message code="Concept.retiredMessage"/></div>
     <div>  <c:if test="${command.concept.retiredBy.personName != null}">  <spring:message code="general.byPerson"/> ${command.concept.retiredBy.personName} </c:if> <c:if test="${command.concept.dateRetired != null}"> <spring:message code="general.onDate"/>  <openmrs:formatDate date="${command.concept.dateRetired}" type="long" /> </c:if> <c:if test="${command.concept.retireReason!=''}"> - ${command.concept.retireReason} </c:if> </div>
-	<div><form action="" method="post" ><input type="submit" name="action" value="<spring:message code="general.unretire"/>" /></form></div> 
+	<openmrs:hasPrivilege privilege="Manage Concepts">
+		<div>
+			<form action="" method="post" ><input type="submit" name="action" value="<spring:message code="general.unretire"/>" />
+			</form>
+		</div> 
+	</openmrs:hasPrivilege>
 	</div>
 </c:if>
 
@@ -180,7 +185,12 @@
 		<th title="<spring:message code="Concept.id.help"/>"><spring:message code="general.id"/></th>
 		<td colspan="${fn:length(locales)}">${command.concept.conceptId}</td>
 	</tr>
-
+	<c:if test="${command.concept.conceptId != null}">
+	<tr>
+		<th title="<spring:message code="Concept.uiid.help"/>"><spring:message code="general.uuid"/></th>
+		<td colspan="${fn:length(locales)}">${command.concept.uuid}</td>
+	</tr>
+	</c:if>
 	<tr>
 		<th title="<spring:message code="Concept.locale.help"/>"><spring:message code="general.locale"/></th>
 		<td style="padding-bottom: 0px; padding-left: 0px;">
@@ -429,7 +439,7 @@
 	<tr id="codedDatatypeRow">
 		<th valign="top">
 			<spring:message code="Concept.answers"/> 
-			<img class="help_icon" id="tooltipCodedIcon" src="${pageContext.request.contextPath}/images/help.gif" border="0" title="<spring:message code="Concept.datatype.coded.help"/>"
+			<img class="help_icon" id="tooltipCodedIcon" src="${pageContext.request.contextPath}/images/help.gif" border="0" title="<spring:message code="Concept.datatype.coded.help"/>" />
 		</th>
 		<td>
 			<spring:bind path="command.concept.answers">
@@ -458,7 +468,7 @@
 	<tr id="numericDatatypeRow">
 		<th valign="top">
 			<spring:message code="ConceptNumeric.name"/>
-			<img class="help_icon" id="tooltipNumericIcon" src="${pageContext.request.contextPath}/images/help.gif" border="0" title="<spring:message code="Concept.datatype.numeric.help"/>"
+			<img class="help_icon" id="tooltipNumericIcon" src="${pageContext.request.contextPath}/images/help.gif" border="0" title="<spring:message code="Concept.datatype.numeric.help"/>" />
 		</th>
 		<td>
 			<table border="0">
@@ -546,7 +556,7 @@
     <tr id="complexDatatypeRow">
         <th valign="top">
 			<spring:message code="ConceptComplex.handler"/>
-			<img class="help_icon" id="tooltipComplexIcon" src="${pageContext.request.contextPath}/images/help.gif" border="0" title="<spring:message code="Concept.datatype.complex.help"/>"
+			<img class="help_icon" id="tooltipComplexIcon" src="${pageContext.request.contextPath}/images/help.gif" border="0" title="<spring:message code="Concept.datatype.complex.help"/>" />
 		</th>
         <td>
 			<spring:bind path="command.handlerKey">
@@ -730,12 +740,11 @@
 <br/>
 <br/>
 
-<c:if test="${command.concept.conceptId!=null && command.concept.retired==false }">
+<openmrs:hasPrivilege privilege="Manage Concepts">
+	<c:if test="${command.concept.conceptId!=null && command.concept.retired==false }">
 	<form action="" method="post">
 		<fieldset>
 			<h4><spring:message code="general.retire"/> <spring:message code="Concept"/></h4>
-					
-			
 			
 			<b><spring:message code="general.reason"/></b>
 			<input type="text" value="" size="40" name="retiredReason" />
@@ -744,7 +753,9 @@
 			<input type="submit" value='<spring:message code="general.retire"/>' name="action"/>
 		</fieldset>
 	</form>
-</c:if>
+	</c:if>
+</openmrs:hasPrivilege>
+
 
 <openmrs:extensionPoint pointId="org.openmrs.dictionary.conceptFormFooter" type="html" />
 

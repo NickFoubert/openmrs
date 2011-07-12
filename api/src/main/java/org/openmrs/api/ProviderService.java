@@ -99,7 +99,7 @@ public interface ProviderService extends OpenmrsService {
 	 * @should save a Provider with Person alone
 	 * @should not save a Provider with both name and person
 	 * @should not save a Provider with both name and person being null
-     * @should void the attribute if an attribute with same attribute type already exists
+	 * @should void the attribute if an attribute with same attribute type already exists
 	 */
 	@Authorized( { PrivilegeConstants.ADD_PROVIDER, PrivilegeConstants.EDIT_PROVIDER })
 	public Provider saveProvider(Provider provider);

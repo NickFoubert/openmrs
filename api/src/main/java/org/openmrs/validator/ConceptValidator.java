@@ -72,6 +72,7 @@ public class ConceptValidator implements Validator {
 	 * @should not allow an index term to be a locale preferred name
 	 * @should fail if there is no name explicitly marked as fully specified
 	 * @should pass if the duplicate ConceptName is neither preferred nor fully Specified
+	 * @should pass if the concept has a synonym that is also a short name
 	 */
 	public void validate(Object obj, Errors errors) throws APIException, DuplicateConceptNameException {
 		
@@ -87,12 +88,6 @@ public class ConceptValidator implements Validator {
 		
 		boolean hasFullySpecifiedName = false;
 		for (Locale conceptNameLocale : conceptToValidate.getAllConceptNameLocales()) {
-			//The concept's locale should be among the allowed locales listed in global properties
-			if (!LocaleUtility.getLocalesInOrder().contains(conceptNameLocale)) {
-				log.warn("The locale '" + conceptNameLocale.toString() + "' is not listed among allowed locales");
-				errors.reject("Concept.error.invalid.locale");
-			}
-			
 			boolean fullySpecifiedNameForLocaleFound = false;
 			boolean preferredNameForLocaleFound = false;
 			boolean shortNameForLocaleFound = false;
@@ -175,7 +170,7 @@ public class ConceptValidator implements Validator {
 						}
 					}
 				}
-				
+				//
 				if (errors.hasErrors()) {
 					log.debug("Concept name '" + nameInLocale.getName() + "' for locale '" + conceptNameLocale
 					        + "' is invalid");
@@ -186,9 +181,14 @@ public class ConceptValidator implements Validator {
 				}
 				
 				//No duplicate names allowed for the same locale and concept, keep the case the same
-				if (!validNamesFoundInLocale.add(nameInLocale.getName().toLowerCase()))
-					throw new DuplicateConceptNameException("'" + nameInLocale.getName()
-					        + "' is a duplicate name in locale '" + conceptNameLocale.toString() + "' for the same concept");
+				//except for short names
+				if (!nameInLocale.isShort()) {
+					if (!validNamesFoundInLocale.add(nameInLocale.getName().toLowerCase()))
+						throw new DuplicateConceptNameException("'" + nameInLocale.getName()
+						        + "' is a duplicate name in locale '" + conceptNameLocale.toString()
+						        + "' for the same concept");
+				}
+				
 				if (log.isDebugEnabled())
 					log.debug("Valid name found: " + nameInLocale.getName());
 			}

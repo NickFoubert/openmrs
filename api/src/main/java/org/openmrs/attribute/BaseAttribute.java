@@ -16,6 +16,7 @@ package org.openmrs.attribute;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.api.context.Context;
 import org.openmrs.attribute.handler.AttributeHandler;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * Abstract base implementation of {@link Attribute}. Actual implementations should be able to extend this
@@ -23,7 +24,7 @@ import org.openmrs.attribute.handler.AttributeHandler;
  * @param <OwningType>
  * @since 1.9
  */
-public abstract class BaseAttribute<OwningType extends Customizable<?>> extends BaseOpenmrsData implements Attribute<OwningType>, Comparable<BaseAttribute> {
+public abstract class BaseAttribute<OwningType extends Customizable<?>> extends BaseOpenmrsData implements Attribute<OwningType>, Comparable<Attribute<?>> {
 	
 	private OwningType owner;
 	
@@ -103,13 +104,21 @@ public abstract class BaseAttribute<OwningType extends Customizable<?>> extends 
 		return Context.getAttributeService().getHandler(getAttributeType());
 	}
 	
+	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
-	public int compareTo(BaseAttribute other) {
-		if (other == null || this.getAttributeType() == null)
+	public int compareTo(Attribute<?> other) {
+		if (other == null)
 			return -1;
-		int attributeTypeCompare = ((Comparable) this.getAttributeType()).compareTo(other.getAttributeType());
-		if (attributeTypeCompare != 0)
-			return attributeTypeCompare;
-		return this.getSerializedValue().compareTo(other.getSerializedValue());
+		int retValue = isVoided().compareTo(other.isVoided());
+		if (retValue == 0)
+			retValue = OpenmrsUtil.compareWithNullAsGreatest(getAttributeType().getId(), other.getAttributeType().getId());
+		if (retValue == 0)
+			retValue = OpenmrsUtil.compareWithNullAsGreatest(getSerializedValue(), other.getSerializedValue());
+		if (retValue == 0)
+			retValue = OpenmrsUtil.compareWithNullAsGreatest(getId(), other.getId());
+		return retValue;
 	}
+	
 }

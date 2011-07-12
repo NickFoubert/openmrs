@@ -134,7 +134,9 @@ public class ModuleFilterMapping implements Serializable {
 	 * 
 	 * @param filterMapping - The {@link ModuleFilterMapping} to check for matching servlets and url
 	 *            patterns
-	 * @param requestPath - The URI of the request to check against the {@link ModuleFilterMapping}
+	 * @param requestPath - The URI of the request to check against the {@link ModuleFilterMapping},
+	 * 	      with the context path already removed (since module filter mappings are relative to the
+	 *        context path).
 	 * @return - true if the given {@link ModuleFilterMapping} matches the passed requestPath For
 	 *         example: Passing a ModuleFilterMapping containing a urlPattern of "*" would return
 	 *         true for any requestPath Passing a ModuleFilterMapping containing a urlPattern of
