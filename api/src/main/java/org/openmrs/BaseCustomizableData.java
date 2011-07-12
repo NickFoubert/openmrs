@@ -99,14 +99,20 @@ public abstract class BaseCustomizableData<AttrClass extends Attribute> extends 
 			if (existing.getSerializedValue().equals(attribute.getSerializedValue())) {
 				// do nothing, since the value is already as-specified
 			} else {
-				existing.setVoided(true);
+				if (existing.getId() != null)
+					existing.setVoided(true);
+				else
+					getAttributes().remove(existing);
 				getAttributes().add(attribute);
 				attribute.setOwner(this);
 			}
 		} else {
 			for (AttrClass existing : getActiveAttributes(attribute.getAttributeType()))
 				if (existing.getAttributeType().equals(attribute.getAttributeType()))
-					existing.setVoided(true);
+					if (existing.getId() != null)
+						existing.setVoided(true);
+					else
+						getAttributes().remove(existing);
 			getAttributes().add(attribute);
 			attribute.setOwner(this);
 		}

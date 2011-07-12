@@ -370,19 +370,15 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		Assert.assertNotNull(provider.getId());
 		provider.setAttribute(createProviderAttribute(providerAttributeType, "seattle"));
 		Assert.assertEquals(2, provider.getAttributes().size());
-		ProviderAttribute firstAttribute = (ProviderAttribute) provider.getAttributes().toArray()[0];
-		Assert.assertTrue(firstAttribute.getVoided());
+		ProviderAttribute lastAttribute = (ProviderAttribute) provider.getAttributes().toArray()[1];
+		Assert.assertTrue(lastAttribute.getVoided());
 	}
 	
 	private ProviderAttribute createProviderAttribute(AttributeType<Provider> providerAttributeType, Object value)
 	        throws Exception {
-		UserService us = Context.getUserService();
-		User user = us.getUserByUsername("admin");
 		ProviderAttribute providerAttribute = new ProviderAttribute();
 		providerAttribute.setAttributeType(providerAttributeType);
 		providerAttribute.setSerializedValue(value.toString());
-		providerAttribute.setCreator(user);
-		providerAttribute.setDateCreated(new Date());
 		return providerAttribute;
 	}
 	

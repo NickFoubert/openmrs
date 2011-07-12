@@ -76,7 +76,7 @@ public abstract class BaseOpenmrsObject implements OpenmrsObject {
 		BaseOpenmrsObject other = (BaseOpenmrsObject) obj;
 		if (uuid == null)
 			return false;
-		return uuid.equals(other.uuid);
+		return getUuid().equals(other.getUuid());
 	}
 	
 	/**

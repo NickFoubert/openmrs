@@ -434,7 +434,7 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void getAllVisitAttributeTypes_shouldReturnAllVisitAttributeTypesIncludingRetiredOnes() throws Exception {
 		executeDataSet(VISITS_ATTRIBUTES_XML);
-		Assert.assertEquals(2, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(3, service.getAllVisitAttributeTypes().size());
 	}
 	
 	/**
@@ -485,9 +485,9 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void purgeVisitAttributeType_shouldCompletelyRemoveAVisitAttributeType() throws Exception {
 		executeDataSet(VISITS_ATTRIBUTES_XML);
-		Assert.assertEquals(2, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(3, service.getAllVisitAttributeTypes().size());
 		service.purgeVisitAttributeType(service.getVisitAttributeType(2));
-		Assert.assertEquals(1, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(2, service.getAllVisitAttributeTypes().size());
 	}
 	
 	/**
@@ -514,12 +514,12 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void saveVisitAttributeType_shouldCreateANewVisitAttributeType() throws Exception {
 		executeDataSet(VISITS_ATTRIBUTES_XML);
-		Assert.assertEquals(2, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(3, service.getAllVisitAttributeTypes().size());
 		VisitAttributeType vat = new VisitAttributeType();
 		vat.setName("Another one");
 		vat.setDatatype("string");
 		service.saveVisitAttributeType(vat);
-		Assert.assertEquals(3, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(4, service.getAllVisitAttributeTypes().size());
 	}
 	
 	/**
@@ -529,11 +529,11 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void saveVisitAttributeType_shouldEditAnExistingVisitAttributeType() throws Exception {
 		executeDataSet(VISITS_ATTRIBUTES_XML);
-		Assert.assertEquals(2, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(3, service.getAllVisitAttributeTypes().size());
 		VisitAttributeType vat = service.getVisitAttributeType(1);
 		vat.setName("A new name");
 		service.saveVisitAttributeType(vat);
-		Assert.assertEquals(2, service.getAllVisitAttributeTypes().size());
+		Assert.assertEquals(3, service.getAllVisitAttributeTypes().size());
 		Assert.assertEquals("A new name", service.getVisitAttributeType(1).getName());
 	}
 	

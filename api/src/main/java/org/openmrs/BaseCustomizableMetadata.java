@@ -26,24 +26,24 @@ import java.util.TreeSet;
 
 /**
  * Extension of {@link org.openmrs.BaseOpenmrsMetadata} for classes that support customization via user-defined attributes.
- * @param <AttrType> the type of attribute held
+ * @param <AttrClass> the type of attribute held
  */
-public abstract class BaseCustomizableMetadata<AttrType extends Attribute> extends BaseOpenmrsMetadata implements Customizable<AttrType> {
+public abstract class BaseCustomizableMetadata<AttrClass extends Attribute> extends BaseOpenmrsMetadata implements Customizable<AttrClass> {
 	
-	private Set<AttrType> attributes;
+	private Set<AttrClass> attributes;
 	
 	/**
 	 * @see org.openmrs.attribute.Customizable#getAttributes()
 	 */
 	@Override
-	public Set<AttrType> getAttributes() {
+	public Set<AttrClass> getAttributes() {
 		return attributes;
 	}
 	
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(Set<AttrType> attributes) {
+	public void setAttributes(Set<AttrClass> attributes) {
 		this.attributes = attributes;
 	}
 	
@@ -51,10 +51,10 @@ public abstract class BaseCustomizableMetadata<AttrType extends Attribute> exten
 	 * @see org.openmrs.attribute.Customizable#getActiveAttributes()
 	 */
 	@Override
-	public List<AttrType> getActiveAttributes() {
-		List<AttrType> ret = new ArrayList<AttrType>();
+	public List<AttrClass> getActiveAttributes() {
+		List<AttrClass> ret = new ArrayList<AttrClass>();
 		if (getAttributes() != null)
-			for (AttrType attr : getAttributes())
+			for (AttrClass attr : getAttributes())
 				if (!attr.isVoided())
 					ret.add(attr);
 		return ret;
@@ -64,48 +64,58 @@ public abstract class BaseCustomizableMetadata<AttrType extends Attribute> exten
 	 * @see org.openmrs.attribute.Customizable#getActiveAttributes(org.openmrs.attribute.AttributeType)
 	 */
 	@Override
-	public List<AttrType> getActiveAttributes(AttributeType<?> ofType) {
-		List<AttrType> ret = getActiveAttributes();
-		for (Iterator<AttrType> i = ret.iterator(); i.hasNext();)
+	public List<AttrClass> getActiveAttributes(AttributeType<?> ofType) {
+		List<AttrClass> ret = getActiveAttributes();
+		for (Iterator<AttrClass> i = ret.iterator(); i.hasNext();)
 			if (!(i.next().getAttributeType().equals(ofType)))
 				i.remove();
 		return ret;
 	}
 	
 	/**
-	 * @see org.openmrs.attribute.Customizable#addAttribute(AttrType)
+	 * @see org.openmrs.attribute.Customizable#addAttribute(AttrClass)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addAttribute(AttrType attribute) {
+	public void addAttribute(AttrClass attribute) {
 		if (getAttributes() == null)
-			setAttributes(new HashSet<AttrType>());
+			setAttributes(new HashSet<AttrClass>());
 		// TODO validate
 		getAttributes().add(attribute);
 		attribute.setOwner(this);
 	}
 	
 	/**
-	 * @see org.openmrs.attribute.Customizable#setAttribute(AttrType)
+	 * @see org.openmrs.attribute.Customizable#setAttribute(AttrClass)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setAttribute(AttrType attribute) {
+	public void setAttribute(AttrClass attribute) {
 		if (getAttributes() == null)
-			setAttributes(new TreeSet<AttrType>());
+			setAttributes(new TreeSet<AttrClass>());
 		// TODO validate
-		for (Iterator<AttrType> iterator = getAttributes().iterator(); iterator.hasNext();) {
-			AttrType existing = iterator.next();
-			if (existing.getAttributeType().equals(attribute.getAttributeType())) {
-				if (existing.getId() != null) {
+		if (getActiveAttributes(attribute.getAttributeType()).size() == 1) {
+			AttrClass existing = getActiveAttributes(attribute.getAttributeType()).get(0);
+			if (existing.getSerializedValue().equals(attribute.getSerializedValue())) {
+				// do nothing, since the value is already as-specified
+			} else {
+				if (existing.getId() != null)
 					existing.setVoided(true);
-				} else {
-					iterator.remove();
-				}
+				else
+					getAttributes().remove(existing);
+				getAttributes().add(attribute);
+				attribute.setOwner(this);
 			}
+		} else {
+			for (AttrClass existing : getActiveAttributes(attribute.getAttributeType()))
+				if (existing.getAttributeType().equals(attribute.getAttributeType()))
+					if (existing.getId() != null)
+						existing.setVoided(true);
+					else
+						getAttributes().remove(existing);
+			getAttributes().add(attribute);
+			attribute.setOwner(this);
 		}
-		getAttributes().add(attribute);
-		attribute.setOwner(this);
 	}
 	
 }
