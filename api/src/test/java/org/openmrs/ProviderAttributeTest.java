@@ -47,16 +47,15 @@ public class ProviderAttributeTest {
 		ProviderAttributeType providerAttributeType = new ProviderAttributeType();
 		providerAttributeType.setName("occupation");
 		providerAttributeType.setDatatype("string");
-		ProviderAttribute providerAttribute1 = createProviderAttribute(providerAttributeType, new SimpleDateFormat(
-		        "yyyy-MM-dd").parse("2011-04-25"));
+		ProviderAttribute providerAttribute1 = createProviderAttribute(providerAttributeType, "admin");
 		
 		ProviderAttributeType providerAttributeType2 = new ProviderAttributeType();
 		providerAttributeType2.setName("place");
 		providerAttributeType2.setDatatype("string");
 		ProviderAttribute providerAttribute2 = createProviderAttribute(providerAttributeType2, "bangalore");
 		
-		Assert.assertTrue(providerAttribute1.compareTo(providerAttribute2) > 0);
-		Assert.assertTrue(providerAttribute2.compareTo(providerAttribute1) < 0);
+		Assert.assertTrue(providerAttribute1.compareTo(providerAttribute2) < 0);
+		Assert.assertTrue(providerAttribute2.compareTo(providerAttribute1) > 0);
 	}
 	
 	/**
