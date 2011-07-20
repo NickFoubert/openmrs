@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import org.openmrs.Cohort;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -40,6 +41,7 @@ import org.openmrs.api.db.EncounterDAO;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.util.PrivilegeConstants;
 import org.openmrs.validator.EncounterValidator;
+import org.openmrs.validator.ValidateUtil;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -394,7 +396,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	 */
 	public EncounterType retireEncounterType(EncounterType encounterType, String reason) throws APIException {
 		if (reason == null)
-			throw new IllegalArgumentException("The 'reason' argument is required");
+			throw new IllegalArgumentException("The 'reason' for retiring is required");
 		
 		encounterType.setRetired(true);
 		encounterType.setRetireReason(reason);
@@ -616,4 +618,69 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public List<Encounter> getEncountersByVisit(Visit visit) {
 		return dao.getEncountersByVisit(visit);
 	}
+
+    /**
+     * @see org.openmrs.api.EncounterService#saveEncounterRole(org.openmrs.EncounterRole) 
+     */
+    @Override
+    public EncounterRole saveEncounterRole(EncounterRole encounterRole) throws APIException {
+        ValidateUtil.validate(encounterRole);
+        dao.saveEncounterRole(encounterRole);
+        return encounterRole;
+    }
+
+    /**
+     * @see org.openmrs.api.EncounterService#getEncounterRole(Integer)
+     */
+    @Override
+    public EncounterRole getEncounterRole(Integer encounterRoleId) throws APIException {
+        return dao.getEncounterRole(encounterRoleId);
+    }
+
+    /**
+     * @see org.openmrs.api.EncounterService#purgeEncounterRole(org.openmrs.EncounterRole)
+     */
+    @Override
+    public void purgeEncounterRole(EncounterRole encounterRole) throws APIException {
+        dao.deleteEncounterRole(encounterRole);
+    }
+
+    /**
+     * @see org.openmrs.api.EncounterService#getAllEncounterRoles(boolean)
+     */
+    @Override
+    public List<EncounterRole> getAllEncounterRoles(boolean includeRetired) {
+        return dao.getAllEncounterRoles(includeRetired);
+    }
+
+    /**
+     * @see org.openmrs.api.EncounterService#getEncounterRoleByUuid(String) 
+     */
+    @Override
+    public EncounterRole getEncounterRoleByUuid(String uuid) throws APIException {
+        return dao.getEncounterRoleByUuid(uuid);
+    }
+
+    /**
+     * @see org.openmrs.api.EncounterService#retireEncounterRole(org.openmrs.EncounterRole, String)
+     */
+    @Override
+    public EncounterRole retireEncounterRole(EncounterRole encounterRole, String reason) throws APIException {
+        if (reason == null)
+            throw new IllegalArgumentException("The 'reason' for retiring is required");
+
+        encounterRole.setRetired(true);
+        encounterRole.setRetireReason(reason);
+        return saveEncounterRole(encounterRole);
+    }
+
+    /**
+     * @see org.openmrs.api.EncounterService#unretireEncounterRole(org.openmrs.EncounterRole)
+     */
+    @Override
+    public EncounterRole unretireEncounterRole(EncounterRole encounterRole) throws APIException {
+        encounterRole.setRetired(false);
+        return saveEncounterRole(encounterRole);
+    }
+
 }
