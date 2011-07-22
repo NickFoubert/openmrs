@@ -18,8 +18,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
+import org.openmrs.ProviderAttributeType;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -59,6 +62,8 @@ public class ProviderValidator implements Validator {
 	 * @should be invalid if person is not set
 	 * @should be invalid if provider details are not set
 	 * @should be invalid if both provider details and person are set
+	 * @should reject a provider if it has fewer than min occurs of an attribute
+	 * @should reject a provider if it has more than max occurs of an attribute
 	 */
 	public void validate(Object obj, Errors errors) throws APIException {
 		if (log.isDebugEnabled())
@@ -68,22 +73,49 @@ public class ProviderValidator implements Validator {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type " + Provider.class);
 		
 		Provider provider = (Provider) obj;
-		if (provider != null) {
-			
-			if ((provider.getPerson() != null && hasProviderDetails(provider))
-			        || (provider.getPerson() == null && !hasProviderDetails(provider))) {
-				errors.rejectValue("person", "Provider.error.person.required");
-			} else if ((hasProviderDetails(provider) && !hasBothNameAndIdentifier(provider))) {
-				errors.rejectValue("name", "Provider.error.name.identifier.required");
-			}
-			
-			if (provider.isRetired() && StringUtils.isEmpty(provider.getRetireReason())) {
-				errors.rejectValue("retireReason", "Provider.error.retireReason.required");
-			}
-		}
-	}
-	
-	private boolean hasBothNameAndIdentifier(Provider provider) {
+        if ((provider.getPerson() != null && hasProviderDetails(provider))
+                || (provider.getPerson() == null && !hasProviderDetails(provider))) {
+            errors.rejectValue("person", "Provider.error.person.required");
+        } else if ((hasProviderDetails(provider) && !hasBothNameAndIdentifier(provider))) {
+            errors.rejectValue("name", "Provider.error.name.identifier.required");
+        }
+
+        if (provider.isRetired() && StringUtils.isEmpty(provider.getRetireReason())) {
+            errors.rejectValue("retireReason", "Provider.error.retireReason.required");
+        }
+
+        validateForMinAndMaxOccurs(errors, provider);
+    }
+
+    private void validateForMinAndMaxOccurs(Errors errors, Provider provider) {
+        for (ProviderAttributeType providerAttributeType : Context.getProviderService().getAllProviderAttributeTypes()) {
+            if (providerAttributeType.getMinOccurs() > 0 || providerAttributeType.getMaxOccurs() != null) {
+                int numFound = 0;
+                for (ProviderAttribute providerAttribute : provider.getActiveAttributes()) {
+                    if (providerAttribute.getAttributeType().equals(providerAttributeType))
+                        ++numFound;
+                }
+                if (providerAttributeType.getMinOccurs() > 0) {
+                    if (numFound < providerAttributeType.getMinOccurs()) {
+                        // report an error
+                        if (providerAttributeType.getMinOccurs() == 1)
+                            errors.rejectValue("activeAttributes", "error.required", new Object[] { providerAttributeType.getName() }, null);
+                        else
+                            errors.rejectValue("activeAttributes", "attribute.error.minOccurs", new Object[] {
+                                    providerAttributeType.getName(), providerAttributeType.getMinOccurs() }, null);
+                    }
+                }
+                if (providerAttributeType.getMaxOccurs() != null) {
+                    if (numFound > providerAttributeType.getMaxOccurs()) {
+                        errors.rejectValue("activeAttributes", "attribute.error.maxOccurs", new Object[] { providerAttributeType.getName(),
+                                providerAttributeType.getMaxOccurs() }, null);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasBothNameAndIdentifier(Provider provider) {
 		return StringUtils.isNotEmpty(provider.getName()) && StringUtils.isNotEmpty(provider.getIdentifier());
 	}
 	

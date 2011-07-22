@@ -19,22 +19,33 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Person;
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
+import org.openmrs.api.APIException;
+import org.openmrs.api.ProviderService;
+import org.openmrs.api.context.Context;
+import org.openmrs.test.BaseContextSensitiveTest;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 
-public class ProviderValidatorTest {
+import java.util.Date;
+
+public class ProviderValidatorTest extends BaseContextSensitiveTest {
 	
 	private Provider provider;
 	
 	private Errors errors;
 	
 	private ProviderValidator providerValidator;
-	
-	@Before
-	public void setup() {
+
+    private ProviderService providerService;
+    private static final String PROVIDER_ATTRIBUTE_TYPES_XML = "org/openmrs/api/include/ProviderServiceTest-providerAttributes.xml"; ;
+
+    @Before
+	public void setup() throws Exception {
 		provider = new Provider();
 		errors = new BindException(provider, "provider");
 		providerValidator = new ProviderValidator();
+		providerService = Context.getProviderService();
 	}
 	
 	/**
@@ -141,6 +152,37 @@ public class ProviderValidatorTest {
 		
 		Assert.assertTrue(errors.hasErrors());
 		Assert.assertEquals("Provider.error.person.required", errors.getFieldError("person").getCode());
+	}
+
+	/**
+	 * @see ProviderValidator#validate(Object,Errors)
+	 * @verifies reject a provider if it has fewer than min occurs of an attribute
+	 */
+	@Test(expected = APIException.class)
+	public void validate_shouldRejectAProviderIfItHasFewerThanMinOccursOfAnAttribute() throws Exception {
+        executeDataSet(PROVIDER_ATTRIBUTE_TYPES_XML);
+		provider.addAttribute(makeAttribute("one"));
+		ValidateUtil.validate(provider);
+	}
+
+	/**
+	 * @see ProviderValidator#validate(Object,Errors)
+	 * @verifies reject a Provider if it has more than max occurs of an attribute
+	 */
+	@Test(expected = APIException.class)
+	public void validate_shouldRejectAProviderIfItHasMoreThanMaxOccursOfAnAttribute() throws Exception {
+		provider.addAttribute(makeAttribute("one"));
+		provider.addAttribute(makeAttribute("two"));
+		provider.addAttribute(makeAttribute("three"));
+		provider.addAttribute(makeAttribute("four"));
+		ValidateUtil.validate(provider);
+	}
+
+	private ProviderAttribute makeAttribute(String serializedValue) {
+		ProviderAttribute attr = new ProviderAttribute();
+		attr.setAttributeType(providerService.getProviderAttributeType(1));
+		attr.setSerializedValue(serializedValue);
+		return attr;
 	}
 	
 }

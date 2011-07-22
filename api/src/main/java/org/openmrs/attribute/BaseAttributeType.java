@@ -20,7 +20,7 @@ import org.openmrs.BaseOpenmrsMetadata;
  * ProviderAttributeType) should be able to extend this and provide very little of their own code.
  * @since 1.9
  */
-public abstract class BaseAttributeType<OwningType extends Customizable<?>> extends BaseOpenmrsMetadata implements AttributeType<OwningType>, Comparable<BaseAttributeType> {
+public abstract class BaseAttributeType<OwningType extends Customizable<?>> extends BaseOpenmrsMetadata implements AttributeType<OwningType> {
 	
 	private Integer minOccurs = 0;
 	
@@ -86,10 +86,4 @@ public abstract class BaseAttributeType<OwningType extends Customizable<?>> exte
 		this.datatype = datatype;
 	}
 	
-	@Override
-	public int compareTo(BaseAttributeType other) {
-		if (other == null)
-			return -1;
-		return other.getName().compareTo(this.getName());
-	}
 }

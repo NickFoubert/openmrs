@@ -86,38 +86,14 @@ public class VisitFormController {
 	 * @param result the {@link BindingResult} object
 	 * @param model the {@link ModelMap} object
 	 * @return the url to forward/redirect to
+     * @should should not void or change attribute list if the attribute values are same
+     * @should should set attributes to voided if the value is not set
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = VISIT_FORM_URL)
 	public String saveVisit(WebRequest request, @ModelAttribute("visit") Visit visit, BindingResult result,
 	        SessionStatus status, ModelMap model) {
-		
-		// manually handle the attribute parameters
-		for (VisitAttributeType vat : (List<VisitAttributeType>) model.get("visitAttributeTypes")) {
-			if (vat.getMaxOccurs() == null || vat.getMaxOccurs() != 1)
-				throw new RuntimeException("For now only attributes with maxOccurs=1 are supported");
-			AttributeHandler<?> handler = Context.getAttributeService().getHandler(vat);
-			List<Object> attributeValues = new ArrayList<Object>();
-			// look for parameters starting with attribute.${ vat.id }
-			for (Iterator<String> iter = request.getParameterNames(); iter.hasNext();) {
-				String paramName = iter.next();
-				if (paramName.startsWith("attribute." + vat.getId())) {
-					String paramValue = request.getParameter(paramName);
-					if (StringUtils.hasText(paramValue)) {
-						Object realValue = handler.deserialize(paramValue);
-						//handler.validate(realValue);
-						VisitAttribute va = new VisitAttribute();
-						va.setAttributeType(vat);
-						va.setSerializedValue(paramValue);
-						visit.setAttribute(va);
-					} else {
-						for (VisitAttribute va : visit.getActiveAttributes(vat))
-							va.setVoided(true);
-					}
-				}
-			}
-		}
-		
-		new VisitValidator().validate(visit, result);
+        handleAttributeParameteres(request, visit, model);
+        new VisitValidator().validate(visit, result);
 		if (!result.hasErrors()) {
 			try {
 				Context.getVisitService().saveVisit(visit);
@@ -133,8 +109,40 @@ public class VisitFormController {
 		
 		return VISIT_FORM;
 	}
-	
-	/**
+
+    private void handleAttributeParameteres(WebRequest request, Visit visit, ModelMap model) {
+        // manually handle the attribute parameters
+        for (VisitAttributeType vat : (List<VisitAttributeType>) model.get("visitAttributeTypes")) {
+            if (vat.getMaxOccurs() == null || vat.getMaxOccurs() != 1)
+                throw new RuntimeException("For now only attributes with maxOccurs=1 are supported");
+            AttributeHandler<?> handler = Context.getAttributeService().getHandler(vat);
+            List<Object> attributeValues = new ArrayList<Object>();
+            // look for parameters starting with attribute.${ vat.id }
+            for (Iterator<String> iter = request.getParameterNames(); iter.hasNext();) {
+                String paramName = iter.next();
+                if (paramName.startsWith("attribute." + vat.getId())) {
+                    String paramValue = request.getParameter(paramName);
+                    if (StringUtils.hasText(paramValue)) {
+                        Object realValue = handler.deserialize(paramValue);
+                        //handler.validate(realValue);
+                        setAttribute(visit, vat, paramValue);
+                    } else {
+                        for (VisitAttribute va : visit.getActiveAttributes(vat))
+                            va.setVoided(true);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setAttribute(Visit visit, VisitAttributeType vat, String paramValue) {
+        VisitAttribute va = new VisitAttribute();
+        va.setAttributeType(vat);
+        va.setSerializedValue(paramValue);
+        visit.setAttribute(va);
+    }
+
+    /**
 	 * Processes requests to void a visit
 	 * 
 	 * @param request the {@link WebRequest} object

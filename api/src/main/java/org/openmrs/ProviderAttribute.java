@@ -43,12 +43,12 @@ public class ProviderAttribute extends BaseAttribute<Provider> implements Attrib
 	
 	@Override
 	public Integer getId() {
-		return providerAttributeId;
+		return getProviderAttributeId();
 	}
 	
 	@Override
 	public void setId(Integer id) {
-		this.providerAttributeId = id;
+		setProviderAttributeId(id);
 	}
 	
 }

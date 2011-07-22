@@ -356,10 +356,10 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#saveProvider(Provider)
-	 * @verifies void the attribute if an attribute with same attribute type already exists
+	 * @verifies void the attribute if an attribute with same attribute type already exists and the maxOccurs is set to 1
 	 */
 	@Test
-	public void saveProvider_shouldVoidTheAttributeIfAnAttributeWithSameAttributeTypeAlreadyExists() throws Exception {
+	public void saveProvider_shouldVoidTheAttributeIfAnAttributeWithSameAttributeTypeAlreadyExistsAndTheMaxOccursIsSetTo1() throws Exception {
 		Provider provider = new Provider();
 		provider.setName("test provider");
 		AttributeType<Provider> providerAttributeType = service.getProviderAttributeType(3);
@@ -370,7 +370,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		Assert.assertNotNull(provider.getId());
 		provider.setAttribute(createProviderAttribute(providerAttributeType, "seattle"));
 		Assert.assertEquals(2, provider.getAttributes().size());
-		ProviderAttribute lastAttribute = (ProviderAttribute) provider.getAttributes().toArray()[1];
+		ProviderAttribute lastAttribute = (ProviderAttribute) provider.getAttributes().toArray()[0];
 		Assert.assertTrue(lastAttribute.getVoided());
 	}
 	

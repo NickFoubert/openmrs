@@ -16,6 +16,7 @@ package org.openmrs;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -92,7 +93,7 @@ public abstract class BaseCustomizableData<AttrClass extends Attribute> extends 
 	@Override
 	public void setAttribute(AttrClass attribute) {
 		if (getAttributes() == null)
-			setAttributes(new HashSet<AttrClass>());
+			setAttributes(new LinkedHashSet<AttrClass>());
 		// TODO validate
 		if (getActiveAttributes(attribute.getAttributeType()).size() == 1) {
 			AttrClass existing = getActiveAttributes(attribute.getAttributeType()).get(0);
