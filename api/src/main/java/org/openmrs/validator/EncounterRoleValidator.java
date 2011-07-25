@@ -65,7 +65,7 @@ public class EncounterRoleValidator implements Validator {
 		EncounterRole encounterRole = (EncounterRole) obj;
 		
 		if (encounterRole != null) {
-			ValidationUtils.rejectIfEmpty(errors, "name", "EncounterRole.error.name.required", "Name is required");
+			ValidationUtils.rejectIfEmpty(errors, "name", "error.null");
 		}
 	}
 }

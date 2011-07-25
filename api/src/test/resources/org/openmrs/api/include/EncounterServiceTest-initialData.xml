@@ -65,7 +65,7 @@
   <visit visit_id="1" visit_type_id="2" date_started="2001-01-01 00:00:00.0" patient_id="3" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="0" uuid="7fffd6b9-0970-4967-88c7-0b7b50f12ab9"/>
 
   <!-- an encounter role -->
-  <encounter_role encounter_role_id="1" name = "jones" description = "attending physician" creator="1" date_created="2005-01-01 00:00:00.0" retired = "false" uuid="430bbb70-6a9c-4e1e-badb-9d1054b1b5e9"/>
-  <encounter_role encounter_role_id="2" name = "jane" description = "physician" creator="1" date_created="2005-01-01 00:00:00.0" retired = "true" retired_by="1" date_retired="2005-01-01 00:00:00.0" retire_reason="for testing" uuid="430bbb70-6a9c-4e1e-badb-9c1054b1b5e9"/>
+  <encounter_role encounter_role_id="1" name = "attending physician" description = "The person in charge" creator="1" date_created="2005-01-01 00:00:00.0" retired = "false" uuid="430bbb70-6a9c-4e1e-badb-9d1054b1b5e9"/>
+  <encounter_role encounter_role_id="2" name = "surgeon" description = "who did the operation" creator="1" date_created="2005-01-01 00:00:00.0" retired = "true" retired_by="1" date_retired="2005-01-01 00:00:00.0" retire_reason="for testing" uuid="430bbb70-6a9c-4e1e-badb-9c1054b1b5e9"/>
 
 </dataset>

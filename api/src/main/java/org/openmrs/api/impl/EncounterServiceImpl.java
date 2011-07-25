@@ -668,9 +668,6 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
     public EncounterRole retireEncounterRole(EncounterRole encounterRole, String reason) throws APIException {
         if (reason == null)
             throw new IllegalArgumentException("The 'reason' for retiring is required");
-
-        encounterRole.setRetired(true);
-        encounterRole.setRetireReason(reason);
         return saveEncounterRole(encounterRole);
     }
 
@@ -679,7 +676,6 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
      */
     @Override
     public EncounterRole unretireEncounterRole(EncounterRole encounterRole) throws APIException {
-        encounterRole.setRetired(false);
         return saveEncounterRole(encounterRole);
     }
 

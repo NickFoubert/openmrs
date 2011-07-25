@@ -98,8 +98,8 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 	 * @see {@link EncounterService#saveEncounter(Encounter)}
 	 */
 	@Test
-	@Verifies(value = "should update encounter successfully", method = "saveEncounter(Encounter)")
-	public void saveEncounter_shouldUpdateEncounterSuccessfully() throws Exception {
+	@Verifies(value = "should update encounter role successfully", method = "saveEncounter(Encounter)")
+	public void saveEncounter_shouldUpdateEncounterRoleSuccessfully() throws Exception {
 		EncounterService es = Context.getEncounterService();
 		
 		// get the encounter from the database
@@ -1505,26 +1505,18 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
     @Verifies(value = "should save encounter role with basic details", method = "saveEncounterRole(EncounterRole)")
     public void saveEncounterRole_shouldSaveEncounterRoleWithBasicDetails() throws Exception {
         EncounterRole encounterRole = new EncounterRole();
-        encounterRole.setName("jones");
-        encounterRole.setDescription("Attending physician");
+        encounterRole.setName("Attending physician");
+        encounterRole.setDescription("The person in charge");
         EncounterService encounterService = Context.getEncounterService();
         encounterService.saveEncounterRole(encounterRole);
 
         assertNotNull("The saved encounter role should have an encounter role id now", encounterRole.getEncounterRoleId());
         EncounterRole newSavedEncounterRole = encounterService.getEncounterRole(encounterRole.getEncounterRoleId());
         assertNotNull("We should get back an encounter role", newSavedEncounterRole);
+        assertEquals(encounterRole,newSavedEncounterRole);
         assertTrue("The created encounter role needs to equal the pojo encounter role", encounterRole.equals(newSavedEncounterRole));
 
     }
-
-	/**
-	 * @see {@link EncounterService#getEncounterRole(Integer)}
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	@Verifies(value = "should throw error if given null parameter for encounter role id", method = "getEncounterRole(Integer)")
-	public void getEncounterRole_shouldThrowErrorIfGivenNullParameterForEncounterRoleId() throws Exception {
-		Context.getEncounterService().getEncounterRole(null);
-	}
 
     /**
      * Make sure that purging an encounter removes the row from the database

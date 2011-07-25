@@ -437,20 +437,11 @@ public class PrivilegeConstants {
 	
 	@AddOnStartup(description = "Able to delete provider")
 	public static final String PURGE_PROVIDER = "Purge Providers";
-	
-	@AddOnStartup(description = "Able to add/edit/retire provider attribute types")
-	public static final String MANAGE_PROVIDER_ATTRIBUTE_TYPES = "Manage Provider Attribute Types";
 
-    @AddOnStartup(description = "Able to add provider encounter roles")
-    public static final String ADD_ENCOUNTER_ROLE = "Add encounter roles";
+    @AddOnStartup(description = "Able to view encounter roles")
+    public static final String VIEW_ENCOUNTER_ROLES = "View Encounter Roles";
 
-    @AddOnStartup(description = "Able to edit provider encounter roles")
-    public static final String EDIT_ENCOUNTER_ROLE = "Edit encounter roles";
-
-    @AddOnStartup(description = "Able to view provider encounter role")
-    public static final String VIEW_ENCOUNTER_ROLE = "View Encounter Role";
-
-    public static final String PURGE_ENCOUNTER_ROLE = "Purge Encounter Role";
+    public static final String PURGE_ENCOUNTER_ROLES = "Purge Encounter Roles";
 
 	@AddOnStartup(description = "Able to add/edit/retire encounter roles")
 	public static final String MANAGE_ENCOUNTER_ROLES = "Manage Encounter Roles";
