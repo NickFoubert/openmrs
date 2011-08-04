@@ -15,7 +15,6 @@ package org.openmrs.validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.APIException;
