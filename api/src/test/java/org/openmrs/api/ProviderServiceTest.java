@@ -355,34 +355,6 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#saveProvider(Provider)
-	 * @verifies void the attribute if an attribute with same attribute type already exists and the maxOccurs is set to 1
-	 */
-	@Test
-	public void saveProvider_shouldVoidTheAttributeIfAnAttributeWithSameAttributeTypeAlreadyExistsAndTheMaxOccursIsSetTo1() throws Exception {
-		Provider provider = new Provider();
-		provider.setName("test provider");
-		AttributeType<Provider> providerAttributeType = service.getProviderAttributeType(3);
-		provider.setAttribute(createProviderAttribute(providerAttributeType, "bangalore"));
-		provider.setAttribute(createProviderAttribute(providerAttributeType, "chennai"));
-		Assert.assertEquals(1, provider.getAttributes().size());
-		service.saveProvider(provider);
-		Assert.assertNotNull(provider.getId());
-		provider.setAttribute(createProviderAttribute(providerAttributeType, "seattle"));
-		Assert.assertEquals(2, provider.getAttributes().size());
-		ProviderAttribute lastAttribute = (ProviderAttribute) provider.getAttributes().toArray()[0];
-		Assert.assertTrue(lastAttribute.getVoided());
-	}
-	
-	private ProviderAttribute createProviderAttribute(AttributeType<Provider> providerAttributeType, Object value)
-	        throws Exception {
-		ProviderAttribute providerAttribute = new ProviderAttribute();
-		providerAttribute.setAttributeType(providerAttributeType);
-		providerAttribute.setSerializedValue(value.toString());
-		return providerAttribute;
-	}
-	
-	/**
 	 * @see ProviderService#saveProviderAttributeType(ProviderAttributeType)
 	 * @verifies save the provider attribute type
 	 */
