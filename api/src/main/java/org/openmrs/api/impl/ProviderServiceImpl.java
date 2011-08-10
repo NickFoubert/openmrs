@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
@@ -161,7 +162,7 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	}
 	
 	/**
-	 * @see org.openmrs.api.ProviderService#getAllProviderAttributeTypes(java.lang.Boolean)
+	 * @see org.openmrs.api.ProviderService#getAllProviderAttributeTypes(boolean)
 	 */
 	@Override
 	public List<ProviderAttributeType> getAllProviderAttributeTypes(boolean includeRetired) {
@@ -182,6 +183,24 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	@Override
 	public ProviderAttributeType getProviderAttributeTypeByUuid(String uuid) {
 		return dao.getProviderAttributeTypeByUuid(uuid);
+	}
+	
+	/**
+	 * @see org.openmrs.api.ProviderService#getProviderAttribute(java.lang.Integer)
+	 */
+	
+	@Override
+	public ProviderAttribute getProviderAttribute(Integer providerAttributeID) {
+		return dao.getProviderAttribute(providerAttributeID);
+	}
+	
+	/**
+	 * @see org.openmrs.api.ProviderService#getProviderAttributeByUuid(String)
+	 */
+	
+	@Override
+	public ProviderAttribute getProviderAttributeByUuid(String uuid) {
+		return dao.getProviderAttributeByUuid(uuid);
 	}
 	
 	/**

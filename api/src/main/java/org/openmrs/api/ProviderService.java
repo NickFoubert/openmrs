@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.attribute.AttributeType;
 import org.openmrs.util.PrivilegeConstants;
@@ -184,9 +185,28 @@ public interface ProviderService extends OpenmrsService {
 	 */
 	public ProviderAttributeType getProviderAttributeTypeByUuid(String uuid);
 	
+
+    /**
+	 * Get a provider attribute by it's providerAttributeID
+	 *
+	 * @param providerAttributeID the provider attribute ID of the providerAttribute
+	 * @return the provider attribute for the given providerAttributeID
+	 * @should get the provider attribute by it's providerAttributeID
+	 */
+	public ProviderAttribute getProviderAttribute(Integer providerAttributeID);
+	
+    /**
+	 * Get a provider attribute by it's providerAttributeUuid
+	 *
+	 * @param uuid the provider attribute uuid of the providerAttribute
+	 * @return the provider attribute for the given providerAttributeUuid
+	 * @should get the provider attribute by it's providerAttributeUuid
+	 */
+	public ProviderAttribute getProviderAttributeByUuid(String uuid);
+	
 	/**
 	 * Save the provider attribute type
-	 * 
+	 *
 	 * @param providerAttributeType the provider attribute type to be saved
 	 * @return the saved provider attribute type
 	 * @should save the provider attribute type
@@ -219,4 +239,5 @@ public interface ProviderService extends OpenmrsService {
 	 * @should delete a provider attribute type
 	 */
 	public void purgeProviderAttributeType(ProviderAttributeType providerAttributeType);
+	
 }

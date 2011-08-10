@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.ProviderService;
 import org.openmrs.attribute.AttributeType;
@@ -76,7 +77,7 @@ public interface ProviderDAO {
 	public Integer getCountOfProviders(String name);
 	
 	/**
-	 * @see ProviderService#getAllProviderAttributeTypes(Boolean)
+	 * @see ProviderService#getAllProviderAttributeTypes(boolean)
 	 * @see ProviderService#getAllProviderAttributeTypes()
 	 */
 	List<ProviderAttributeType> getAllProviderAttributeTypes(boolean includeRetired);
@@ -101,4 +102,14 @@ public interface ProviderDAO {
 	 */
 	void deleteProviderAttributeType(ProviderAttributeType providerAttributeType);
 	
+	/**
+	 * @see ProviderService#getProviderAttribute(Integer)
+	 */
+	
+	ProviderAttribute getProviderAttribute(Integer providerAttributeID);
+	
+	/**
+	 * @see ProviderService#getProviderAttributeByUuid(String)
+	 */
+	ProviderAttribute getProviderAttributeByUuid(String uuid);
 }

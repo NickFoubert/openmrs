@@ -28,6 +28,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.db.ProviderDAO;
 import org.openmrs.attribute.AttributeType;
@@ -91,8 +92,22 @@ public class HibernateProviderDAO implements ProviderDAO {
 	}
 	
 	/**
-	 * @see org.openmrs.api.db.ProviderDAO#getProviders(String, java.util.Map
+	 * @see org.openmrs.api.db.ProviderDAO#getProviderAttribute(Integer)
 	 */
+	@Override
+	public ProviderAttribute getProviderAttribute(Integer providerAttributeID) {
+		return (ProviderAttribute) getSession().load(ProviderAttribute.class, providerAttributeID);
+	}
+	
+	/**
+	 * @see org.openmrs.api.db.ProviderDAO#getProviderAttributeByUuid(String)
+	 */
+	
+	@Override
+	public ProviderAttribute getProviderAttributeByUuid(String uuid) {
+		return getByUuid(uuid, ProviderAttribute.class);
+	}
+	
 	@Override
 	public List<Provider> getProviders(String name, Map<AttributeType, String> serializedAttributeValues, Integer start,
 	        Integer length) {

@@ -141,6 +141,29 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
+	 * @see ProviderService#getProviderAttribute(Integer)
+	 * @verifies get providerAttribute given ID
+	 */
+	@Test
+	public void getProviderAttribute_shouldGetProviderAttributeGivenID() throws Exception {
+		ProviderAttribute providerAttribute = service.getProviderAttribute(1);
+		assertEquals("RobertClive", providerAttribute.getProvider().getName());
+		assertEquals("a2c3868a-6b90-11e0-93c3-18a905e044dc", providerAttribute.getProvider().getUuid());
+	}
+	
+	/**
+	 * @see ProviderService#getProviderAttributeByUuid(String)
+	 * @verifies get providerAttribute given Uuid
+	 */
+	
+	@Test
+	public void getProviderAttributeByUuid_shouldGetProviderAttributeGivenUuid() throws Exception {
+		ProviderAttribute providerAttribute = service.getProviderAttributeByUuid("3a2bdb18-6faa-11e0-8414-001e378eb67e");
+		assertEquals("RobertClive", providerAttribute.getProvider().getName());
+		assertEquals("a2c3868a-6b90-11e0-93c3-18a905e044dc", providerAttribute.getProvider().getUuid());
+	}
+	
+	/**
 	 * @see ProviderService#getProviderAttributeType(Integer)
 	 * @verifies get provider attribute type for the given id
 	 */
