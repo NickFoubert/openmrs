@@ -618,65 +618,65 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public List<Encounter> getEncountersByVisit(Visit visit) {
 		return dao.getEncountersByVisit(visit);
 	}
-
-    /**
-     * @see org.openmrs.api.EncounterService#saveEncounterRole(org.openmrs.EncounterRole) 
-     */
-    @Override
-    public EncounterRole saveEncounterRole(EncounterRole encounterRole) throws APIException {
-        ValidateUtil.validate(encounterRole);
-        dao.saveEncounterRole(encounterRole);
-        return encounterRole;
-    }
-
-    /**
-     * @see org.openmrs.api.EncounterService#getEncounterRole(Integer)
-     */
-    @Override
-    public EncounterRole getEncounterRole(Integer encounterRoleId) throws APIException {
-        return dao.getEncounterRole(encounterRoleId);
-    }
-
-    /**
-     * @see org.openmrs.api.EncounterService#purgeEncounterRole(org.openmrs.EncounterRole)
-     */
-    @Override
-    public void purgeEncounterRole(EncounterRole encounterRole) throws APIException {
-        dao.deleteEncounterRole(encounterRole);
-    }
-
-    /**
-     * @see org.openmrs.api.EncounterService#getAllEncounterRoles(boolean)
-     */
-    @Override
-    public List<EncounterRole> getAllEncounterRoles(boolean includeRetired) {
-        return dao.getAllEncounterRoles(includeRetired);
-    }
-
-    /**
-     * @see org.openmrs.api.EncounterService#getEncounterRoleByUuid(String) 
-     */
-    @Override
-    public EncounterRole getEncounterRoleByUuid(String uuid) throws APIException {
-        return dao.getEncounterRoleByUuid(uuid);
-    }
-
-    /**
-     * @see org.openmrs.api.EncounterService#retireEncounterRole(org.openmrs.EncounterRole, String)
-     */
-    @Override
-    public EncounterRole retireEncounterRole(EncounterRole encounterRole, String reason) throws APIException {
-        if (reason == null)
-            throw new IllegalArgumentException("The 'reason' for retiring is required");
-        return saveEncounterRole(encounterRole);
-    }
-
-    /**
-     * @see org.openmrs.api.EncounterService#unretireEncounterRole(org.openmrs.EncounterRole)
-     */
-    @Override
-    public EncounterRole unretireEncounterRole(EncounterRole encounterRole) throws APIException {
-        return saveEncounterRole(encounterRole);
-    }
-
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#saveEncounterRole(org.openmrs.EncounterRole) 
+	 */
+	@Override
+	public EncounterRole saveEncounterRole(EncounterRole encounterRole) throws APIException {
+		ValidateUtil.validate(encounterRole);
+		dao.saveEncounterRole(encounterRole);
+		return encounterRole;
+	}
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#getEncounterRole(Integer)
+	 */
+	@Override
+	public EncounterRole getEncounterRole(Integer encounterRoleId) throws APIException {
+		return dao.getEncounterRole(encounterRoleId);
+	}
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#purgeEncounterRole(org.openmrs.EncounterRole)
+	 */
+	@Override
+	public void purgeEncounterRole(EncounterRole encounterRole) throws APIException {
+		dao.deleteEncounterRole(encounterRole);
+	}
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#getAllEncounterRoles(boolean)
+	 */
+	@Override
+	public List<EncounterRole> getAllEncounterRoles(boolean includeRetired) {
+		return dao.getAllEncounterRoles(includeRetired);
+	}
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#getEncounterRoleByUuid(String) 
+	 */
+	@Override
+	public EncounterRole getEncounterRoleByUuid(String uuid) throws APIException {
+		return dao.getEncounterRoleByUuid(uuid);
+	}
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#retireEncounterRole(org.openmrs.EncounterRole, String)
+	 */
+	@Override
+	public EncounterRole retireEncounterRole(EncounterRole encounterRole, String reason) throws APIException {
+		if (reason == null)
+			throw new IllegalArgumentException("The 'reason' for retiring is required");
+		return saveEncounterRole(encounterRole);
+	}
+	
+	/**
+	 * @see org.openmrs.api.EncounterService#unretireEncounterRole(org.openmrs.EncounterRole)
+	 */
+	@Override
+	public EncounterRole unretireEncounterRole(EncounterRole encounterRole) throws APIException {
+		return saveEncounterRole(encounterRole);
+	}
+	
 }

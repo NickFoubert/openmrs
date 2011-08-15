@@ -676,67 +676,66 @@ public interface EncounterService extends OpenmrsService {
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_ENCOUNTERS })
 	List<Encounter> getEncountersByVisit(Visit visit);
-
+	
 	/**
 	 * Saves a new encounter role or updates an existing encounter role.
 	 * @param encounterRole to be saved
 	 * @throws APIException
-     * @return EncounterRole
-     * @since 1.9
+	 * @return EncounterRole
+	 * @since 1.9
 	 * @should save encounter role with basic details
 	 * @should update encounter role successfully
 	 */
-	@Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES})
+	@Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
 	public EncounterRole saveEncounterRole(EncounterRole encounterRole) throws APIException;
-
+	
 	/**
 	 * Gets an encounter role when and internal encounter role id is provided.
 	 *
 	 * @param encounterRoleId to be retrieved
 	 * @throws APIException
-     * @return EncounterRole
-     * @since 1.9
+	 * @return EncounterRole
+	 * @since 1.9
 	 */
-    @Transactional(readOnly = true)
-    @Authorized( { PrivilegeConstants.VIEW_ENCOUNTER_ROLES })
-    public EncounterRole getEncounterRole(Integer encounterRoleId) throws APIException;
-
-
+	@Transactional(readOnly = true)
+	@Authorized( { PrivilegeConstants.VIEW_ENCOUNTER_ROLES })
+	public EncounterRole getEncounterRole(Integer encounterRoleId) throws APIException;
+	
 	/**
 	 * Completely remove an encounter role from database. For super users only. If dereferencing
 	 * encounter roles, use <code>retireEncounterRole(org.openmrs.Encounter, java.lang.String)</code>
 	 *
 	 * @param encounterRole encounter role object to be purged
-     * @since 1.9
+	 * @since 1.9
 	 * @should purge Encounter Role
 	 */
 	@Authorized( { PrivilegeConstants.PURGE_ENCOUNTER_ROLES })
 	public void purgeEncounterRole(EncounterRole encounterRole) throws APIException;
-
+	
 	/**
 	 * Get all encounter roles based on includeRetired flag
 	 *
 	 * @param includeRetired 
 	 * @return List of all encounter roles
-     * @since 1.9
-     * @should get all encounter roles based on include retired flag.
+	 * @since 1.9
+	 * @should get all encounter roles based on include retired flag.
 	 */
 	@Transactional(readOnly = true)
-    @Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
+	@Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
 	public List<EncounterRole> getAllEncounterRoles(boolean includeRetired);
-
+	
 	/**
 	 * Get EncounterRole by its UUID
 	 *
 	 * @param uuid
 	 * @return EncounterRole
-     * @since 1.9
+	 * @since 1.9
 	 * @should find encounter role based on uuid
 	 */
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
 	public EncounterRole getEncounterRoleByUuid(String uuid) throws APIException;
-
+	
 	/**
 	 * Retire an EncounterRole. This essentially marks the given encounter role as a non-current
 	 * type that shouldn't be used anymore.
@@ -744,23 +743,23 @@ public interface EncounterService extends OpenmrsService {
 	 * @param encounterRole the encounter role to retire
 	 * @param reason required non-null purpose for retiring this encounter role
 	 * @throws APIException
-     * @since 1.9
+	 * @since 1.9
 	 * @should retire type and set attributes
 	 * @should throw error if given null reason parameter
 	 */
 	@Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
 	public EncounterRole retireEncounterRole(EncounterRole encounterRole, String reason) throws APIException;
-
-    /**
-     * Unretire an EncounterRole. This brings back the given encounter role and says that it can be
-     * used again
-     *
-     * @param encounterRole the encounter role to unretire
-     * @throws APIException
-     * @since 1.9     
-     * @should unretire type and unmark attributes
-     */
-    @Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
-    public EncounterRole unretireEncounterRole(EncounterRole encounterType) throws APIException;
-
+	
+	/**
+	 * Unretire an EncounterRole. This brings back the given encounter role and says that it can be
+	 * used again
+	 *
+	 * @param encounterRole the encounter role to unretire
+	 * @throws APIException
+	 * @since 1.9     
+	 * @should unretire type and unmark attributes
+	 */
+	@Authorized( { PrivilegeConstants.MANAGE_ENCOUNTER_ROLES })
+	public EncounterRole unretireEncounterRole(EncounterRole encounterType) throws APIException;
+	
 }

@@ -88,7 +88,7 @@ public abstract class BaseCustomizableMetadata<AttrClass extends Attribute> exte
 	
 	/**
 	 * @see org.openmrs.attribute.Customizable#setAttribute(AttrClass)
-     * @should void the attribute if an attribute with same attribute type already exists and the maxOccurs is set to 1
+	 * @should void the attribute if an attribute with same attribute type already exists and the maxOccurs is set to 1
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

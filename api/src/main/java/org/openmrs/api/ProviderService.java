@@ -185,8 +185,7 @@ public interface ProviderService extends OpenmrsService {
 	 */
 	public ProviderAttributeType getProviderAttributeTypeByUuid(String uuid);
 	
-
-    /**
+	/**
 	 * Get a provider attribute by it's providerAttributeID
 	 *
 	 * @param providerAttributeID the provider attribute ID of the providerAttribute
@@ -195,7 +194,7 @@ public interface ProviderService extends OpenmrsService {
 	 */
 	public ProviderAttribute getProviderAttribute(Integer providerAttributeID);
 	
-    /**
+	/**
 	 * Get a provider attribute by it's providerAttributeUuid
 	 *
 	 * @param uuid the provider attribute uuid of the providerAttribute

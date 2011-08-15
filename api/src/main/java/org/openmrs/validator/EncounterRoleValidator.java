@@ -29,9 +29,9 @@ import org.springframework.validation.Validator;
  */
 @Handler(supports = { EncounterRole.class }, order = 50)
 public class EncounterRoleValidator implements Validator {
-
+	
 	private static final Log log = LogFactory.getLog(EncounterRoleValidator.class);
-
+	
 	/**
 	 * Returns whether or not this validator supports validating a given class.
 	 *
@@ -44,7 +44,7 @@ public class EncounterRoleValidator implements Validator {
 			log.debug(this.getClass().getName() + ".supports: " + c.getName());
 		return EncounterRole.class.isAssignableFrom(c);
 	}
-
+	
 	/**
 	 * Validates the given EncounterRole. Currently checks if name
 	 * of the encounter role is given or not.
@@ -59,7 +59,8 @@ public class EncounterRoleValidator implements Validator {
 			log.debug(this.getClass().getName() + ".validate...");
 		
 		if (obj == null || !(obj instanceof EncounterRole))
-			throw new IllegalArgumentException("The parameter obj should not be null and must be of type " + EncounterRole.class);
+			throw new IllegalArgumentException("The parameter obj should not be null and must be of type "
+			        + EncounterRole.class);
 		
 		EncounterRole encounterRole = (EncounterRole) obj;
 		

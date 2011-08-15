@@ -248,33 +248,33 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 		Assert.assertNotNull(visit.getDateCreated());
 		Assert.assertEquals(originalSize + 1, vs.getAllVisits().size());
 	}
-
-
+	
 	/**
 	 * @see {@link VisitService#saveVisit(Visit)}
 	 */
 	@Test
 	@Verifies(value = "should save a visit though changedBy and dateCreated are not set for VisitAttribute explicitly", method = "saveVisit(Visit)")
-	public void saveVisit_shouldSaveAVisitThoughChangedByAndDateCreatedAreNotSetForVisitAttributeExplictly() throws Exception {
+	public void saveVisit_shouldSaveAVisitThoughChangedByAndDateCreatedAreNotSetForVisitAttributeExplictly()
+	        throws Exception {
 		executeDataSet(VISITS_ATTRIBUTES_XML);
 		VisitService vs = Context.getVisitService();
 		Visit visit = new Visit(new Patient(2), new VisitType(3), new Date());
-        VisitAttribute visitAttribute = createVisitAttributeWithoutCreatorAndDateCreated();
-        visit.setAttribute(visitAttribute);
+		VisitAttribute visitAttribute = createVisitAttributeWithoutCreatorAndDateCreated();
+		visit.setAttribute(visitAttribute);
 		visit = vs.saveVisit(visit);
 		Assert.assertNotNull(visit.getId());
 	}
-
-    private VisitAttribute createVisitAttributeWithoutCreatorAndDateCreated() {
-        VisitAttribute visitAttribute = new VisitAttribute();
-        VisitAttributeType attributeType = Context.getVisitService().getVisitAttributeType(1);
-        attributeType.setName("visit type");
-        visitAttribute.setSerializedValue("first visit");
-        visitAttribute.setAttributeType(attributeType);
-        return visitAttribute;
-    }
-
-    /**
+	
+	private VisitAttribute createVisitAttributeWithoutCreatorAndDateCreated() {
+		VisitAttribute visitAttribute = new VisitAttribute();
+		VisitAttributeType attributeType = Context.getVisitService().getVisitAttributeType(1);
+		attributeType.setName("visit type");
+		visitAttribute.setSerializedValue("first visit");
+		visitAttribute.setAttributeType(attributeType);
+		return visitAttribute;
+	}
+	
+	/**
 	 * @see {@link VisitService#saveVisit(Visit)}
 	 */
 	@Test
@@ -293,7 +293,7 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 		VisitAttribute firstAttribute = (VisitAttribute) visit.getAttributes().toArray()[0];
 		Assert.assertTrue(firstAttribute.getVoided());
 	}
-
+	
 	private VisitAttribute createVisitAttribute(String serializedValue) {
 		UserService us = Context.getUserService();
 		User user = us.getUserByUsername("admin");
@@ -306,7 +306,7 @@ public class VisitServiceTest extends BaseContextSensitiveTest {
 		visitAttribute.setAttributeType(attributeType);
 		return visitAttribute;
 	}
-    
+	
 	/**
 	 * @see {@link VisitService#saveVisit(Visit)}
 	 */

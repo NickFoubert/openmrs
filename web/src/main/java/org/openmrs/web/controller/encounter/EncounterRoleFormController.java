@@ -88,9 +88,9 @@ public class EncounterRoleFormController {
 	public String retire(HttpSession session, @ModelAttribute("encounterRole") EncounterRole encounterRole,
 	        BindingResult errors) throws Exception {
 		new EncounterRoleValidator().validate(encounterRole, errors);
-        if (encounterRole.getEncounterRoleId() != null && !(hasText(encounterRole.getRetireReason()))) {
-            errors.reject("retireReason", "general.retiredReason.empty");
-        }
+		if (encounterRole.getEncounterRoleId() != null && !(hasText(encounterRole.getRetireReason()))) {
+			errors.reject("retireReason", "general.retiredReason.empty");
+		}
 		if (!errors.hasErrors()) {
 			if (Context.isAuthenticated()) {
 				EncounterService service = Context.getEncounterService();

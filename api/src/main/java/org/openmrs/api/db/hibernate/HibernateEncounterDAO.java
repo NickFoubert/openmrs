@@ -227,14 +227,14 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 * @see org.openmrs.api.db.EncounterDAO#getEncounterByUuid(java.lang.String)
 	 */
 	public Encounter getEncounterByUuid(String uuid) {
-		return (Encounter) getClassByUuid(uuid,"Encounter");
+		return (Encounter) getClassByUuid(uuid, "Encounter");
 	}
-
-    /**
+	
+	/**
 	 * @see org.openmrs.api.db.EncounterDAO#getEncounterTypeByUuid(java.lang.String)
 	 */
 	public EncounterType getEncounterTypeByUuid(String uuid) {
-		return (EncounterType) getClassByUuid(uuid,"EncounterType");
+		return (EncounterType) getClassByUuid(uuid, "EncounterType");
 	}
 	
 	/**
@@ -350,8 +350,8 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	
 	/**
 	 * @see org.openmrs.api.db.EncounterDAO##getEncountersByVisit(Visit)
-     * @param visit visit
-     * @return List of encounters
+	 * @param visit visit
+	 * @return List of encounters
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -362,61 +362,61 @@ public class HibernateEncounterDAO implements EncounterDAO {
 		
 		return crit.list();
 	}
-
+	
 	/**
 	 * @see org.openmrs.api.db.EncounterDAO##saveEncounterRole(EncounterRole encounterRole)
-     * @param EncounterRole encounterRole
-     * @return EncounterRole
+	 * @param EncounterRole encounterRole
+	 * @return EncounterRole
 	 */
-    @Override
-    public EncounterRole saveEncounterRole(EncounterRole encounterRole) throws DAOException {
+	@Override
+	public EncounterRole saveEncounterRole(EncounterRole encounterRole) throws DAOException {
 		sessionFactory.getCurrentSession().saveOrUpdate(encounterRole);
-        return encounterRole;
-    }
-
+		return encounterRole;
+	}
+	
 	/**
 	 * @see org.openmrs.api.db.EncounterDAO##deleteEncounterRole(org.openmrs.EncounterRole)
-     * @param EncounterRole encounterRole
+	 * @param EncounterRole encounterRole
 	 */
-    @Override
-    public void deleteEncounterRole(EncounterRole encounterRole) throws DAOException {
-        sessionFactory.getCurrentSession().delete(encounterRole);
-    }
-
+	@Override
+	public void deleteEncounterRole(EncounterRole encounterRole) throws DAOException {
+		sessionFactory.getCurrentSession().delete(encounterRole);
+	}
+	
 	/**
 	 * @see org.openmrs.api.db.EncounterDAO##getEncounterRole(Integer)
-     * @param encounterRoleId
-     * @return EncounterRole
+	 * @param encounterRoleId
+	 * @return EncounterRole
 	 */
-    @Override
-    public EncounterRole getEncounterRole(Integer encounterRoleId) throws DAOException {
+	@Override
+	public EncounterRole getEncounterRole(Integer encounterRoleId) throws DAOException {
 		return (EncounterRole) sessionFactory.getCurrentSession().get(EncounterRole.class, encounterRoleId);
-    }
-
+	}
+	
 	/**
 	 * @see org.openmrs.api.db.EncounterDAO##getEncounterRoleByUuid(String)
-     * @param uuid
-     * @return EncounterRole
+	 * @param uuid
+	 * @return EncounterRole
 	 */
-    @Override
-    public EncounterRole getEncounterRoleByUuid(String uuid) {
-        return (EncounterRole)getClassByUuid(uuid,"EncounterRole");
-    }
-
-    /**
-     * @see org.openmrs.api.db.EncounterDAO##getAllEncounterRoles(boolean)
-     * @param includeRetired
-     * @return List of encounter roles
-     */
-    @Override
-    public List<EncounterRole> getAllEncounterRoles(boolean includeRetired) throws DAOException {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EncounterRole.class);
-        return includeRetired ? criteria.list() : criteria.add(Restrictions.eq("retired",includeRetired)).list();
-    }
-
-    private Object getClassByUuid(String uuid, String table) {
-        return sessionFactory.getCurrentSession().createQuery("from "+ table +" e where e.uuid = :uuid")
-                .setString("uuid", uuid).uniqueResult();
-    }
-
+	@Override
+	public EncounterRole getEncounterRoleByUuid(String uuid) {
+		return (EncounterRole) getClassByUuid(uuid, "EncounterRole");
+	}
+	
+	/**
+	 * @see org.openmrs.api.db.EncounterDAO##getAllEncounterRoles(boolean)
+	 * @param includeRetired
+	 * @return List of encounter roles
+	 */
+	@Override
+	public List<EncounterRole> getAllEncounterRoles(boolean includeRetired) throws DAOException {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EncounterRole.class);
+		return includeRetired ? criteria.list() : criteria.add(Restrictions.eq("retired", includeRetired)).list();
+	}
+	
+	private Object getClassByUuid(String uuid, String table) {
+		return sessionFactory.getCurrentSession().createQuery("from " + table + " e where e.uuid = :uuid").setString("uuid",
+		    uuid).uniqueResult();
+	}
+	
 }

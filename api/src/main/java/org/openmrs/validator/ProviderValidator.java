@@ -73,49 +73,50 @@ public class ProviderValidator implements Validator {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type " + Provider.class);
 		
 		Provider provider = (Provider) obj;
-        if ((provider.getPerson() != null && hasProviderDetails(provider))
-                || (provider.getPerson() == null && !hasProviderDetails(provider))) {
-            errors.rejectValue("person", "Provider.error.person.required");
-        } else if ((hasProviderDetails(provider) && !hasBothNameAndIdentifier(provider))) {
-            errors.rejectValue("name", "Provider.error.name.identifier.required");
-        }
-
-        if (provider.isRetired() && StringUtils.isEmpty(provider.getRetireReason())) {
-            errors.rejectValue("retireReason", "Provider.error.retireReason.required");
-        }
-
-        validateForMinAndMaxOccurs(errors, provider);
-    }
-
-    private void validateForMinAndMaxOccurs(Errors errors, Provider provider) {
-        for (ProviderAttributeType providerAttributeType : Context.getProviderService().getAllProviderAttributeTypes()) {
-            if (providerAttributeType.getMinOccurs() > 0 || providerAttributeType.getMaxOccurs() != null) {
-                int numFound = 0;
-                for (ProviderAttribute providerAttribute : provider.getActiveAttributes()) {
-                    if (providerAttribute.getAttributeType().equals(providerAttributeType))
-                        ++numFound;
-                }
-                if (providerAttributeType.getMinOccurs() > 0) {
-                    if (numFound < providerAttributeType.getMinOccurs()) {
-                        // report an error
-                        if (providerAttributeType.getMinOccurs() == 1)
-                            errors.rejectValue("activeAttributes", "error.required", new Object[] { providerAttributeType.getName() }, null);
-                        else
-                            errors.rejectValue("activeAttributes", "attribute.error.minOccurs", new Object[] {
-                                    providerAttributeType.getName(), providerAttributeType.getMinOccurs() }, null);
-                    }
-                }
-                if (providerAttributeType.getMaxOccurs() != null) {
-                    if (numFound > providerAttributeType.getMaxOccurs()) {
-                        errors.rejectValue("activeAttributes", "attribute.error.maxOccurs", new Object[] { providerAttributeType.getName(),
-                                providerAttributeType.getMaxOccurs() }, null);
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean hasBothNameAndIdentifier(Provider provider) {
+		if ((provider.getPerson() != null && hasProviderDetails(provider))
+		        || (provider.getPerson() == null && !hasProviderDetails(provider))) {
+			errors.rejectValue("person", "Provider.error.person.required");
+		} else if ((hasProviderDetails(provider) && !hasBothNameAndIdentifier(provider))) {
+			errors.rejectValue("name", "Provider.error.name.identifier.required");
+		}
+		
+		if (provider.isRetired() && StringUtils.isEmpty(provider.getRetireReason())) {
+			errors.rejectValue("retireReason", "Provider.error.retireReason.required");
+		}
+		
+		validateForMinAndMaxOccurs(errors, provider);
+	}
+	
+	private void validateForMinAndMaxOccurs(Errors errors, Provider provider) {
+		for (ProviderAttributeType providerAttributeType : Context.getProviderService().getAllProviderAttributeTypes()) {
+			if (providerAttributeType.getMinOccurs() > 0 || providerAttributeType.getMaxOccurs() != null) {
+				int numFound = 0;
+				for (ProviderAttribute providerAttribute : provider.getActiveAttributes()) {
+					if (providerAttribute.getAttributeType().equals(providerAttributeType))
+						++numFound;
+				}
+				if (providerAttributeType.getMinOccurs() > 0) {
+					if (numFound < providerAttributeType.getMinOccurs()) {
+						// report an error
+						if (providerAttributeType.getMinOccurs() == 1)
+							errors.rejectValue("activeAttributes", "error.required", new Object[] { providerAttributeType
+							        .getName() }, null);
+						else
+							errors.rejectValue("activeAttributes", "attribute.error.minOccurs", new Object[] {
+							        providerAttributeType.getName(), providerAttributeType.getMinOccurs() }, null);
+					}
+				}
+				if (providerAttributeType.getMaxOccurs() != null) {
+					if (numFound > providerAttributeType.getMaxOccurs()) {
+						errors.rejectValue("activeAttributes", "attribute.error.maxOccurs", new Object[] {
+						        providerAttributeType.getName(), providerAttributeType.getMaxOccurs() }, null);
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean hasBothNameAndIdentifier(Provider provider) {
 		return StringUtils.isNotEmpty(provider.getName()) && StringUtils.isNotEmpty(provider.getIdentifier());
 	}
 	

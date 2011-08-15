@@ -36,11 +36,12 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 	private Errors errors;
 	
 	private ProviderValidator providerValidator;
-
-    private ProviderService providerService;
-    private static final String PROVIDER_ATTRIBUTE_TYPES_XML = "org/openmrs/api/include/ProviderServiceTest-providerAttributes.xml"; ;
-
-    @Before
+	
+	private ProviderService providerService;
+	
+	private static final String PROVIDER_ATTRIBUTE_TYPES_XML = "org/openmrs/api/include/ProviderServiceTest-providerAttributes.xml";;
+	
+	@Before
 	public void setup() throws Exception {
 		provider = new Provider();
 		errors = new BindException(provider, "provider");
@@ -153,18 +154,18 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 		Assert.assertTrue(errors.hasErrors());
 		Assert.assertEquals("Provider.error.person.required", errors.getFieldError("person").getCode());
 	}
-
+	
 	/**
 	 * @see ProviderValidator#validate(Object,Errors)
 	 * @verifies reject a provider if it has fewer than min occurs of an attribute
 	 */
 	@Test(expected = APIException.class)
 	public void validate_shouldRejectAProviderIfItHasFewerThanMinOccursOfAnAttribute() throws Exception {
-        executeDataSet(PROVIDER_ATTRIBUTE_TYPES_XML);
+		executeDataSet(PROVIDER_ATTRIBUTE_TYPES_XML);
 		provider.addAttribute(makeAttribute("one"));
 		ValidateUtil.validate(provider);
 	}
-
+	
 	/**
 	 * @see ProviderValidator#validate(Object,Errors)
 	 * @verifies reject a Provider if it has more than max occurs of an attribute
@@ -177,7 +178,7 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 		provider.addAttribute(makeAttribute("four"));
 		ValidateUtil.validate(provider);
 	}
-
+	
 	private ProviderAttribute makeAttribute(String serializedValue) {
 		ProviderAttribute attr = new ProviderAttribute();
 		attr.setAttributeType(providerService.getProviderAttributeType(1));

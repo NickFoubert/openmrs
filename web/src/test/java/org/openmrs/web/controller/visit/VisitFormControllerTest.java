@@ -34,55 +34,54 @@ import java.util.Arrays;
  * Tests against the {@link VisitFormController}
  */
 public class VisitFormControllerTest extends BaseWebContextSensitiveTest {
-
+	
 	protected static final String VISITS_ATTRIBUTES_XML = "org/openmrs/api/include/VisitServiceTest-visitAttributes.xml";
-    
-    /**
-     * @see {@link VisitFormController#saveVisit(WebRequest, Visit, BindingResult, SessionStatus, ModelMap)}
-     */
-    @Test
-    @Verifies(value = "should not void or change attribute list if the attribute values are same", method = "saveVisit(Visit)")
-    public void saveVisit_shouldNotVoidOrChangeAttributeListIfTheAttributeValuesAreSame() throws Exception {
-        executeDataSet(VISITS_ATTRIBUTES_XML);
-        Visit visit = Context.getVisitService().getVisit(1);
-        VisitAttributeType visitAttributeType = Context.getVisitService().getVisitAttributeType(1);
-        visitAttributeType.setName("visit type");
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        mockHttpServletRequest.setParameter("attribute."+visitAttributeType.getId(),"2011-04-25");
-        ServletWebRequest mockWebRequest = new ServletWebRequest(mockHttpServletRequest);
-        BindException errors = new BindException(visit, "visit");
-        VisitFormController visitFormController = (VisitFormController)applicationContext.getBean("visitFormController");
-        visitFormController.saveVisit(mockWebRequest, visit, errors, null, createModelMap(visitAttributeType));
-        Assert.assertFalse(visit.getVoided());
-        Assert.assertEquals(1, visit.getAttributes().size());
-    }
-
-    /**
-     * @see {@link VisitFormController#saveVisit(WebRequest, Visit, BindingResult, SessionStatus, ModelMap)}
-     */
-    @Test
-    @Verifies(value = "should set attributes to voided if the value is not set", method = "saveVisit(Visit)")
-    public void saveVisit_shouldSetAttributesToVoidIfTheValueIsNotSet() throws Exception {
-        executeDataSet(VISITS_ATTRIBUTES_XML);
-        Visit visit = Context.getVisitService().getVisit(1);
-        VisitAttributeType visitAttributeType = Context.getVisitService().getVisitAttributeType(1);
-        visitAttributeType.setName("visit type");
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        //If value is not set then void all the attributes.
-        mockHttpServletRequest.setParameter("attribute."+visitAttributeType.getId(),"");
-        ServletWebRequest mockWebRequest = new ServletWebRequest(mockHttpServletRequest);
-        BindException errors = new BindException(visit, "visit");
-        VisitFormController visitFormController = (VisitFormController)applicationContext.getBean("visitFormController");
-        visitFormController.saveVisit(mockWebRequest, visit, errors, null, createModelMap(visitAttributeType));
-        Assert.assertEquals(1,visit.getAttributes().size());
-        Assert.assertTrue(((VisitAttribute) (visit.getAttributes().toArray()[0])).isVoided());
-    }
-
-
-    private ModelMap createModelMap(VisitAttributeType visitAttributeType) {
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("visitAttributeTypes", Arrays.asList(visitAttributeType));
-        return modelMap;
-    }
-
+	
+	/**
+	 * @see {@link VisitFormController#saveVisit(WebRequest, Visit, BindingResult, SessionStatus, ModelMap)}
+	 */
+	@Test
+	@Verifies(value = "should not void or change attribute list if the attribute values are same", method = "saveVisit(Visit)")
+	public void saveVisit_shouldNotVoidOrChangeAttributeListIfTheAttributeValuesAreSame() throws Exception {
+		executeDataSet(VISITS_ATTRIBUTES_XML);
+		Visit visit = Context.getVisitService().getVisit(1);
+		VisitAttributeType visitAttributeType = Context.getVisitService().getVisitAttributeType(1);
+		visitAttributeType.setName("visit type");
+		MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+		mockHttpServletRequest.setParameter("attribute." + visitAttributeType.getId(), "2011-04-25");
+		ServletWebRequest mockWebRequest = new ServletWebRequest(mockHttpServletRequest);
+		BindException errors = new BindException(visit, "visit");
+		VisitFormController visitFormController = (VisitFormController) applicationContext.getBean("visitFormController");
+		visitFormController.saveVisit(mockWebRequest, visit, errors, null, createModelMap(visitAttributeType));
+		Assert.assertFalse(visit.getVoided());
+		Assert.assertEquals(1, visit.getAttributes().size());
+	}
+	
+	/**
+	 * @see {@link VisitFormController#saveVisit(WebRequest, Visit, BindingResult, SessionStatus, ModelMap)}
+	 */
+	@Test
+	@Verifies(value = "should set attributes to voided if the value is not set", method = "saveVisit(Visit)")
+	public void saveVisit_shouldSetAttributesToVoidIfTheValueIsNotSet() throws Exception {
+		executeDataSet(VISITS_ATTRIBUTES_XML);
+		Visit visit = Context.getVisitService().getVisit(1);
+		VisitAttributeType visitAttributeType = Context.getVisitService().getVisitAttributeType(1);
+		visitAttributeType.setName("visit type");
+		MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+		//If value is not set then void all the attributes.
+		mockHttpServletRequest.setParameter("attribute." + visitAttributeType.getId(), "");
+		ServletWebRequest mockWebRequest = new ServletWebRequest(mockHttpServletRequest);
+		BindException errors = new BindException(visit, "visit");
+		VisitFormController visitFormController = (VisitFormController) applicationContext.getBean("visitFormController");
+		visitFormController.saveVisit(mockWebRequest, visit, errors, null, createModelMap(visitAttributeType));
+		Assert.assertEquals(1, visit.getAttributes().size());
+		Assert.assertTrue(((VisitAttribute) (visit.getAttributes().toArray()[0])).isVoided());
+	}
+	
+	private ModelMap createModelMap(VisitAttributeType visitAttributeType) {
+		ModelMap modelMap = new ModelMap();
+		modelMap.put("visitAttributeTypes", Arrays.asList(visitAttributeType));
+		return modelMap;
+	}
+	
 }
