@@ -15,13 +15,13 @@
    <dependencies>
       <dependency>
          <groupId>org.openmrs.api</groupId>
-         <artifactId>openmrs-api</artifactId>
+         <artifactId>openmrsproviders-api</artifactId>
          <version>${project.version}</version>
          <type>jar</type>
       </dependency>
       <dependency>
          <groupId>org.openmrs.web</groupId>
-         <artifactId>openmrs-web</artifactId>
+         <artifactId>openmrsproviders-web</artifactId>
          <version>${project.version}</version>
          <type>jar</type>
          <exclusions>
