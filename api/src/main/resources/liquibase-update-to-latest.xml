@@ -4689,6 +4689,37 @@
             baseTableName="encounter_role" baseColumnNames="retired_by" referencedTableName="users"
             referencedColumnNames="user_id" />
     </changeSet>
-    
+
+    <changeSet id="20110811-1205-create-encounter-provider-table" author="sree/vishnu">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="encounter_provider"/></not>
+        </preConditions>
+        <comment>Creating encounter_provider table</comment>
+        <createTable tableName="encounter_provider">
+            <column name="encounter_provider_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+        </column>
+            <column name="encounter_id" type="int(11)"><constraints nullable="false" /></column>
+            <column name="provider_id" type="int(11)"><constraints nullable="false" /> </column>
+            <column name="encounter_role_id" type="int(11)"><constraints nullable="false" /></column>
+            <column defaultValueNumeric="0" name="creator" type="int"><constraints nullable="false"/></column>
+            <column name="date_created" type="datetime"><constraints nullable="false"/></column>
+            <column name="changed_by" type="int"/>
+            <column name="date_changed" type="datetime" />
+            <column defaultValueNumeric="0" name="voided" type="tinyint"><constraints nullable="false" /></column>
+            <column name="date_voided" type="datetime" />
+            <column name="voided_by" type="int" />
+            <column name="void_reason" type="varchar(255)" />
+        </createTable>
+        <addForeignKeyConstraint constraintName="encounter_id_fk"
+            baseTableName="encounter_provider" baseColumnNames="encounter_id" referencedTableName="encounter"
+            referencedColumnNames="encounter_id" />
+        <addForeignKeyConstraint constraintName="provider_id_fk"
+            baseTableName="encounter_provider" baseColumnNames="provider_id" referencedTableName="provider"
+            referencedColumnNames="provider_id" />
+        <addForeignKeyConstraint constraintName="encounter_role_id_fk"
+            baseTableName="encounter_provider" baseColumnNames="encounter_role_id" referencedTableName="encounter_role"
+            referencedColumnNames="encounter_role_id" />
+    </changeSet>
 </databaseChangeLog>
 
