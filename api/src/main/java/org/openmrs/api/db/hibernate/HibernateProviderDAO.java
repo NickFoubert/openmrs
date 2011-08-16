@@ -151,7 +151,7 @@ public class HibernateProviderDAO implements ProviderDAO {
 	 */
 	private LogicalExpression getNameSearchExpression(String name) {
 		
-		MatchMode mode = MatchMode.START;
+		MatchMode mode = MatchMode.ANYWHERE;
 		IlikeExpression providerNameExpression = (IlikeExpression) Expression.ilike("name", name, mode);
 		IlikeExpression givenName = (IlikeExpression) Expression.ilike("personName.givenName", name, mode);
 		IlikeExpression middleName = (IlikeExpression) Expression.ilike("personName.middleName", name, mode);
