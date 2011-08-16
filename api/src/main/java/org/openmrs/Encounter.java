@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -55,6 +56,8 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	private Set<Obs> obs;
 	
 	private Visit visit;
+	
+	private List<EncounterProvider> providers;
 	
 	// Constructors
 	
@@ -493,5 +496,31 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	 */
 	public void setVisit(Visit visit) {
 		this.visit = visit;
+	}
+	
+	public Map<EncounterRole, List<Provider>> getProvidersByRoles() {
+		//TODO: TRUNK-2260
+		return null;
+	}
+	
+	public List<Provider> getProvidersByRole(EncounterRole role) {
+		//TODO: TRUNK-2260
+		return null;
+	}
+	
+	public void addProvider(EncounterRole role, Provider provider) {
+		//TODO: TRUNK-2260
+	}
+	
+	public void addAllProviders(EncounterRole role, List<Provider> providers) {
+		//TODO: TRUNK-2260
+	}
+	
+	public void removeProvider(EncounterRole role, Provider provider) {
+		//TODO: TRUNK-2260
+	}
+	
+	public void removeAllProviders(EncounterRole role) {
+		//TODO: TRUNK-2260
 	}
 }
