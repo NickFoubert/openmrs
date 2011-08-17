@@ -284,8 +284,12 @@ public class ConceptWord implements java.io.Serializable, Comparable<ConceptWord
 	 * @since 1.8
 	 */
 	public static List<String> getUniqueWords(String phrase, Locale locale) {
-		
-		String[] parts = splitPhrase(phrase);
+		String[] parts;
+		if (phrase.equals("%")) {
+			parts = new String[] { phrase };
+		} else {
+			parts = splitPhrase(phrase);
+		}
 		List<String> uniqueParts = new Vector<String>();
 		
 		if (parts != null) {
