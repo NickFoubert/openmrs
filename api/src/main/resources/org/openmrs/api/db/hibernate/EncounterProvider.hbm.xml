@@ -8,7 +8,7 @@
 	<class name="EncounterProvider" table="encounter_provider" batch-size="25">
 
 		<id name="encounterProviderId" type="int" column="encounter_provider_id"
-			unsaved-value="0">
+			unsaved-value="undefined">
 			<generator class="native" />
 		</id>
 
@@ -31,19 +31,19 @@
 
         <!-- bi-directional many-to-one association to Provider -->
 
-        <many-to-one name="providerId" class="Provider" not-null="true">
+        <many-to-one name="provider" class="Provider" not-null="true">
             <column name="provider_id" />
         </many-to-one>
 
         <!-- bi-directional many-to-one association to Encounter -->
 
-        <many-to-one name="encounterId" class="Encounter" not-null="true">
+        <many-to-one name="encounter" class="Encounter" not-null="true">
             <column name="encounter_id" />
         </many-to-one>
 
         <!-- bi-directional many-to-one association to Encounter Role -->
 
-        <many-to-one name="encounterRoleId" class="EncounterRole" not-null="true">
+        <many-to-one name="encounterRole" class="EncounterRole" not-null="true">
             <column name="encounter_role_id" />
         </many-to-one>
 
