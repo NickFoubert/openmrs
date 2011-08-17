@@ -435,7 +435,7 @@ function OpenmrsSearch(div, showIncludeVoided, searchHandler, selectionHandler, 
 		
 		_doSearch: function(text) {
 			if(this.options.searchHandler) {
-				if (!text) {
+				if (!text && self.options.filter) {
 					text = "%";
 				}
 				var tmpIncludeVoided = (this.options.showIncludeVoided && checkBox.attr('checked'));
