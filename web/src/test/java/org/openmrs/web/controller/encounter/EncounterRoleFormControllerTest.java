@@ -6,11 +6,10 @@ import org.openmrs.api.context.Context;
 import org.openmrs.web.WebConstants;
 import org.openmrs.web.test.BaseWebContextSensitiveTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
-
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -143,16 +142,16 @@ public class EncounterRoleFormControllerTest extends BaseWebContextSensitiveTest
 	
 	/**
 	 * @verifies add list of encounter role objects to the model
-	 * @see EncounterRoleFormController#showEncounterList(org.springframework.ui.Model)
+	 * @see EncounterRoleFormController#getEncounterList(org.springframework.ui.ModelMap)
 	 */
 	@Test
 	public void showEncounterList_shouldAddListOfEncounterRoleObjectsToTheModel() throws Exception {
+		ModelMap modelMap = new ModelMap();
 		executeDataSet(ENC_INITIAL_DATA_XML);
 		EncounterRoleFormController controller = new EncounterRoleFormController();
-		ModelAndView modelAndView = controller.getEncounterList();
-		List<EncounterRole> encounterRoles = (List<EncounterRole>) modelAndView.getModel().get("encounterRoles");
-		assertEquals("admin/encounters/encounterRoleList", modelAndView.getViewName());
-		assertEquals(2, encounterRoles.size());
+		String viewName = controller.getEncounterList(modelMap);
+		assertEquals("admin/encounters/encounterRoleList", viewName);
+		assertEquals(2, ((List) modelMap.get("encounterRoles")).size());
 	}
 	
 	/**

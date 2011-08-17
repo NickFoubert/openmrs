@@ -28,15 +28,15 @@
 					<a href="encounterRole.form?encounterRoleId=${encounterRole.encounterRoleId}">
 						<c:choose>
 							<c:when test="${encounterRole.retired == true}">
-								<del>${encounterRole.name}</del>
+								<del><c:out value="${encounterRole.name}"/></del>
 							</c:when>
 							<c:otherwise>
-								${encounterRole.name}
+								<c:out value="${encounterRole.name}"/>
 							</c:otherwise>
 						</c:choose>
 					</a>
 				</td>
-				<td valign="top">${encounterRole.description}</td>
+				<td valign="top"><c:out value="${encounterRole.description}"/></td>
 			</tr>
 		</c:forEach>
 	</table>

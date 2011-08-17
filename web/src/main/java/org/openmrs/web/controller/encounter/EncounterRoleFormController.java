@@ -23,12 +23,12 @@ import org.openmrs.validator.EncounterRoleValidator;
 import org.openmrs.web.WebConstants;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
@@ -69,7 +69,7 @@ public class EncounterRoleFormController {
 				EncounterService service = Context.getEncounterService();
 				String message = saveEncounterRole(encounterRole, service);
 				session.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message);
-				return showForm(encounterRole.getEncounterRoleId());
+				return showEncounterList();
 			}
 		}
 		
@@ -167,21 +167,19 @@ public class EncounterRoleFormController {
 	}
 	
 	/**
-	 * @param model model to be returned
+     * @param modelMap
 	 * @return logical view for the encounter list
 	 * @should add list of encounter role objects to the model
 	 */
 	@RequestMapping(value = "/encounterRole.list", method = RequestMethod.GET)
-	public ModelAndView getEncounterList() {
+	public String getEncounterList(ModelMap modelMap) {
 		List<EncounterRole> encounterRoles = new ArrayList<EncounterRole>();
-		ModelAndView mav = new ModelAndView();
 		if (Context.isAuthenticated()) {
 			EncounterService encounterService = Context.getEncounterService();
 			encounterRoles = encounterService.getAllEncounterRoles(true);
 		}
-		mav.setViewName("admin/encounters/encounterRoleList");
-		mav.addObject("encounterRoles", encounterRoles);
-		return mav;
+		modelMap.addAttribute("encounterRoles", encounterRoles);
+		return "admin/encounters/encounterRoleList";
 	}
 	
 	private String showForm(Integer encounterRoleId) {

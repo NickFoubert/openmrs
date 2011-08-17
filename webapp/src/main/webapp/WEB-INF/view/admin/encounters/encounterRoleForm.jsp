@@ -9,7 +9,7 @@
 <script type="text/javascript">
 
     function confirmPurge() {
-        if (confirm("Are you sure you want to purge this object? It will be permanently removed from the system.")) {
+        if (confirm("<spring:message code="general.confirm.purge"/>")) {
             return true;
         } else {
             return false;
@@ -41,7 +41,7 @@
                 <td><spring:message code="general.name"/></td>
                 <td colspan="5">
                     <spring:bind path="encounterRole.name">
-                        <input type="text" name="name" value="${status.value}" size="35"/>
+                        <input type="text" name="name" value='<c:out value="${status.value}"/>' size="35"/>
                         <c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
                     </spring:bind>
                 </td>
