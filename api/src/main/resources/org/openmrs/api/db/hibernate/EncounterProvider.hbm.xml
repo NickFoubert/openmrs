@@ -23,7 +23,7 @@
 		<!-- Associations -->
         <many-to-one name="changedBy" class="User" column="changed_by" />
 
-        <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
+        <many-to-one name="creator" class="User" not-null="true" />
 
         <many-to-one name="voidedBy" class="User">
 			<column name="voided_by" />

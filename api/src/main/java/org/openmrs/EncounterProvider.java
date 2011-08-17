@@ -19,13 +19,13 @@ package org.openmrs;
  */
 public class EncounterProvider extends BaseOpenmrsData {
 	
-	private int encounterProviderId;
+	private Integer encounterProviderId;
 	
-	private int encounterId;
+	private Encounter encounter;
 	
-	private int providerId;
+	private Provider provider;
 	
-	private int encounterRoleId;
+	private EncounterRole encounterRole;
 	
 	public void setEncounterProviderId(Integer encounterProviderId) {
 		this.encounterProviderId = encounterProviderId;
@@ -34,38 +34,64 @@ public class EncounterProvider extends BaseOpenmrsData {
 	public Integer getEncounterProviderId() {
 		return this.encounterProviderId;
 	}
-	
-	@Override
-	public Integer getId() {
+
+    /**
+     * @see OpenmrsObject#getId()
+     */
+    public Integer getId() {
 		return getEncounterProviderId();
 	}
-	
-	@Override
+
+    /**
+     * @see OpenmrsObject#setId(Integer)
+     */
 	public void setId(Integer id) {
 		setEncounterProviderId(id);
 	}
-	
-	public int getEncounterId() {
-		return encounterId;
+
+    /**
+     * @return the encounter
+     * @see Encounter
+     */
+	public Encounter getEncounter() {
+		return this.encounter;
 	}
-	
-	public void setEncounterId(int encounterId) {
-		this.encounterId = encounterId;
+
+    /**
+     * @param encounter the encounter to set
+     */
+	public void setEncounter(Encounter encounter) {
+		this.encounter = encounter;
 	}
-	
-	public int getProviderId() {
-		return providerId;
+
+    /**
+     * @return the provider
+     * @see Provider
+     */
+    public Provider getProvider() {
+		return this.provider;
 	}
-	
-	public void setProviderId(int providerId) {
-		this.providerId = providerId;
+
+
+    /**
+     * @param provider the provider to set
+     */
+    public void setProvider(Provider provider) {
+		this.provider = provider;
 	}
-	
-	public int getEncounterRoleId() {
-		return encounterRoleId;
+
+    /**
+     * @return the encounterRole
+     * @see EncounterRole
+     */
+    public EncounterRole getEncounterRole() {
+		return this.encounterRole;
 	}
-	
-	public void setEncounterRoleId(int encounterRoleId) {
-		this.encounterRoleId = encounterRoleId;
+
+    /**
+     * @param encounterRole the encounterRole to set
+     */
+    public void setEncounterRole(EncounterRole encounterRole) {
+		this.encounterRole = encounterRole;
 	}
 }
