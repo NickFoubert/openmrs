@@ -13,17 +13,16 @@
  */
 package org.openmrs;
 
-import org.openmrs.attribute.Attribute;
-import org.openmrs.attribute.AttributeType;
-import org.openmrs.attribute.Customizable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+
+import org.openmrs.attribute.Attribute;
+import org.openmrs.attribute.AttributeType;
+import org.openmrs.attribute.Customizable;
 
 /**
  * Extension of {@link org.openmrs.BaseOpenmrsMetadata} for classes that support customization via user-defined attributes.
