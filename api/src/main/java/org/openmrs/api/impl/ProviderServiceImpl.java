@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
@@ -97,6 +99,18 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	 */
 	@Override
 	public Provider saveProvider(Provider provider) {
+		if (provider.getPerson() != null) {
+			//If the person was persisted
+			if (provider.getPerson().getId() != null) {
+				Provider providerDb = dao.getProviderByPerson(provider.getPerson());
+				if (providerDb != null) {
+					//Update existing provider
+					provider.setProviderId(providerDb.getProviderId());
+					//Clean up
+					Context.evictFromSession(providerDb);
+				}
+			}
+		}
 		return dao.saveProvider(provider);
 	}
 	
@@ -106,6 +120,15 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	@Override
 	public Provider getProviderbyUuid(String uuid) {
 		return dao.getProviderByUuid(uuid);
+	}
+	
+	/**
+	 * @see org.openmrs.api.ProviderService#getProviderByPerson(org.openmrs.Person)
+	 */
+	@Override
+	public Provider getProviderByPerson(Person person) {
+		Validate.notNull(person, "Person must not be null");
+		return dao.getProviderByPerson(person);
 	}
 	
 	/**

@@ -20,7 +20,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -32,9 +36,7 @@ import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
-import org.openmrs.User;
 import org.openmrs.api.context.Context;
-import org.openmrs.attribute.AttributeType;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.util.OpenmrsConstants;
 
@@ -265,7 +267,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonNamesMiddleName() throws Exception {
-		assertEquals(4, service.getProviders("Tes", 0, null, null).size());
+		assertEquals(5, service.getProviders("Tes", 0, null, null).size());
 	}
 	
 	/**
@@ -440,6 +442,81 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		attributes.put(service.getProviderAttributeType(1), new SimpleDateFormat("yyyy-MM-dd").parse("1411-04-25"));
 		List<Provider> providers = service.getProviders("RobertClive", 0, null, attributes);
 		Assert.assertEquals(0, providers.size());
+	}
+	
+	/**
+	 * @see ProviderService#getProviderByPerson(Person)
+	 * @verifies fail if person is null
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void getProviderByPerson_shouldFailIfPersonIsNull() throws Exception {
+		//given
+		
+		//when
+		service.getProviderByPerson(null);
+		
+		//then
+		Assert.fail();
+	}
+	
+	/**
+	 * @see ProviderService#getProviderByPerson(Person)
+	 * @verifies return null if provider does not exist
+	 */
+	@Test
+	public void getProviderByPerson_shouldReturnNullIfProviderDoesNotExist() throws Exception {
+		//given
+		Person person = Context.getPersonService().getPerson(999);
+		
+		//when
+		Provider provider = service.getProviderByPerson(person);
+		
+		//then
+		Assert.assertNull(provider);
+	}
+	
+	/**
+	 * @see ProviderService#getProviderByPerson(Person)
+	 * @verifies return provider for given person
+	 */
+	@Test
+	public void getProviderByPerson_shouldReturnProviderForGivenPerson() throws Exception {
+		//given
+		Person person = Context.getPersonService().getPerson(999);
+		Provider provider = new Provider();
+		provider.setPerson(person);
+		provider = service.saveProvider(provider);
+		
+		//when
+		Provider provider2 = service.getProviderByPerson(person);
+		
+		//then
+		Assert.assertEquals(provider, provider2);
+	}
+	
+	/**
+	 * @see ProviderService#saveProvider(Provider)
+	 * @verifies update provider if provider for given person exists
+	 */
+	@Test
+	public void saveProvider_shouldUpdateProviderIfProviderForGivenPersonExists() throws Exception {
+		//given
+		Person person = Context.getPersonService().getPerson(999);
+		Provider provider = new Provider();
+		provider.setPerson(person);
+		provider = service.saveProvider(provider);
+		//clean up the session after save
+		Context.flushSession();
+		Context.clearSession();
+		
+		Provider provider2 = new Provider();
+		provider2.setPerson(person);
+		
+		//when
+		provider2 = service.saveProvider(provider2);
+		
+		//then
+		Assert.assertEquals(provider.getId(), provider2.getId());
 	}
 	
 }

@@ -66,6 +66,8 @@ public interface EncounterService extends OpenmrsService {
 	 * @should not overwrite dateCreated if non null
 	 * @should not overwrite obs and orders creator or dateCreated
 	 * @should cascade creator and dateCreated to orders
+	 * @should cascade save encounter providers
+	 * @should cascade delete encounter providers
 	 */
 	@Authorized( { PrivilegeConstants.ADD_ENCOUNTERS, PrivilegeConstants.EDIT_ENCOUNTERS })
 	public Encounter saveEncounter(Encounter encounter) throws APIException;

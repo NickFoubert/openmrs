@@ -34,64 +34,63 @@ public class EncounterProvider extends BaseOpenmrsData {
 	public Integer getEncounterProviderId() {
 		return this.encounterProviderId;
 	}
-
-    /**
-     * @see OpenmrsObject#getId()
-     */
-    public Integer getId() {
+	
+	/**
+	 * @see OpenmrsObject#getId()
+	 */
+	public Integer getId() {
 		return getEncounterProviderId();
 	}
-
-    /**
-     * @see OpenmrsObject#setId(Integer)
-     */
+	
+	/**
+	 * @see OpenmrsObject#setId(Integer)
+	 */
 	public void setId(Integer id) {
 		setEncounterProviderId(id);
 	}
-
-    /**
-     * @return the encounter
-     * @see Encounter
-     */
+	
+	/**
+	 * @return the encounter
+	 * @see Encounter
+	 */
 	public Encounter getEncounter() {
 		return this.encounter;
 	}
-
-    /**
-     * @param encounter the encounter to set
-     */
+	
+	/**
+	 * @param encounter the encounter to set
+	 */
 	public void setEncounter(Encounter encounter) {
 		this.encounter = encounter;
 	}
-
-    /**
-     * @return the provider
-     * @see Provider
-     */
-    public Provider getProvider() {
+	
+	/**
+	 * @return the provider
+	 * @see Provider
+	 */
+	public Provider getProvider() {
 		return this.provider;
 	}
-
-
-    /**
-     * @param provider the provider to set
-     */
-    public void setProvider(Provider provider) {
+	
+	/**
+	 * @param provider the provider to set
+	 */
+	public void setProvider(Provider provider) {
 		this.provider = provider;
 	}
-
-    /**
-     * @return the encounterRole
-     * @see EncounterRole
-     */
-    public EncounterRole getEncounterRole() {
+	
+	/**
+	 * @return the encounterRole
+	 * @see EncounterRole
+	 */
+	public EncounterRole getEncounterRole() {
 		return this.encounterRole;
 	}
-
-    /**
-     * @param encounterRole the encounterRole to set
-     */
-    public void setEncounterRole(EncounterRole encounterRole) {
+	
+	/**
+	 * @param encounterRole the encounterRole to set
+	 */
+	public void setEncounterRole(EncounterRole encounterRole) {
 		this.encounterRole = encounterRole;
 	}
 }

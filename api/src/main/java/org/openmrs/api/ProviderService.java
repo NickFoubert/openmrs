@@ -16,12 +16,12 @@ package org.openmrs.api;
 import java.util.List;
 import java.util.Map;
 
+import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
-import org.openmrs.annotation.Authorized;
-import org.openmrs.attribute.AttributeType;
-import org.openmrs.util.PrivilegeConstants;
 import org.openmrs.ProviderAttributeType;
+import org.openmrs.annotation.Authorized;
+import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -98,6 +98,7 @@ public interface ProviderService extends OpenmrsService {
 	 * @return the Provider object after saving it in the database
 	 * @should save a Provider with provider name alone
 	 * @should save a Provider with Person alone
+	 * @should update provider if provider for given person exists
 	 * @should not save a Provider with both name and person
 	 * @should not save a Provider with both name and person being null
 	 */
@@ -112,6 +113,21 @@ public interface ProviderService extends OpenmrsService {
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
 	public Provider getProviderbyUuid(String uuid);
+	
+	/**
+	 * Gets a provider for the given person.
+	 * <p>
+	 * It can be only one provider for a person.
+	 * 
+	 * @param person
+	 * @return provider or null if does not exist
+	 * @should return provider for given person
+	 * @should return null if provider does not exist
+	 * @should fail if person is null
+	 */
+	@Transactional
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	public Provider getProviderByPerson(Person person);
 	
 	/**
 	 * @param query

@@ -15,10 +15,14 @@ package org.openmrs;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.openmrs.api.context.Context;
 
 /**
  * An Encounter represents one visit or interaction of a patient with a healthcare worker. Every
@@ -49,6 +53,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	
 	private EncounterType encounterType;
 	
+	@Deprecated
 	private Person provider;
 	
 	private Set<Order> orders;
@@ -57,7 +62,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	
 	private Visit visit;
 	
-	private List<EncounterProvider> providers;
+	private Set<EncounterProvider> encounterProviders = new HashSet<EncounterProvider>();
 	
 	// Constructors
 	
@@ -408,9 +413,24 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	/**
 	 * @return Returns the provider.
 	 * @since 1.6 (used to return User)
+	 * @deprecated since 1.9, use {@link #getProvidersByRole(EncounterRole)}
+	 * @should return null if there is no providers
+	 * @should return provider for person
+	 * @should return null if there is no provider for person
+	 * @should return same provider for person if called twice
 	 */
 	public Person getProvider() {
-		return provider;
+		if (encounterProviders == null || encounterProviders.isEmpty()) {
+			return null;
+		} else {
+			for (EncounterProvider encounterProvider : encounterProviders) {
+				//Return the first person in the list
+				if (encounterProvider.getProvider().getPerson() != null) {
+					return encounterProvider.getProvider().getPerson();
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -423,9 +443,24 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	
 	/**
 	 * @param provider The provider to set.
+	 * @deprecated since 1.9, use {@link #setProvider(EncounterRole, Provider)}
+	 * @should set existing provider for unknown role
+	 * @should fail if there is no unknown role
+	 * @should create provider for person if it does not exist
 	 */
 	public void setProvider(Person provider) {
-		this.provider = provider;
+		EncounterRole unknownRole = Context.getEncounterService().getEncounterRole(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID);
+		if (unknownRole == null) {
+			throw new IllegalStateException("There is no unknown encounter role with id "
+			        + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID + ".");
+		}
+		Provider personProvider = Context.getProviderService().getProviderByPerson(provider);
+		if (personProvider == null) {
+			personProvider = new Provider();
+			personProvider.setPerson(provider);
+			personProvider = Context.getProviderService().saveProvider(personProvider);
+		}
+		setProvider(unknownRole, personProvider);
 	}
 	
 	/**
@@ -498,29 +533,79 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 		this.visit = visit;
 	}
 	
-	public Map<EncounterRole, List<Provider>> getProvidersByRoles() {
-		//TODO: TRUNK-2260
-		return null;
+	/**
+	 * Gets all roles and providers
+	 * 
+	 * @return map of providers keyed by roles
+	 * @should return empty map if no providers
+	 * @should return all roles and providers
+	 */
+	public Map<EncounterRole, Set<Provider>> getProvidersByRoles() {
+		Map<EncounterRole, Set<Provider>> providers = new HashMap<EncounterRole, Set<Provider>>();
+		for (EncounterProvider encounterProvider : encounterProviders) {
+			Set<Provider> list = providers.get(encounterProvider.getEncounterRole());
+			if (list == null) {
+				list = new HashSet<Provider>();
+				providers.put(encounterProvider.getEncounterRole(), list);
+			}
+			list.add(encounterProvider.getProvider());
+		}
+		return providers;
 	}
 	
-	public List<Provider> getProvidersByRole(EncounterRole role) {
-		//TODO: TRUNK-2260
-		return null;
+	/**
+	 * Gets providers for the given role.
+	 * 
+	 * @param role
+	 * @return providers or empty set if none was found
+	 * @should return providers for role
+	 * @should return empty set for no role
+	 * @should return empty set for null role
+	 */
+	public Set<Provider> getProvidersByRole(EncounterRole role) {
+		Set<Provider> providers = new HashSet<Provider>();
+		for (EncounterProvider encounterProvider : encounterProviders) {
+			if (encounterProvider.getEncounterRole().equals(role)) {
+				providers.add(encounterProvider.getProvider());
+			}
+		}
+		return providers;
 	}
 	
+	/**
+	 * Adds the provider for the given role, if it was not added before.
+	 * 
+	 * @param role
+	 * @param provider
+	 * @should add provider for new role
+	 * @should add second provider for role
+	 * @should not add same provider twice for role
+	 */
 	public void addProvider(EncounterRole role, Provider provider) {
-		//TODO: TRUNK-2260
+		EncounterProvider encounterProvider = new EncounterProvider();
+		encounterProvider.setEncounter(this);
+		encounterProvider.setEncounterRole(role);
+		encounterProvider.setProvider(provider);
+		encounterProviders.add(encounterProvider);
 	}
 	
-	public void addAllProviders(EncounterRole role, List<Provider> providers) {
-		//TODO: TRUNK-2260
-	}
-	
-	public void removeProvider(EncounterRole role, Provider provider) {
-		//TODO: TRUNK-2260
-	}
-	
-	public void removeAllProviders(EncounterRole role) {
-		//TODO: TRUNK-2260
+	/**
+	 * Sets the provider for the given role.
+	 * <p>
+	 * It clears all providers for the given role and adds the given provider.
+	 * 
+	 * @param role
+	 * @param provider
+	 * @should set provider for new role
+	 * @should clear providers and set provider for role
+	 */
+	public void setProvider(EncounterRole role, Provider provider) {
+		for (Iterator<EncounterProvider> it = encounterProviders.iterator(); it.hasNext();) {
+			EncounterProvider encounterProvider = it.next();
+			if (encounterProvider.getEncounterRole().equals(role)) {
+				it.remove();
+			}
+		}
+		addProvider(role, provider);
 	}
 }

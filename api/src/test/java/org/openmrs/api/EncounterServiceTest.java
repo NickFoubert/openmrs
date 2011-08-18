@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
-import org.openmrs.Person;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
@@ -83,7 +84,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		encounter.setEncounterType(new EncounterType(1));
 		encounter.setEncounterDatetime(new Date());
 		encounter.setPatient(new Patient(3));
-		encounter.setProvider(new Person(1));
+		encounter.setProvider(Context.getPersonService().getPerson(1));
 		
 		EncounterService es = Context.getEncounterService();
 		es.saveEncounter(encounter);
@@ -156,7 +157,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		enc.setEncounterType(new EncounterType(1));
 		enc.setEncounterDatetime(new Date());
 		enc.setPatient(new Patient(3));
-		enc.setProvider(new Person(1));
+		enc.setProvider(Context.getPersonService().getPerson(1));
 		es.saveEncounter(enc);
 		
 		// Now add an obs to it
@@ -187,7 +188,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		enc.setEncounterType(new EncounterType(1));
 		enc.setEncounterDatetime(new Date());
 		enc.setPatient(new Patient(3));
-		enc.setProvider(new Person(1));
+		enc.setProvider(Context.getPersonService().getPerson(1));
 		es.saveEncounter(enc);
 		
 		// Now add an obs to it
@@ -222,7 +223,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		enc.setEncounterType(new EncounterType(1));
 		enc.setEncounterDatetime(new Date());
 		enc.setPatient(new Patient(3));
-		enc.setProvider(new Person(1));
+		enc.setProvider(Context.getPersonService().getPerson(1));
 		es.saveEncounter(enc);
 		
 		// Now add an obs to it
@@ -1613,4 +1614,93 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		assertNull(unretiredEncounterRole.getRetireReason());
 	}
 	
+	/**
+	 * @see EncounterService#saveEncounter(Encounter)
+	 * @verifies cascade delete encounter providers
+	 */
+	@Test
+	public void saveEncounter_shouldCascadeDeleteEncounterProviders() throws Exception {
+		//given
+		Encounter encounter = new Encounter();
+		encounter.setLocation(new Location(1));
+		encounter.setEncounterType(new EncounterType(1));
+		encounter.setEncounterDatetime(new Date());
+		encounter.setPatient(new Patient(3));
+		
+		EncounterRole role = new EncounterRole();
+		role.setName("role");
+		role = Context.getEncounterService().saveEncounterRole(role);
+		
+		Provider provider = new Provider();
+		provider.setName("provider");
+		provider = Context.getProviderService().saveProvider(provider);
+		
+		Provider provider2 = new Provider();
+		provider.setName("provider2");
+		provider2 = Context.getProviderService().saveProvider(provider2);
+		
+		encounter.addProvider(role, provider);
+		encounter.addProvider(role, provider2);
+		
+		EncounterService es = Context.getEncounterService();
+		encounter = es.saveEncounter(encounter);
+		
+		//when
+		encounter.setProvider(role, provider);
+		encounter = es.saveEncounter(encounter);
+		Context.flushSession();
+		Context.clearSession();
+		
+		//then
+		encounter = Context.getEncounterService().getEncounter(encounter.getEncounterId());
+		Assert.assertEquals(1, encounter.getProvidersByRole(role).size());
+		Assert.assertTrue("Role", encounter.getProvidersByRole(role).contains(provider));
+	}
+	
+	/**
+	 * @see EncounterService#saveEncounter(Encounter)
+	 * @verifies cascade save encounter providers
+	 */
+	@Test
+	public void saveEncounter_shouldCascadeSaveEncounterProviders() throws Exception {
+		//given
+		Encounter encounter = new Encounter();
+		encounter.setLocation(new Location(1));
+		encounter.setEncounterType(new EncounterType(1));
+		encounter.setEncounterDatetime(new Date());
+		encounter.setPatient(new Patient(3));
+		
+		EncounterRole role = new EncounterRole();
+		role.setName("role");
+		role = Context.getEncounterService().saveEncounterRole(role);
+		
+		EncounterRole role2 = new EncounterRole();
+		role2.setName("role2");
+		role2 = Context.getEncounterService().saveEncounterRole(role2);
+		
+		Provider provider = new Provider();
+		provider.setName("provider");
+		provider = Context.getProviderService().saveProvider(provider);
+		
+		Provider provider2 = new Provider();
+		provider.setName("provider2");
+		provider2 = Context.getProviderService().saveProvider(provider2);
+		
+		encounter.addProvider(role, provider);
+		encounter.addProvider(role, provider2);
+		encounter.addProvider(role2, provider2);
+		
+		//when
+		EncounterService es = Context.getEncounterService();
+		es.saveEncounter(encounter);
+		Context.flushSession();
+		Context.clearSession();
+		
+		//then
+		encounter = Context.getEncounterService().getEncounter(encounter.getEncounterId());
+		Assert.assertEquals(2, encounter.getProvidersByRole(role).size());
+		Assert.assertTrue("Role", encounter.getProvidersByRole(role).containsAll(Arrays.asList(provider, provider2)));
+		Assert.assertEquals(1, encounter.getProvidersByRole(role2).size());
+		Assert.assertTrue("Role2", encounter.getProvidersByRole(role2).contains(provider2));
+	}
 }

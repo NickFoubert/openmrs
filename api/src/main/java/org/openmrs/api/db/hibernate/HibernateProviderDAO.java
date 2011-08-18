@@ -27,6 +27,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
@@ -89,6 +90,16 @@ public class HibernateProviderDAO implements ProviderDAO {
 	@Override
 	public Provider getProviderByUuid(String uuid) {
 		return getByUuid(uuid, Provider.class);
+	}
+	
+	/**
+	 * @see org.openmrs.api.db.ProviderDAO#getProviderByPerson(org.openmrs.Person)
+	 */
+	@Override
+	public Provider getProviderByPerson(Person person) {
+		Criteria criteria = getSession().createCriteria(Provider.class);
+		criteria.add(Restrictions.eq("person", person));
+		return (Provider) criteria.uniqueResult();
 	}
 	
 	/**

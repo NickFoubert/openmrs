@@ -42,6 +42,7 @@ public class Provider extends BaseCustomizableMetadata<ProviderAttribute> {
 	 */
 	@Override
 	public void setId(Integer id) {
+		setProviderId(id);
 	}
 	
 	/**

@@ -20,6 +20,8 @@ package org.openmrs;
  */
 public class EncounterRole extends BaseOpenmrsMetadata {
 	
+	public static final Integer UNKNOWN_ENCOUNTER_ROLE_ID = 1;
+	
 	// Fields
 	private Integer encounterRoleId;
 	
