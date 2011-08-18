@@ -96,4 +96,13 @@ public class DWRProviderService {
 		return providerMap;
 	}
 	
+	/**
+	 * Get the provider identified by <code>providerId</code>
+	 * 
+	 * @param providerId
+	 * @return
+	 */
+	public ProviderListItem getProvider(Integer providerId) {
+		return new ProviderListItem(Context.getProviderService().getProvider(providerId));
+	}
 }

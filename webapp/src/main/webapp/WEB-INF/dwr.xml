@@ -245,6 +245,7 @@
 		<create creator="new" javascript="DWRProviderService">
 			<param name="class" value="org.openmrs.web.dwr.DWRProviderService" />
 			<include method="findProviderCountAndProvider"/>
+			<include method="findProvider"/>
 		</create>
 				
 	</allow>
@@ -304,6 +305,7 @@
 			DWRVisitService.findVisitsByPatient(Integer patientId, boolean includeEnded, boolean includeVoided);
 			DWRVisitService.getVisit(Integer visitId);
 			DWRProviderService.findProviderCountAndProvider(String phrase, boolean includeVoided, Integer start, Integer length);
+			DWRProviderService.findProvider(String phrase, boolean includeVoided, Integer start, Integer length);
 		]]>
 	</signatures>
   	
