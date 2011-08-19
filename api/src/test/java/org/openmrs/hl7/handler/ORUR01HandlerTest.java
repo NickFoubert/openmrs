@@ -938,6 +938,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#parseObs(Encounter,OBX,OBR,String)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should add comments to an observation group", method = "parseObs(Encounter,OBX,OBR,String)")
 	public void parseObs_shouldAddCommentsToAnObservationGroup() throws Exception {
 		ObsService os = Context.getObsService();
