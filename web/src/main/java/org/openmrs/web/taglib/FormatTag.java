@@ -249,7 +249,8 @@ public class FormatTag extends TagSupport {
 	 * @param p
 	 */
 	private void printPerson(StringBuilder sb, Person p) {
-		sb.append(p.getPersonName());
+		if (p != null)
+			sb.append(p.getPersonName());
 	}
 	
 	@Override
