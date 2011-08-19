@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
@@ -87,6 +88,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should create encounter and obs from hl7 message", method = "processMessage(Message)")
 	public void processMessage_shouldCreateEncounterAndObsFromHl7Message() throws Exception {
 		ObsService obsService = Context.getObsService();
@@ -136,6 +138,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should create obs group for OBRs", method = "processMessage(Message)")
 	public void processMessage_shouldCreateObsGroupForOBRs() throws Exception {
 		ObsService obsService = Context.getObsService();
@@ -256,6 +259,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should create basic concept proposal", method = "processMessage(Message)")
 	public void processMessage_shouldCreateBasicConceptProposal() throws Exception {
 		
@@ -285,6 +289,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should create concept proposal and with obs alongside", method = "processMessage(Message)")
 	public void processMessage_shouldCreateConceptProposalAndWithObsAlongside() throws Exception {
 		
@@ -316,6 +321,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should not create problem list observation with concept proposals", method = "processMessage(Message)")
 	public void processMessage_shouldNotCreateProblemListObservationWithConceptProposals() throws Exception {
 		ObsService obsService = Context.getObsService();
@@ -350,6 +356,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should create obs valueCodedName", method = "processMessage(Message)")
 	public void processMessage_shouldCreateObsValueCodedName() throws Exception {
 		ObsService obsService = Context.getObsService();
@@ -411,6 +418,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test(expected = ApplicationException.class)
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should fail on empty concept answers", method = "processMessage(Message)")
 	public void processMessage_shouldFailOnEmptyConceptAnswers() throws Exception {
 		String hl7string = "MSH|^~\\&|FORMENTRY|AMRS.ELD|HL7LISTENER|AMRS.ELD|20080630094800||ORU^R01|kgWdFt0SVwwClOfJm3pe|P|2.5|1||||||||15^AMRS.ELD.FORMID\r"
@@ -427,6 +435,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test(expected = ApplicationException.class)
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should fail on empty concept proposals", method = "processMessage(Message)")
 	public void processMessage_shouldFailOnEmptyConceptProposals() throws Exception {
 		String hl7string = "MSH|^~\\&|FORMENTRY|AMRS.ELD|HL7LISTENER|AMRS.ELD|20080630094800||ORU^R01|kgWdFt0SVwwClOfJm3pe|P|2.5|1||||||||15^AMRS.ELD.FORMID\r"
@@ -604,6 +613,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processORU_R01(ORU_R01)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should process multiple NK1 segments", method = "processORU_R01(ORU_R01)")
 	public void processORU_R01_shouldProcessMultipleNK1Segments() throws Exception {
 		PersonService personService = Context.getPersonService();
@@ -691,6 +701,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test(expected = ApplicationException.class)
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should fail if question datatype is coded and a boolean is not a valid answer", method = "processMessage(Message)")
 	public void processMessage_shouldFailIfQuestionDatatypeIsCodedAndABooleanIsNotAValidAnswer() throws Exception {
 		GlobalProperty trueConceptGlobalProperty = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_TRUE_CONCEPT, "7",
@@ -714,6 +725,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test(expected = ApplicationException.class)
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should fail if question datatype is neither Boolean nor numeric nor coded", method = "processMessage(Message)")
 	public void processMessage_shouldFailIfQuestionDatatypeIsNeitherBooleanNorNumericNorCoded() throws Exception {
 		String hl7string = "MSH|^~\\&|FORMENTRY|AMRS.ELD|HL7LISTENER|AMRS.ELD|20080226102656||ORU^R01|JqnfhKKtouEz8kzTk6Zo|P|2.5|1||||||||16^AMRS.ELD.FORMID\r"
@@ -731,6 +743,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should set value as boolean for obs if the answer is 0 or 1 and Question datatype is Boolean", method = "processMessage(Message)")
 	public void processMessage_shouldSetValueAsBooleanForObsIfTheAnswerIs0Or1AndQuestionDatatypeIsBoolean() throws Exception {
 		GlobalProperty trueConceptGlobalProperty = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_TRUE_CONCEPT, "7",
@@ -767,6 +780,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should set value_Coded matching a boolean concept for obs if the answer is 0 or 1 and Question datatype is coded", method = "processMessage(Message)")
 	public void processMessage_shouldSetValue_CodedMatchingABooleanConceptForObsIfTheAnswerIs0Or1AndQuestionDatatypeIsCoded()
 	        throws Exception {
@@ -797,6 +811,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should set value_Numeric for obs if Question datatype is Numeric", method = "processMessage(Message)")
 	public void processMessage_shouldSetValue_NumericForObsIfQuestionDatatypeIsNumeric() throws Exception {
 		ObsService os = Context.getObsService();
@@ -826,6 +841,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#processMessage(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should set value_Numeric for obs if Question datatype is Numeric and the answer is either 0 or 1", method = "processMessage(Message)")
 	public void processMessage_shouldSetValue_NumericForObsIfQuestionDatatypeIsNumericAndTheAnswerIsEither0Or1()
 	        throws Exception {
@@ -856,6 +872,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#parseObs(Encounter,OBX,OBR,String)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should add comments to an observation from NTE segments", method = "parseObs(Encounter,OBX,OBR,String)")
 	public void parseObs_shouldAddCommentsToAnObservationFromNTESegments() throws Exception {
 		ObsService os = Context.getObsService();
@@ -885,6 +902,7 @@ public class ORUR01HandlerTest extends BaseContextSensitiveTest {
 	 * @see {@link ORUR01Handler#parseObs(Encounter,OBX,OBR,String)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should add multiple comments for an observation as one comment", method = "parseObs(Encounter,OBX,OBR,String)")
 	public void parseObs_shouldAddMultipleCommentsForAnObservationAsOneComment() throws Exception {
 		ObsService os = Context.getObsService();

@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.GlobalProperty;
@@ -75,6 +76,7 @@ public class HL7ServiceTest extends BaseContextSensitiveTest {
 	 * @see {@link HL7Service#processHL7InQueue(HL7InQueue)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should create HL7InArchive after successful parsing", method = "processHL7InQueue(HL7InQueue)")
 	public void processHL7InQueue_shouldCreateHL7InArchiveAfterSuccessfulParsing() throws Exception {
 		executeDataSet("org/openmrs/hl7/include/ORUTest-initialData.xml");
@@ -136,6 +138,7 @@ public class HL7ServiceTest extends BaseContextSensitiveTest {
 	 * @see {@link HL7Service#processHL7Message(Message)}
 	 */
 	@Test
+	@Ignore("TRUNK-2583")
 	@Verifies(value = "should save hl7Message to the database", method = "processHL7Message(Message)")
 	public void processHL7Message_shouldSaveHl7MessageToTheDatabase() throws Exception {
 		executeDataSet("org/openmrs/hl7/include/ORUTest-initialData.xml");
