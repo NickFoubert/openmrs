@@ -167,7 +167,7 @@ public class EncounterRoleFormController {
 	}
 	
 	/**
-     * @param modelMap
+	 * @param modelMap
 	 * @return logical view for the encounter list
 	 * @should add list of encounter role objects to the model
 	 */

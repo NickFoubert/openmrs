@@ -151,7 +151,7 @@ public class EncounterRoleFormControllerTest extends BaseWebContextSensitiveTest
 		EncounterRoleFormController controller = new EncounterRoleFormController();
 		String viewName = controller.getEncounterList(modelMap);
 		assertEquals("admin/encounters/encounterRoleList", viewName);
-		assertEquals(2, ((List) modelMap.get("encounterRoles")).size());
+		assertEquals(3, ((List) modelMap.get("encounterRoles")).size());
 	}
 	
 	/**

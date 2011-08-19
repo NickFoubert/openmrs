@@ -1222,7 +1222,7 @@ public class EncounterTest extends BaseContextSensitiveTest {
 		Encounter encounter = new Encounter();
 		Person person = Context.getPersonService().getPerson(1);
 		Assert.assertNull("Provider", Context.getProviderService().getProviderByPerson(person));
-		EncounterRole role = Context.getEncounterService().getEncounterRole(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID);
+		EncounterRole role = Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		Assert.assertNotNull("Unknown role", role);
 		
 		//when
@@ -1243,7 +1243,7 @@ public class EncounterTest extends BaseContextSensitiveTest {
 		//given
 		Encounter encounter = new Encounter();
 		Context.getEncounterService().purgeEncounterRole(
-		    Context.getEncounterService().getEncounterRole(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID));
+		    Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID));
 		
 		//when
 		encounter.setProvider(new Person());
@@ -1266,7 +1266,7 @@ public class EncounterTest extends BaseContextSensitiveTest {
 		provider.setPerson(person);
 		provider = Context.getProviderService().saveProvider(provider);
 		
-		EncounterRole role = Context.getEncounterService().getEncounterRole(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID);
+		EncounterRole role = Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		Assert.assertNotNull("Unknown role", role);
 		
 		//when

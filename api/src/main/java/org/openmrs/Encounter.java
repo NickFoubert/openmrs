@@ -449,10 +449,11 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	 * @should create provider for person if it does not exist
 	 */
 	public void setProvider(Person provider) {
-		EncounterRole unknownRole = Context.getEncounterService().getEncounterRole(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID);
+		EncounterRole unknownRole = Context.getEncounterService().getEncounterRoleByUuid(
+		    EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		if (unknownRole == null) {
-			throw new IllegalStateException("There is no unknown encounter role with id "
-			        + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_ID + ".");
+			throw new IllegalStateException("There is no 'Unknown' encounter role with uuid "
+			        + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
 		}
 		Provider personProvider = Context.getProviderService().getProviderByPerson(provider);
 		if (personProvider == null) {
