@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
@@ -90,6 +91,7 @@ public class PatientDataUnvoidHandlerTest extends BaseContextSensitiveTest {
 	/**
 	 * @see {@link PatientDataUnvoidHandler#handle(Patient,User,Date,String)}
 	 */
+	@Ignore("TRUNK-2583")
 	@Test
 	@Verifies(value = "should not unvoid the orders and encounters that never got voided with the patient", method = "handle(Patient,User,Date,String)")
 	public void handle_shouldNotUnvoidTheOrdersAndEncountersThatNeverGotVoidedWithThePatient() throws Exception {
