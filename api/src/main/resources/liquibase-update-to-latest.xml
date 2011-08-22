@@ -4710,6 +4710,7 @@
             <column name="date_voided" type="datetime" />
             <column name="voided_by" type="int" />
             <column name="void_reason" type="varchar(255)" />
+            <column name="uuid" type="char(38)"><constraints nullable="false" unique="true" /></column>
         </createTable>
         <addForeignKeyConstraint constraintName="encounter_id_fk"
             baseTableName="encounter_provider" baseColumnNames="encounter_id" referencedTableName="encounter"
