@@ -15,6 +15,7 @@ package org.openmrs.web.taglib;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Set;
 
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -22,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -29,6 +31,7 @@ import org.openmrs.Obs;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.Person;
 import org.openmrs.Program;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
@@ -94,6 +97,8 @@ public class FormatTag extends TagSupport {
 	private Visit visit;
 	
 	private Boolean javaScriptEscape = Boolean.FALSE;
+	
+	private Set<EncounterProvider> encounterProviders;
 	
 	@Override
 	public int doStartTag() {
@@ -171,6 +176,10 @@ public class FormatTag extends TagSupport {
 			} else if (program.getConcept() != null) {
 				printConcept(sb, program.getConcept());
 			}
+		}
+		
+		if (encounterProviders != null) {
+			printEncounterProviders(sb, encounterProviders);
 		}
 		
 		if (StringUtils.hasText(var)) {
@@ -253,6 +262,33 @@ public class FormatTag extends TagSupport {
 			sb.append(p.getPersonName());
 	}
 	
+	/**
+	 * formats encounter providers and prints them to a string builder
+	 * 
+	 * @param sb the string builder
+	 * @param eps the encounter providers.
+	 */
+	private void printEncounterProviders(StringBuilder sb, Set<EncounterProvider> eps) {
+		if (eps != null) {
+			
+			String providers = null;
+			for (EncounterProvider ep : eps) {
+				if (providers == null)
+					providers = "";
+				else
+					providers += ", ";
+				
+				Provider provider = ep.getProvider();
+				if (provider.getPerson() != null)
+					providers += provider.getPerson().getPersonName();
+				else
+					providers += provider.getName();
+			}
+			
+			sb.append(providers);
+		}
+	}
+	
 	@Override
 	public int doEndTag() {
 		reset();
@@ -280,6 +316,7 @@ public class FormatTag extends TagSupport {
 		visitTypeId = null;
 		visitId = null;
 		visit = null;
+		encounterProviders = null;
 	}
 	
 	public Integer getConceptId() {
@@ -498,5 +535,21 @@ public class FormatTag extends TagSupport {
 	 */
 	public void setJavaScriptEscape(Boolean javaScriptEscape) {
 		this.javaScriptEscape = javaScriptEscape;
+	}
+	
+	/**
+	 * @since 1.9
+	 * @param encounterProviders the encounterProviders to set
+	 */
+	public Set<EncounterProvider> getEncounterProviders() {
+		return encounterProviders;
+	}
+	
+	/**
+	 * @since 1.9
+	 * @return the encounterProviders
+	 */
+	public void setEncounterProviders(Set<EncounterProvider> encounterProviders) {
+		this.encounterProviders = encounterProviders;
 	}
 }
