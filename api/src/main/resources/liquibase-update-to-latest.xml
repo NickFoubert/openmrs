@@ -4751,9 +4751,9 @@
 				from person as person inner join encounter as encounter
 				on encounter.provider_id = person.person_id;
 			
-			insert into encounter_provider(provider_id, encounter_id, encounter_role_id, creator, date_created, voided) 
+			insert into encounter_provider(provider_id, encounter_id, encounter_role_id, creator, date_created, voided, uuid) 
 				select provider.provider_id, encounter.encounter_id, encounter_role.encounter_role_id, 
-					encounter.creator, encounter.date_created, encounter.voided
+					encounter.creator, encounter.date_created, encounter.voided, uuid()
 				from encounter as encounter 
 					inner join encounter_role as encounter_role 
 						on encounter_role.uuid = "a0b03050-c99b-11e0-9572-0800200c9a66"
