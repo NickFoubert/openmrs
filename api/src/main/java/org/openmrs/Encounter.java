@@ -54,7 +54,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	private EncounterType encounterType;
 	
 	@Deprecated
-	private Person provider;
+	private Person provider; //TODO: remove
 	
 	private Set<Order> orders;
 	
