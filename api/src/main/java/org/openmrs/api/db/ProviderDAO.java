@@ -13,6 +13,7 @@
  */
 package org.openmrs.api.db;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -59,9 +60,9 @@ public interface ProviderDAO {
 	public Provider getProviderByUuid(String uuid);
 	
 	/**
-	 * @see ProviderService#getProviderByPerson(Person)
+	 * @see ProviderService#getProvidersByPerson(Person)
 	 */
-	public Provider getProviderByPerson(Person person);
+	public Collection<Provider> getProvidersByPerson(Person person);
 	
 	/**
 	 * 

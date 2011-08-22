@@ -13,6 +13,7 @@
  */
 package org.openmrs.api.db.hibernate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -93,13 +94,16 @@ public class HibernateProviderDAO implements ProviderDAO {
 	}
 	
 	/**
-	 * @see org.openmrs.api.db.ProviderDAO#getProviderByPerson(org.openmrs.Person)
+	 * @see org.openmrs.api.db.ProviderDAO#getProvidersByPerson(org.openmrs.Person)
 	 */
 	@Override
-	public Provider getProviderByPerson(Person person) {
+	public Collection<Provider> getProvidersByPerson(Person person) {
 		Criteria criteria = getSession().createCriteria(Provider.class);
 		criteria.add(Restrictions.eq("person", person));
-		return (Provider) criteria.uniqueResult();
+		criteria.addOrder(Order.asc("providerId"));
+		@SuppressWarnings("unchecked")
+		List<Provider> list = criteria.list();
+		return list;
 	}
 	
 	/**
@@ -138,7 +142,7 @@ public class HibernateProviderDAO implements ProviderDAO {
 	 * Creates a Provider Criteria based on name
 	 * 
 	 * @param name represents provider name
-	 * @return Criteria represents the hibernate criteria to search 
+	 * @return Criteria represents the hibernate criteria to search
 	 */
 	private Criteria prepareProviderCriteria(String name) {
 		

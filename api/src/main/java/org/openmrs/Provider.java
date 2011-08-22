@@ -29,6 +29,13 @@ public class Provider extends BaseCustomizableMetadata<ProviderAttribute> {
 	
 	private String identifier;
 	
+	public Provider() {
+	}
+	
+	public Provider(Integer providerId) {
+		this.providerId = providerId;
+	}
+	
 	/**
 	 * @see org.openmrs.OpenmrsObject#getId()
 	 */

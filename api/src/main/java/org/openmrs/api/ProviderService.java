@@ -13,6 +13,7 @@
  */
 package org.openmrs.api;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public interface ProviderService extends OpenmrsService {
 	 */
 	
 	@Transactional(readOnly = true)
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
 	public List<Provider> getAllProviders();
 	
 	/**
@@ -51,7 +52,7 @@ public interface ProviderService extends OpenmrsService {
 	 * @should get all providers that are unretired
 	 */
 	@Transactional(readOnly = true)
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
 	public List<Provider> getAllProviders(boolean includeRetired);
 	
 	/**
@@ -90,7 +91,7 @@ public interface ProviderService extends OpenmrsService {
 	 * @should get provider given ID
 	 */
 	@Transactional(readOnly = true)
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
 	public Provider getProvider(Integer providerId);
 	
 	/**
@@ -98,7 +99,6 @@ public interface ProviderService extends OpenmrsService {
 	 * @return the Provider object after saving it in the database
 	 * @should save a Provider with provider name alone
 	 * @should save a Provider with Person alone
-	 * @should update provider if provider for given person exists
 	 * @should not save a Provider with both name and person
 	 * @should not save a Provider with both name and person being null
 	 */
@@ -111,23 +111,20 @@ public interface ProviderService extends OpenmrsService {
 	 * @should get provider given Uuid
 	 */
 	@Transactional(readOnly = true)
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
 	public Provider getProviderbyUuid(String uuid);
 	
 	/**
-	 * Gets a provider for the given person.
-	 * <p>
-	 * It can be only one provider for a person.
+	 * Gets the Providers for the given person.
 	 * 
 	 * @param person
-	 * @return provider or null if does not exist
-	 * @should return provider for given person
-	 * @should return null if provider does not exist
+	 * @return providers or empty collection
+	 * @should return providers for given person
 	 * @should fail if person is null
 	 */
-	@Transactional
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
-	public Provider getProviderByPerson(Person person);
+	@Transactional(readOnly = true)
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
+	public Collection<Provider> getProvidersByPerson(Person person);
 	
 	/**
 	 * @param query
@@ -149,7 +146,7 @@ public interface ProviderService extends OpenmrsService {
 	 * @should not find any visits if none have given attribute values
 	 */
 	@Transactional(readOnly = true)
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
 	public List<Provider> getProviders(String query, Integer start, Integer length,
 	        Map<ProviderAttributeType, Object> attributes);
 	
@@ -159,12 +156,12 @@ public interface ProviderService extends OpenmrsService {
 	 * @should fetch number of provider matching given query.
 	 */
 	@Transactional(readOnly = true)
-	@Authorized( { PrivilegeConstants.VIEW_PROVIDER })
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
 	public Integer getCountOfProviders(String query);
 	
 	/**
-	 * Gets all provider attribute types including retired provider attribute types. This method delegates to the
-	 * #getAllProviderAttributeTypes(boolean) method
+	 * Gets all provider attribute types including retired provider attribute types. This method
+	 * delegates to the #getAllProviderAttributeTypes(boolean) method
 	 * 
 	 * @return a list of provider attribute type objects.
 	 * @should get all provider attribute types including retired by default
@@ -174,7 +171,7 @@ public interface ProviderService extends OpenmrsService {
 	
 	/**
 	 * Gets all provider attribute types optionally including retired provider attribute types.
-	 *
+	 * 
 	 * @param includeRetired boolean value to indicate whether to include retired records or not
 	 * @return a list of provider attribute type objects.
 	 * @should get all provider attribute types excluding retired
@@ -203,7 +200,7 @@ public interface ProviderService extends OpenmrsService {
 	
 	/**
 	 * Get a provider attribute by it's providerAttributeID
-	 *
+	 * 
 	 * @param providerAttributeID the provider attribute ID of the providerAttribute
 	 * @return the provider attribute for the given providerAttributeID
 	 * @should get the provider attribute by it's providerAttributeID
@@ -212,7 +209,7 @@ public interface ProviderService extends OpenmrsService {
 	
 	/**
 	 * Get a provider attribute by it's providerAttributeUuid
-	 *
+	 * 
 	 * @param uuid the provider attribute uuid of the providerAttribute
 	 * @return the provider attribute for the given providerAttributeUuid
 	 * @should get the provider attribute by it's providerAttributeUuid
@@ -221,7 +218,7 @@ public interface ProviderService extends OpenmrsService {
 	
 	/**
 	 * Save the provider attribute type
-	 *
+	 * 
 	 * @param providerAttributeType the provider attribute type to be saved
 	 * @return the saved provider attribute type
 	 * @should save the provider attribute type

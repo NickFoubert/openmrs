@@ -84,7 +84,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		encounter.setEncounterType(new EncounterType(1));
 		encounter.setEncounterDatetime(new Date());
 		encounter.setPatient(new Patient(3));
-		encounter.setProvider(Context.getPersonService().getPerson(1));
+		encounter.addProvider(new EncounterRole(1), new Provider(1));
 		
 		EncounterService es = Context.getEncounterService();
 		es.saveEncounter(encounter);
@@ -157,7 +157,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		enc.setEncounterType(new EncounterType(1));
 		enc.setEncounterDatetime(new Date());
 		enc.setPatient(new Patient(3));
-		enc.setProvider(Context.getPersonService().getPerson(1));
+		enc.addProvider(new EncounterRole(1), new Provider(1));
 		es.saveEncounter(enc);
 		
 		// Now add an obs to it
@@ -188,7 +188,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		enc.setEncounterType(new EncounterType(1));
 		enc.setEncounterDatetime(new Date());
 		enc.setPatient(new Patient(3));
-		enc.setProvider(Context.getPersonService().getPerson(1));
+		enc.addProvider(new EncounterRole(1), new Provider(1));
 		es.saveEncounter(enc);
 		
 		// Now add an obs to it
@@ -223,7 +223,8 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		enc.setEncounterType(new EncounterType(1));
 		enc.setEncounterDatetime(new Date());
 		enc.setPatient(new Patient(3));
-		enc.setProvider(Context.getPersonService().getPerson(1));
+		enc.addProvider(new EncounterRole(1), new Provider(1));
+		;
 		es.saveEncounter(enc);
 		
 		// Now add an obs to it
@@ -824,7 +825,7 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		providers.add(new User(1));
 		List<Encounter> encounters = Context.getEncounterService().getEncounters(null, null, null, null, null, null,
 		    providers, true);
-		assertEquals(3, encounters.size());
+		assertEquals(2, encounters.size());
 	}
 	
 	/**

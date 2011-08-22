@@ -4740,9 +4740,9 @@
     </changeSet>
     
     <changeSet id="20110819-1500-migrate-providers-to-encounter-provider-table" author="raff">
-    	<!-- <preConditions onFail="MARK_RAN">
+    	<preConditions onFail="MARK_RAN">
 			<columnExists tableName="encounter" columnName="provider_id"/>
-		</preConditions> -->
+		</preConditions>
 		<comment>Migrating providers from the encounter table to the encounter provider table</comment>
 		<sql>
 			insert into provider(person_id, creator, date_created, retired, uuid)
@@ -4758,7 +4758,8 @@
 						on encounter_role.uuid = "a0b03050-c99b-11e0-9572-0800200c9a66"
 					inner join provider as provider on encounter.provider_id = provider.person_id;
         </sql>
-        <!-- <dropColumn tableName="encounter" columnName="provider_id"/> I'm not sure yet if we drop it -->
+        <dropForeignKeyConstraint baseTableName="encounter" constraintName="encounter_provider"/>
+        <dropColumn tableName="encounter" columnName="provider_id"/>
 	</changeSet>
     
 </databaseChangeLog>

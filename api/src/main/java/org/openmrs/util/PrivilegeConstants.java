@@ -427,7 +427,7 @@ public class PrivilegeConstants {
 	public static final String DASHBOARD_VISITS = "Patient Dashboard - View Visits Section";
 	
 	@AddOnStartup(description = "Able to view Provider")
-	public static final String VIEW_PROVIDER = "View Providers";
+	public static final String VIEW_PROVIDERS = "View Providers";
 	
 	@AddOnStartup(description = "Able to edit Provider")
 	public static final String EDIT_PROVIDER = "Edit Providers";

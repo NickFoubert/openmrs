@@ -136,7 +136,9 @@ public class HibernateEncounterDAO implements EncounterDAO {
 			crit.add(Expression.in("encounterType", encounterTypes));
 		}
 		if (providers != null && providers.size() > 0) {
-			crit.add(Expression.in("provider", providers));
+			crit.createAlias("encounterProviders", "ep");
+			crit.createAlias("ep.provider", "epp");
+			crit.add(Expression.in("epp.person", providers));
 		}
 		if (visitTypes != null && visitTypes.size() > 0) {
 			crit.createAlias("visit", "v");

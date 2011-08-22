@@ -13,6 +13,7 @@
  */
 package org.openmrs.api.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -94,23 +95,10 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	}
 	
 	/**
-	 * @throws Exception
 	 * @see org.openmrs.api.ProviderService#saveProvider(org.openmrs.Provider)
 	 */
 	@Override
 	public Provider saveProvider(Provider provider) {
-		if (provider.getPerson() != null) {
-			//If the person was persisted
-			if (provider.getPerson().getId() != null) {
-				Provider providerDb = dao.getProviderByPerson(provider.getPerson());
-				if (providerDb != null) {
-					//Update existing provider
-					provider.setProviderId(providerDb.getProviderId());
-					//Clean up
-					Context.evictFromSession(providerDb);
-				}
-			}
-		}
 		return dao.saveProvider(provider);
 	}
 	
@@ -123,12 +111,12 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	}
 	
 	/**
-	 * @see org.openmrs.api.ProviderService#getProviderByPerson(org.openmrs.Person)
+	 * @see org.openmrs.api.ProviderService#getProvidersByPerson(org.openmrs.Person)
 	 */
 	@Override
-	public Provider getProviderByPerson(Person person) {
+	public Collection<Provider> getProvidersByPerson(Person person) {
 		Validate.notNull(person, "Person must not be null");
-		return dao.getProviderByPerson(person);
+		return dao.getProvidersByPerson(person);
 	}
 	
 	/**

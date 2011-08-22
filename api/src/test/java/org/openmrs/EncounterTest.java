@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -1214,46 +1215,6 @@ public class EncounterTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see Encounter#setProvider(Person)
-	 * @verifies create provider for person if it does not exist
-	 */
-	@Test
-	public void setProvider_shouldCreateProviderForPersonIfItDoesNotExist() throws Exception {
-		//given
-		Encounter encounter = new Encounter();
-		Person person = Context.getPersonService().getPerson(1);
-		Assert.assertNull("Provider", Context.getProviderService().getProviderByPerson(person));
-		EncounterRole role = Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
-		Assert.assertNotNull("Unknown role", role);
-		
-		//when
-		encounter.setProvider(person);
-		
-		//then
-		Provider provider = Context.getProviderService().getProviderByPerson(person);
-		Assert.assertNotNull(provider);
-		Assert.assertTrue(encounter.getProvidersByRole(role).contains(provider));
-	}
-	
-	/**
-	 * @see Encounter#setProvider(Person)
-	 * @verifies fail if there is no unknown role
-	 */
-	@Test(expected = IllegalStateException.class)
-	public void setProvider_shouldFailIfThereIsNoUnknownRole() throws Exception {
-		//given
-		Encounter encounter = new Encounter();
-		Context.getEncounterService().purgeEncounterRole(
-		    Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID));
-		
-		//when
-		encounter.setProvider(new Person());
-		
-		//then
-		Assert.fail();
-	}
-	
-	/**
-	 * @see Encounter#setProvider(Person)
 	 * @verifies set existing provider for unknown role
 	 */
 	@Test
@@ -1262,9 +1223,7 @@ public class EncounterTest extends BaseContextSensitiveTest {
 		Encounter encounter = new Encounter();
 		
 		Person person = Context.getPersonService().getPerson(1);
-		Provider provider = new Provider();
-		provider.setPerson(person);
-		provider = Context.getProviderService().saveProvider(provider);
+		Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(person);
 		
 		EncounterRole role = Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		Assert.assertNotNull("Unknown role", role);
@@ -1274,7 +1233,7 @@ public class EncounterTest extends BaseContextSensitiveTest {
 		
 		//then
 		Assert.assertEquals(1, encounter.getProvidersByRole(role).size());
-		Assert.assertTrue(encounter.getProvidersByRole(role).contains(provider));
+		Assert.assertTrue(encounter.getProvidersByRole(role).contains(providers.iterator().next()));
 	}
 	
 }

@@ -14,10 +14,12 @@
 package org.openmrs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,16 +55,13 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	
 	private EncounterType encounterType;
 	
-	@Deprecated
-	private Person provider; //TODO: remove
-	
 	private Set<Order> orders;
 	
 	private Set<Obs> obs;
 	
 	private Visit visit;
 	
-	private Set<EncounterProvider> encounterProviders = new HashSet<EncounterProvider>();
+	private Set<EncounterProvider> encounterProviders = new LinkedHashSet<EncounterProvider>();
 	
 	// Constructors
 	
@@ -445,23 +444,19 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	 * @param provider The provider to set.
 	 * @deprecated since 1.9, use {@link #setProvider(EncounterRole, Provider)}
 	 * @should set existing provider for unknown role
-	 * @should fail if there is no unknown role
-	 * @should create provider for person if it does not exist
 	 */
 	public void setProvider(Person provider) {
 		EncounterRole unknownRole = Context.getEncounterService().getEncounterRoleByUuid(
 		    EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 		if (unknownRole == null) {
-			throw new IllegalStateException("There is no 'Unknown' encounter role with uuid "
+			throw new IllegalStateException("No 'Unknown' encounter role with uuid "
 			        + EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID + ".");
 		}
-		Provider personProvider = Context.getProviderService().getProviderByPerson(provider);
-		if (personProvider == null) {
-			personProvider = new Provider();
-			personProvider.setPerson(provider);
-			personProvider = Context.getProviderService().saveProvider(personProvider);
+		Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(provider);
+		if (providers == null || providers.isEmpty()) {
+			throw new IllegalArgumentException("No provider with personId " + provider.getPersonId());
 		}
-		setProvider(unknownRole, personProvider);
+		setProvider(unknownRole, providers.iterator().next());
 	}
 	
 	/**
@@ -535,7 +530,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	}
 	
 	/**
-	 * Gets all roles and providers
+	 * Gets all providers, grouped by role.
 	 * 
 	 * @return map of providers keyed by roles
 	 * @should return empty map if no providers
@@ -546,7 +541,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 		for (EncounterProvider encounterProvider : encounterProviders) {
 			Set<Provider> list = providers.get(encounterProvider.getEncounterRole());
 			if (list == null) {
-				list = new HashSet<Provider>();
+				list = new LinkedHashSet<Provider>();
 				providers.put(encounterProvider.getEncounterRole(), list);
 			}
 			list.add(encounterProvider.getProvider());
@@ -555,7 +550,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	}
 	
 	/**
-	 * Gets providers for the given role.
+	 * Gets providers who had the given role in this encounter.
 	 * 
 	 * @param role
 	 * @return providers or empty set if none was found
@@ -564,7 +559,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	 * @should return empty set for null role
 	 */
 	public Set<Provider> getProvidersByRole(EncounterRole role) {
-		Set<Provider> providers = new HashSet<Provider>();
+		Set<Provider> providers = new LinkedHashSet<Provider>();
 		for (EncounterProvider encounterProvider : encounterProviders) {
 			if (encounterProvider.getEncounterRole().equals(role)) {
 				providers.add(encounterProvider.getProvider());
@@ -574,7 +569,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	}
 	
 	/**
-	 * Adds the provider for the given role, if it was not added before.
+	 * Adds a new provider for the encounter, with the given role.
 	 * 
 	 * @param role
 	 * @param provider
@@ -593,7 +588,7 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 	/**
 	 * Sets the provider for the given role.
 	 * <p>
-	 * It clears all providers for the given role and adds the given provider.
+	 * If the encounter already had any providers for the given role, those are removed.
 	 * 
 	 * @param role
 	 * @param provider

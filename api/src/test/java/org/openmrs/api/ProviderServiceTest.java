@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -200,8 +201,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies force search string to be greater than minsearchcharacters
-	 *           global property
+	 * @verifies force search string to be greater than minsearchcharacters global property
 	 */
 	@Test
 	public void getProviders_shouldForceSearchStringToBeGreaterThanMinsearchcharactersGlobalProperty() throws Exception {
@@ -252,8 +252,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies fetch provider by matching query string with any unVoided
-	 *           PersonName's Given Name
+	 * @verifies fetch provider by matching query string with any unVoided PersonName's Given Name
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonNamesGivenName() throws Exception {
@@ -262,8 +261,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies fetch provider by matching query string with any unVoided
-	 *           PersonName's middleName
+	 * @verifies fetch provider by matching query string with any unVoided PersonName's middleName
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonNamesMiddleName() throws Exception {
@@ -272,8 +270,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies fetch provider by matching query string with any unVoided
-	 *           Person's familyName
+	 * @verifies fetch provider by matching query string with any unVoided Person's familyName
 	 */
 	@Test
 	public void getProviders_shouldFetchProviderByMatchingQueryStringWithAnyUnVoidedPersonsFamilyName() throws Exception {
@@ -282,8 +279,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies not fetch provider if the query string matches with any voided
-	 *           Person name for that
+	 * @verifies not fetch provider if the query string matches with any voided Person name for that
 	 */
 	@Test
 	public void getProviders_shouldNotFetchProviderIfTheQueryStringMatchesWithAnyVoidedPersonNameForThat() throws Exception {
@@ -297,7 +293,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	 */
 	@Test
 	public void purgeProvider_shouldDeleteAProvider() throws Exception {
-		Provider provider = service.getProvider(1);
+		Provider provider = service.getProvider(2);
 		service.purgeProvider(provider);
 		assertEquals(7, Context.getProviderService().getAllProviders().size());
 	}
@@ -445,42 +441,26 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see ProviderService#getProviderByPerson(Person)
+	 * @see ProviderService#getProvidersByPerson(Person)
 	 * @verifies fail if person is null
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void getProviderByPerson_shouldFailIfPersonIsNull() throws Exception {
+	public void getProvidersByPerson_shouldFailIfPersonIsNull() throws Exception {
 		//given
 		
 		//when
-		service.getProviderByPerson(null);
+		service.getProvidersByPerson(null);
 		
 		//then
 		Assert.fail();
 	}
 	
 	/**
-	 * @see ProviderService#getProviderByPerson(Person)
-	 * @verifies return null if provider does not exist
-	 */
-	@Test
-	public void getProviderByPerson_shouldReturnNullIfProviderDoesNotExist() throws Exception {
-		//given
-		Person person = Context.getPersonService().getPerson(999);
-		
-		//when
-		Provider provider = service.getProviderByPerson(person);
-		
-		//then
-		Assert.assertNull(provider);
-	}
-	
-	/**
-	 * @see ProviderService#getProviderByPerson(Person)
+	 * @see ProviderService#getProvidersByPerson(Person)
 	 * @verifies return provider for given person
 	 */
 	@Test
-	public void getProviderByPerson_shouldReturnProviderForGivenPerson() throws Exception {
+	public void getProvidersByPerson_shouldReturnProvidersForGivenPerson() throws Exception {
 		//given
 		Person person = Context.getPersonService().getPerson(999);
 		Provider provider = new Provider();
@@ -488,35 +468,10 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		provider = service.saveProvider(provider);
 		
 		//when
-		Provider provider2 = service.getProviderByPerson(person);
+		Collection<Provider> providers = service.getProvidersByPerson(person);
 		
 		//then
-		Assert.assertEquals(provider, provider2);
+		Assert.assertEquals(1, providers.size());
+		Assert.assertTrue(providers.contains(provider));
 	}
-	
-	/**
-	 * @see ProviderService#saveProvider(Provider)
-	 * @verifies update provider if provider for given person exists
-	 */
-	@Test
-	public void saveProvider_shouldUpdateProviderIfProviderForGivenPersonExists() throws Exception {
-		//given
-		Person person = Context.getPersonService().getPerson(999);
-		Provider provider = new Provider();
-		provider.setPerson(person);
-		provider = service.saveProvider(provider);
-		//clean up the session after save
-		Context.flushSession();
-		Context.clearSession();
-		
-		Provider provider2 = new Provider();
-		provider2.setPerson(person);
-		
-		//when
-		provider2 = service.saveProvider(provider2);
-		
-		//then
-		Assert.assertEquals(provider.getId(), provider2.getId());
-	}
-	
 }
