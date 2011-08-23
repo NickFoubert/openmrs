@@ -4729,7 +4729,7 @@
 				select count(*) from encounter_role where uuid = 'a0b03050-c99b-11e0-9572-0800200c9a66'
 			</sqlCheck>
 		</preConditions>
-    	<comment>Inserting the unknown encounter role into the encounter role table</comment>
+    	<comment>Inserting the unknown encounter role into the encounter_role table</comment>
 		<insert tableName="encounter_role">
 			<column name="name" value="Unknown"/>
 			<column name="description" value="Unknown encounter role for legacy providers with no encounter role set"/>
@@ -4742,9 +4742,10 @@
     
     <changeSet id="20110819-1500-migrate-providers-to-encounter-provider-table" author="raff">
     	<preConditions onFail="MARK_RAN">
-			<columnExists tableName="encounter" columnName="provider_id"/>
+			<not><changeSetExecuted id="20110823-1000-drop-provider-id-column-from-encounter-table" 
+					author="raff" changeLogFile="liquibase-update-to-latest.xml" /></not>
 		</preConditions>
-		<comment>Migrating providers from the encounter table to the encounter provider table</comment>
+		<comment>Migrating providers from the encounter table to the encounter_provider table</comment>
 		<sql>
 			insert into provider(person_id, creator, date_created, retired, uuid)
 				select distinct person.person_id, 1, now(), person.voided, uuid()
@@ -4759,7 +4760,14 @@
 						on encounter_role.uuid = "a0b03050-c99b-11e0-9572-0800200c9a66"
 					inner join provider as provider on encounter.provider_id = provider.person_id;
         </sql>
-        <dropForeignKeyConstraint baseTableName="encounter" constraintName="encounter_provider"/>
+	</changeSet>
+	
+	<changeSet id="20110823-1000-drop-provider-id-column-from-encounter-table" author="raff">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="encounter" columnName="provider_id"/>
+		</preConditions>
+		<comment>Dropping the provider_id column from the encounter table</comment>
+		<dropForeignKeyConstraint baseTableName="encounter" constraintName="encounter_provider"/>
         <dropColumn tableName="encounter" columnName="provider_id"/>
 	</changeSet>
     
