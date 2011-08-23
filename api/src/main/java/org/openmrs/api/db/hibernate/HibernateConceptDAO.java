@@ -520,6 +520,9 @@ public class HibernateConceptDAO implements ConceptDAO {
 	@SuppressWarnings("unchecked")
 	public List<Concept> getConcepts(String name, Locale loc, boolean searchOnPhrase, List<ConceptClass> classes,
 	        List<ConceptDatatype> datatypes) throws DAOException {
+		if (name.isEmpty()) {
+			name = "%"; // match all
+		}
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Concept.class);
 		
@@ -1342,6 +1345,10 @@ public class HibernateConceptDAO implements ConceptDAO {
 	public Integer getCountOfConceptWords(String phrase, List<Locale> locales, boolean includeRetired,
 	        List<ConceptClass> requireClasses, List<ConceptClass> excludeClasses, List<ConceptDatatype> requireDatatypes,
 	        List<ConceptDatatype> excludeDatatypes, Concept answersToConcept, boolean forUniqueConcepts) {
+		if (phrase.isEmpty()) {
+			phrase = "%"; // match all
+		}
+		
 		Criteria searchCriteria = createConceptWordSearchCriteria(phrase, locales, includeRetired, requireClasses,
 		    excludeClasses, requireDatatypes, excludeDatatypes, answersToConcept);
 		if (searchCriteria != null) {
@@ -1519,6 +1526,9 @@ public class HibernateConceptDAO implements ConceptDAO {
 	        List<ConceptClass> requireClasses, List<ConceptClass> excludeClasses, List<ConceptDatatype> requireDatatypes,
 	        List<ConceptDatatype> excludeDatatypes, Concept answersToConcept, Integer start, Integer size)
 	        throws DAOException {
+		if (phrase.isEmpty()) {
+			phrase = "%"; // match all
+		}
 		
 		Criteria searchCriteria = createConceptWordSearchCriteria(phrase, locales, includeRetired, requireClasses,
 		    excludeClasses, requireDatatypes, excludeDatatypes, answersToConcept);
