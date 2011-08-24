@@ -145,6 +145,9 @@ public class HibernateProviderDAO implements ProviderDAO {
 	 * @return Criteria represents the hibernate criteria to search
 	 */
 	private Criteria prepareProviderCriteria(String name) {
+		if (name.isEmpty()) {
+			name = "%";
+		}
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Provider.class).createAlias("person", "p",
 		    Criteria.LEFT_JOIN);

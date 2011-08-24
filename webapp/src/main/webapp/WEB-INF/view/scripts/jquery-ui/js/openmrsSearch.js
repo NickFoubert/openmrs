@@ -406,8 +406,12 @@ function OpenmrsSearch(div, showIncludeVoided, searchHandler, selectionHandler, 
 				else
 					self._table.numberOfPages = Math.floor(initialRowCount/self._table.fnSettings()._iDisplayLength)+1;
 				
-		    }else if(self.options.searchPhrase || self.options.doSearchWhenEmpty)
+		    } else if(self.options.searchPhrase || self.options.doSearchWhenEmpty) {
+		    	if (self.options.searchPhrase == null) {
+		    		self.options.searchPhrase = "";
+		    	}
 		    	$j(input).val(self.options.searchPhrase).keyup();
+		    }
 		},
 		
 		_makeColumns: function() {

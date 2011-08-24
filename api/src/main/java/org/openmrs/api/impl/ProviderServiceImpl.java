@@ -14,11 +14,9 @@
 package org.openmrs.api.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.openmrs.Person;
 import org.openmrs.Provider;
@@ -28,7 +26,6 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.ProviderDAO;
 import org.openmrs.attribute.AttributeType;
-import org.openmrs.util.OpenmrsConstants;
 
 /**
  * Default implementation of the {@link ProviderService}. This class should not be used on its own.
@@ -124,9 +121,6 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	 */
 	@Override
 	public Integer getCountOfProviders(String query) {
-		if (StringUtils.isBlank(query) || query.length() < getMinSearchCharacters()) {
-			return 0;
-		}
 		return dao.getCountOfProviders(query);
 	}
 	
@@ -136,32 +130,9 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	@Override
 	public List<Provider> getProviders(String query, Integer start, Integer length,
 	        Map<ProviderAttributeType, Object> attributeValues) {
-		if (StringUtils.isBlank(query) || query.length() < getMinSearchCharacters()) {
-			return Collections.emptyList();
-		}
 		Map<AttributeType, String> serializedAttributeValues = Context.getAttributeService().getSerializedAttributeValues(
 		    attributeValues);
 		return dao.getProviders(query, serializedAttributeValues, start, length);
-	}
-	
-	/**
-	 * Method returns the minimum number of search characters
-	 * 
-	 * @return the value of min search characters
-	 */
-	private int getMinSearchCharacters() {
-		int minSearchCharacters = OpenmrsConstants.GLOBAL_PROPERTY_DEFAULT_MIN_SEARCH_CHARACTERS;
-		String minSearchCharactersStr = Context.getAdministrationService().getGlobalProperty(
-		    OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS);
-		
-		try {
-			minSearchCharacters = Integer.valueOf(minSearchCharactersStr);
-		}
-		catch (NumberFormatException e) {
-			//do nothing
-		}
-		
-		return minSearchCharacters;
 	}
 	
 	/**
