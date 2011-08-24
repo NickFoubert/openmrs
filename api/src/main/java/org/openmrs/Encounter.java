@@ -604,12 +604,4 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 		}
 		addProvider(role, provider);
 	}
-	
-	public Set<EncounterProvider> getEncounterProviders() {
-		return encounterProviders;
-	}
-	
-	public void setEncounterProviders(Set<EncounterProvider> encounterProviders) {
-		this.encounterProviders = encounterProviders;
-	}
 }

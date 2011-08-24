@@ -874,6 +874,12 @@ public final class OpenmrsConstants {
 	public static final String GP_SEARCH_WIDGET_DELAY_INTERVAL = "searchWidget.searchDelayInterval";
 	
 	/**
+	 * Global property name for the encounter roles to display on the provider column of the patient 
+	 * dashboard under the encounters tab.
+	 */
+	public static final String GP_DASHBOARD_PROVIDER_DISPLAY_ENCOUNTER_ROLES = "dashboard.encounters.providerDisplayRoles";
+	
+	/**
 	 * Encryption properties; both vector and key are required to utilize a two-way encryption
 	 */
 	public static final String ENCRYPTION_CIPHER_CONFIGURATION = "AES/CBC/PKCS5Padding";
@@ -1226,6 +1232,12 @@ public final class OpenmrsConstants {
 		                "START",
 		                "Specifies how patient names are matched while searching patient. Valid values are 'ANYWHERE' or 'START'. Defaults to start if missing or invalid value is present."));
 		
+		props
+        .add(new GlobalProperty(
+        		GP_DASHBOARD_PROVIDER_DISPLAY_ENCOUNTER_ROLES,
+                "",
+                "Specifies a comma separated list of encounter roles whose providers to display under the encounter tab of the patient dashbaord."));
+
 		for (GlobalProperty gp : ModuleFactory.getGlobalProperties()) {
 			props.add(gp);
 		}

@@ -14,7 +14,10 @@
 package org.openmrs.web.taglib;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.jsp.tagext.TagSupport;
@@ -23,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
-import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -36,6 +39,7 @@ import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.JavaScriptUtils;
 
@@ -98,7 +102,11 @@ public class FormatTag extends TagSupport {
 	
 	private Boolean javaScriptEscape = Boolean.FALSE;
 	
-	private Set<EncounterProvider> encounterProviders;
+	private Integer providerId;
+	
+	private Provider provider;
+	
+	private Map<EncounterRole, Set<Provider>> encounterProviders;
 	
 	@Override
 	public int doStartTag() {
@@ -177,6 +185,11 @@ public class FormatTag extends TagSupport {
 				printConcept(sb, program.getConcept());
 			}
 		}
+		
+		if (providerId != null)
+			provider = Context.getProviderService().getProvider(providerId);
+		if (provider != null)
+			printProvider(sb, provider);
 		
 		if (encounterProviders != null) {
 			printEncounterProviders(sb, encounterProviders);
@@ -263,30 +276,136 @@ public class FormatTag extends TagSupport {
 	}
 	
 	/**
+	 * formats a provider and prints him or her to a string builder
+	 * 
+	 * @param sb the string builder
+	 * @param p the provider
+	 */
+	private void printProvider(StringBuilder sb, Provider p) {
+		if (p != null)
+			sb.append(getProviderName(p));
+	}
+	
+	/**
 	 * formats encounter providers and prints them to a string builder
 	 * 
 	 * @param sb the string builder
 	 * @param eps the encounter providers.
 	 */
-	private void printEncounterProviders(StringBuilder sb, Set<EncounterProvider> eps) {
+	private void printEncounterProviders(StringBuilder sb, Map<EncounterRole, Set<Provider>> eps) {
 		if (eps != null) {
 			
+			List<Provider> providerList = getDisplayEncounterProviders(eps);
+			
 			String providers = null;
-			for (EncounterProvider ep : eps) {
-				if (providers == null)
+			for (Provider provider : providerList) {
+				if (providers == null) {
 					providers = "";
-				else
+				} else {
 					providers += ", ";
+				}
 				
-				Provider provider = ep.getProvider();
-				if (provider.getPerson() != null)
-					providers += provider.getPerson().getPersonName();
-				else
-					providers += provider.getName();
+				providers += getProviderName(provider);
 			}
 			
-			sb.append(providers);
+			if (providers != null){
+				sb.append(providers);
+			}
 		}
+	}
+	
+	/**
+	 * Gets the name of a provider.
+	 * 
+	 * @param provider the provider.
+	 * @return the provider name.
+	 */
+	private String getProviderName(Provider provider) {
+		if (provider.getPerson() != null)
+			return provider.getPerson().getPersonName().toString();
+		else
+			return provider.getName();
+	}
+	
+	/**
+	 * Filters a list of encounter providers according to the global property 
+	 * which determines providers in which encounter roles to display.
+	 * 
+	 * @param eps the encounter providers to filter.
+	 * @return the filtered encounter providers.
+	 */
+	private List<Provider> getDisplayEncounterProviders(Map<EncounterRole, Set<Provider>> encounterProviders) {
+		String encounterRoles = Context.getAdministrationService().getGlobalProperty(
+		    OpenmrsConstants.GP_DASHBOARD_PROVIDER_DISPLAY_ENCOUNTER_ROLES, null);
+		
+		if (!StringUtils.hasText(encounterRoles)) {
+			
+			//we do not filter if user has not yet set the global property.
+			List<Provider> allProviders = new ArrayList<Provider>();
+			
+			Set<EncounterRole> roles = encounterProviders.keySet();
+			for (EncounterRole encounterRole : roles) {
+				allProviders.addAll(encounterProviders.get(encounterRole));
+			}
+			
+			return allProviders;
+		}
+		
+		return filterProviders(encounterProviders, trimStringArray(encounterRoles.split(",")));
+	}
+	
+	/**
+	 * Filters and returns a list of providers from an encounter role provider map.
+	 * The filtering is based on a given array of encounter roles names or ids.
+	 * 
+	 * @param encounterProviders map of encounter role providers to filter.
+	 * @param rolesArray the roles string array.
+	 * @return a filtered list of providers.
+	 */
+	private List<Provider> filterProviders(Map<EncounterRole, Set<Provider>> encounterProviders, String[] rolesArray) {
+		List<Provider> filteredProviders = new ArrayList<Provider>();
+		
+		Set<EncounterRole> roles = encounterProviders.keySet();
+		for (EncounterRole encounterRole : roles) {
+			if (containsRole(encounterRole, rolesArray)) {
+				filteredProviders.addAll(encounterProviders.get(encounterRole));
+			}
+		}
+		
+		return filteredProviders;
+	}
+	
+	/**
+	 * Checks if an encounter role has its name or id in a string array.
+	 * 
+	 * @param encounterRole the encounter role.
+	 * @param rolesArray the roles string array.
+	 * @return true if yes, else false.
+	 */
+	private boolean containsRole(EncounterRole encounterRole, String[] rolesArray) {
+		for (String role : rolesArray) {
+			//Check for name and id
+			if (role.equalsIgnoreCase(encounterRole.getName()) || role.equals(encounterRole.getId().toString())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Trims elements of a string array.
+	 * 
+	 * @param unTrimmedArray the un trimmed array.
+	 * @return the trimmed array.
+	 */
+	private String[] trimStringArray(String[] unTrimmedArray){
+		String[] trimmedArray = new String[unTrimmedArray.length];
+		for (int index = 0; index < unTrimmedArray.length; index++){
+			trimmedArray[index] = unTrimmedArray[index].trim();
+		}
+		
+		return trimmedArray;
 	}
 	
 	@Override
@@ -316,6 +435,8 @@ public class FormatTag extends TagSupport {
 		visitTypeId = null;
 		visitId = null;
 		visit = null;
+		providerId = null;
+		provider = null;
 		encounterProviders = null;
 	}
 	
@@ -541,7 +662,7 @@ public class FormatTag extends TagSupport {
 	 * @since 1.9
 	 * @param encounterProviders the encounterProviders to set
 	 */
-	public Set<EncounterProvider> getEncounterProviders() {
+	public Map<EncounterRole, Set<Provider>> getEncounterProviders() {
 		return encounterProviders;
 	}
 	
@@ -549,7 +670,7 @@ public class FormatTag extends TagSupport {
 	 * @since 1.9
 	 * @return the encounterProviders
 	 */
-	public void setEncounterProviders(Set<EncounterProvider> encounterProviders) {
+	public void setEncounterProviders(Map<EncounterRole, Set<Provider>> encounterProviders) {
 		this.encounterProviders = encounterProviders;
 	}
 }
