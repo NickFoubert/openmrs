@@ -1704,4 +1704,19 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		Assert.assertEquals(1, encounter.getProvidersByRole(role2).size());
 		Assert.assertTrue("Role2", encounter.getProvidersByRole(role2).contains(provider2));
 	}
+	
+	/**
+	 * @see EncounterService#getEncounters(String,Integer,Integer,boolean)
+	 * @verifies return empty list for empty query
+	 */
+	@Test
+	public void getEncounters_shouldReturnEmptyListForEmptyQuery() throws Exception {
+		//given
+		
+		//when
+		List<Encounter> encounters = Context.getEncounterService().getEncounters("", null, null, true);
+		
+		//then
+		Assert.assertTrue(encounters.isEmpty());
+	}
 }

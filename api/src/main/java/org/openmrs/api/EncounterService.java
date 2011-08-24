@@ -637,6 +637,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @since 1.8
 	 * @should get all the unique encounters that match the specified parameter values
 	 * @should not return voided encounters if includeVoided is set to true
+	 * @should return empty list for empty query
 	 */
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_ENCOUNTERS })

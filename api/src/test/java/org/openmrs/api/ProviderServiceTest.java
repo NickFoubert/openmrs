@@ -31,7 +31,6 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.GlobalProperty;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
@@ -39,7 +38,6 @@ import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
-import org.openmrs.util.OpenmrsConstants;
 
 /**
  * This test class (should) contain tests for all of the ProviderService
@@ -201,21 +199,6 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies force search string to be greater than minsearchcharacters global property
-	 */
-	@Test
-	public void getProviders_shouldForceSearchStringToBeGreaterThanMinsearchcharactersGlobalProperty() throws Exception {
-		assertEquals(2, service.getProviders("Ron", 0, null, null).size());
-		Context.clearSession();
-		Context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "4"));
-		
-		assertEquals(0, service.getProviders("Ron", 0, null, null).size());
-		assertEquals(2, service.getProviders("Rona", 0, null, null).size());
-	}
-	
-	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
 	 * @verifies fetch provider with given name with case in sensitive
 	 */
 	@Test
@@ -224,30 +207,6 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		provider.setName("Catherin");
 		service.saveProvider(provider);
 		assertEquals(1, service.getProviders("Cath", 0, null, null).size());
-	}
-	
-	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies not fail when minimum search characters is null
-	 */
-	@Test
-	public void getProviders_shouldNotFailWhenMinimumSearchCharactersIsNull() throws Exception {
-		Context.clearSession();
-		Context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, null));
-		assertEquals(2, service.getProviders("RON", 0, null, null).size());
-	}
-	
-	/**
-	 * @see ProviderService#getProviders(String, Integer, Integer, java.util.Map)
-	 * @verifies not fail when minimum search characters is invalid integer
-	 */
-	@Test
-	public void getProviders_shouldNotFailWhenMinimumSearchCharactersIsInvalidInteger() throws Exception {
-		Context.clearSession();
-		Context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS, "A"));
-		assertEquals(1, service.getProviders("ROg", 0, null, null).size());
 	}
 	
 	/**
@@ -473,5 +432,21 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		//then
 		Assert.assertEquals(1, providers.size());
 		Assert.assertTrue(providers.contains(provider));
+	}
+	
+	/**
+	 * @see ProviderService#getProviders(String,Integer,Integer,Map)
+	 * @verifies return all providers if query is empty
+	 */
+	@Test
+	public void getProviders_shouldReturnAllProvidersIfQueryIsEmpty() throws Exception {
+		//given
+		List<Provider> allProviders = service.getAllProviders();
+		
+		//when
+		List<Provider> providers = service.getProviders("", null, null, null);
+		
+		//then
+		Assert.assertEquals(allProviders.size(), providers.size());
 	}
 }

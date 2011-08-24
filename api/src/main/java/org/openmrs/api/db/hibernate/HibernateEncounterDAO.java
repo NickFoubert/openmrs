@@ -15,6 +15,7 @@ package org.openmrs.api.db.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -244,6 +245,10 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Encounter> getEncounters(String query, Integer start, Integer length, boolean includeVoided) {
+		if (query != null && query.isEmpty()) {
+			return Collections.emptyList();
+		}
+		
 		Criteria criteria = createEncounterByQueryCriteria(query, includeVoided);
 		
 		if (start != null)

@@ -132,11 +132,8 @@ public interface ProviderService extends OpenmrsService {
 	 * @param length
 	 * @param attributes
 	 * @return the list of Providers given the query , current page and page length
-	 * @should force search string to be greater than minsearchcharacters global property
 	 * @should fetch provider with given identifier with case in sensitive
 	 * @should fetch provider with given name with case in sensitive
-	 * @should not fail when minimum search characters is null
-	 * @should not fail when minimum search characters is invalid integer
 	 * @should fetch provider by matching query string with any unVoided PersonName's Given Name
 	 * @should fetch provider by matching query string with any unVoided PersonName's middleName
 	 * @should fetch provider by matching query string with any unVoided Person's familyName
@@ -144,6 +141,7 @@ public interface ProviderService extends OpenmrsService {
 	 *         Provider
 	 * @should get all visits with given attribute values
 	 * @should not find any visits if none have given attribute values
+	 * @should return all providers if query is empty
 	 */
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })

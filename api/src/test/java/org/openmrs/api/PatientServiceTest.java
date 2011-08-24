@@ -2382,4 +2382,19 @@ public class PatientServiceTest extends BaseContextSensitiveTest {
 		Context.getPatientService().savePatient(patient);
 		Assert.assertEquals(1, Context.getPatientService().getCountOfPatients("Hor").intValue());
 	}
+	
+	/**
+	 * @see PatientService#getPatients(String)
+	 * @verifies return empty list if given query length less than minimum search characters
+	 */
+	@Test
+	public void getPatients_shouldReturnEmptyListIfGivenQueryLengthLessThanMinimumSearchCharacters() throws Exception {
+		//given
+		
+		//when
+		List<Patient> patients = patientService.getPatients("", "", null, false);
+		
+		//then
+		Assert.assertTrue(patients.isEmpty());
+	}
 }
