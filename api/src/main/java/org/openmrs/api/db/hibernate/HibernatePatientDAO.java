@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -179,7 +180,7 @@ public class HibernatePatientDAO implements PatientDAO {
 	@SuppressWarnings("unchecked")
 	public List<Patient> getPatients(String name, String identifier, List<PatientIdentifierType> identifierTypes,
 	        boolean matchIdentifierExactly, Integer start, Integer length) throws DAOException {
-		if ((name != null && name.isEmpty()) && (identifier != null && identifier.isEmpty())) {
+		if (StringUtils.isWhitespace(name) && StringUtils.isWhitespace(identifier)) {
 			return Collections.emptyList();
 		}
 		

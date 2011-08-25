@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
@@ -145,7 +146,7 @@ public class HibernateProviderDAO implements ProviderDAO {
 	 * @return Criteria represents the hibernate criteria to search
 	 */
 	private Criteria prepareProviderCriteria(String name) {
-		if (name.isEmpty()) {
+		if (StringUtils.isWhitespace(name)) {
 			name = "%";
 		}
 		

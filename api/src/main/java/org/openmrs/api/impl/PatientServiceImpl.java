@@ -1431,7 +1431,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	@Override
 	public List<Patient> getPatients(String query, Integer start, Integer length) throws APIException {
 		List<Patient> patients = new Vector<Patient>();
-		if (StringUtils.isBlank(query))
+		if (query != null && query.isEmpty())
 			return patients;
 		
 		// if there is a number in the query string

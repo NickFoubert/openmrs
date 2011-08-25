@@ -2384,11 +2384,11 @@ public class PatientServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * @see PatientService#getPatients(String)
-	 * @verifies return empty list if given query length less than minimum search characters
+	 * @see PatientService#getPatients(String,String,List,boolean)
+	 * @verifies return empty list if name and identifier is empty
 	 */
 	@Test
-	public void getPatients_shouldReturnEmptyListIfGivenQueryLengthLessThanMinimumSearchCharacters() throws Exception {
+	public void getPatients_shouldReturnEmptyListIfNameAndIdentifierIsEmpty() throws Exception {
 		//given
 		
 		//when

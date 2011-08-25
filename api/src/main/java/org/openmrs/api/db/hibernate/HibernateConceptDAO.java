@@ -520,7 +520,7 @@ public class HibernateConceptDAO implements ConceptDAO {
 	@SuppressWarnings("unchecked")
 	public List<Concept> getConcepts(String name, Locale loc, boolean searchOnPhrase, List<ConceptClass> classes,
 	        List<ConceptDatatype> datatypes) throws DAOException {
-		if (name != null && name.isEmpty()) {
+		if (StringUtils.isWhitespace(name)) {
 			name = "%"; // match all
 		}
 		
@@ -1345,7 +1345,7 @@ public class HibernateConceptDAO implements ConceptDAO {
 	public Integer getCountOfConceptWords(String phrase, List<Locale> locales, boolean includeRetired,
 	        List<ConceptClass> requireClasses, List<ConceptClass> excludeClasses, List<ConceptDatatype> requireDatatypes,
 	        List<ConceptDatatype> excludeDatatypes, Concept answersToConcept, boolean forUniqueConcepts) {
-		if (phrase != null && phrase.isEmpty()) {
+		if (StringUtils.isWhitespace(phrase)) {
 			phrase = "%"; // match all
 		}
 		
@@ -1394,8 +1394,13 @@ public class HibernateConceptDAO implements ConceptDAO {
 		
 		locales.addAll(localesToAdd);
 		
-		//assumes getUniqueWords() removes quote(') characters.  (otherwise we would have a security leak)
-		List<String> words = ConceptWord.getUniqueWords(phrase);
+		List<String> words = new ArrayList<String>();
+		if (phrase.equals("%")) {
+			words.add(phrase);
+		} else {
+			//assumes getUniqueWords() removes quote(') characters.  (otherwise we would have a security leak)
+			words = ConceptWord.getUniqueWords(phrase);
+		}
 		
 		// these are the answers to restrict on
 		List<Concept> answers = new Vector<Concept>();
@@ -1526,7 +1531,7 @@ public class HibernateConceptDAO implements ConceptDAO {
 	        List<ConceptClass> requireClasses, List<ConceptClass> excludeClasses, List<ConceptDatatype> requireDatatypes,
 	        List<ConceptDatatype> excludeDatatypes, Concept answersToConcept, Integer start, Integer size)
 	        throws DAOException {
-		if (phrase != null && phrase.isEmpty()) {
+		if (StringUtils.isWhitespace(phrase)) {
 			phrase = "%"; // match all
 		}
 		

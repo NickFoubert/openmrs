@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -245,7 +246,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Encounter> getEncounters(String query, Integer start, Integer length, boolean includeVoided) {
-		if (query != null && query.isEmpty()) {
+		if (StringUtils.isWhitespace(query)) {
 			return Collections.emptyList();
 		}
 		
