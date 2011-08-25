@@ -4740,29 +4740,38 @@
 		</insert>
     </changeSet>
     
-    <changeSet id="20110819-1500-migrate-providers-to-encounter-provider-table" author="raff">
+    <changeSet id="20110825-1000-creating-providers-for-persons-from-encounter" author="raff">
     	<preConditions onFail="MARK_RAN">
-			<not><changeSetExecuted id="20110823-1000-drop-provider-id-column-from-encounter-table" 
-					author="raff" changeLogFile="liquibase-update-to-latest.xml" /></not>
+			<columnExists tableName="encounter" columnName="provider_id"/>
 		</preConditions>
-		<comment>Migrating providers from the encounter table to the encounter_provider table</comment>
+		<comment>Creating providers for persons from the encounter table</comment>
 		<sql>
 			insert into provider(person_id, creator, date_created, retired, uuid)
 				select distinct person.person_id, 1, now(), person.voided, uuid()
 				from person as person inner join encounter as encounter
-				on encounter.provider_id = person.person_id;
-			
+				on encounter.provider_id = person.person_id 
+				where encounter.provider_id not in (select person_id from provider);
+        </sql>
+	</changeSet>
+    
+    <changeSet id="20110825-1000-migrating-providers-to-encounter-provider" author="raff">
+    	<preConditions onFail="MARK_RAN">
+			<columnExists tableName="encounter" columnName="provider_id"/>
+		</preConditions>
+		<comment>Migrating providers from the encounter table to the encounter_provider table</comment>
+		<sql>			
 			insert into encounter_provider(provider_id, encounter_id, encounter_role_id, creator, date_created, voided, uuid) 
 				select distinct provider.provider_id, encounter.encounter_id, encounter_role.encounter_role_id, 
 					encounter.creator, encounter.date_created, encounter.voided, uuid()
 				from encounter as encounter 
 					inner join encounter_role as encounter_role 
 						on encounter_role.uuid = "a0b03050-c99b-11e0-9572-0800200c9a66"
-					inner join provider as provider on encounter.provider_id = provider.person_id;
+					inner join provider as provider on encounter.provider_id = provider.person_id
+				where encounter.encounter_id not in (select encounter_id from encounter_provider);
         </sql>
 	</changeSet>
 	
-	<changeSet id="20110823-1000-drop-provider-id-column-from-encounter-table" author="raff">
+	<changeSet id="20110825-1000-drop-provider-id-column-from-encounter-table" author="raff">
 		<preConditions onFail="MARK_RAN">
 			<columnExists tableName="encounter" columnName="provider_id"/>
 		</preConditions>
