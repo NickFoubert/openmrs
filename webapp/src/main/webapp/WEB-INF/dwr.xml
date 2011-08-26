@@ -107,6 +107,8 @@
 			<include method="findBatchOfLocations"/>
 			<include method="addEncounterToVisit"/>
 			<include method="removeEncounterFromVisit"/>
+			<include method="addProviderToEncounter"/>
+			<include method="removeProviderFromEncounter"/>
 		</create>
 		
 		<create creator="new" javascript="DWRUserService">
@@ -279,6 +281,8 @@
 			DWREncounterService.findBatchOfLocations(String searchValue, boolean includeRetired, Integer start, Integer length);
 			DWREncounterService.addEncounterToVisit(Integer encounterId, Integer visitId)
 			DWREncounterService.removeEncounterFromVisit(Integer encounterId)
+			DWREncounterService.addProviderToEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId)
+			DWREncounterService.removeProviderFromEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId)
 			DWRPersonService.getSimilarPeople(String name, String birthdate, String age, String gender);
 			DWRPersonService.findBatchOfPeopleByRoles(String searchPhrase, boolean includeRetired, String roles, Integer start, Integer length);
 			DWRPersonService.findCountAndPeople(String phrase, boolean includeRetired, String roles, Integer start, Integer length, boolean getMatchCount);

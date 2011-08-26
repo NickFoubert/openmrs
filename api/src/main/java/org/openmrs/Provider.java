@@ -94,4 +94,11 @@ public class Provider extends BaseCustomizableMetadata<ProviderAttribute> {
 		return identifier;
 	}
 	
+	@Override
+	public String toString() {
+		if (getPerson() != null)
+			return getPerson().getPersonName().toString();
+		else
+			return getName();
+	}
 }

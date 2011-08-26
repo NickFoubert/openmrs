@@ -604,4 +604,20 @@ public class Encounter extends BaseOpenmrsData implements java.io.Serializable {
 		}
 		addProvider(role, provider);
 	}
+	
+	/**
+	 * Removes the provider for a given role.
+	 * 
+	 * @param role the role.
+	 * @param provider the provider.
+	 */
+	public void removeProvider(EncounterRole role, Provider provider) {
+		for (EncounterProvider encounterProvider : encounterProviders) {
+			if (encounterProvider.getEncounterRole().equals(role) &&
+					encounterProvider.getProvider().equals(provider)) {
+				encounterProviders.remove(encounterProvider);
+				return;
+			}
+		}
+	}
 }
