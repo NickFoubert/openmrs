@@ -520,7 +520,7 @@ public class HibernateConceptDAO implements ConceptDAO {
 	@SuppressWarnings("unchecked")
 	public List<Concept> getConcepts(String name, Locale loc, boolean searchOnPhrase, List<ConceptClass> classes,
 	        List<ConceptDatatype> datatypes) throws DAOException {
-		if (StringUtils.isWhitespace(name)) {
+		if (StringUtils.isBlank(name)) {
 			name = "%"; // match all
 		}
 		
@@ -1345,7 +1345,7 @@ public class HibernateConceptDAO implements ConceptDAO {
 	public Integer getCountOfConceptWords(String phrase, List<Locale> locales, boolean includeRetired,
 	        List<ConceptClass> requireClasses, List<ConceptClass> excludeClasses, List<ConceptDatatype> requireDatatypes,
 	        List<ConceptDatatype> excludeDatatypes, Concept answersToConcept, boolean forUniqueConcepts) {
-		if (StringUtils.isWhitespace(phrase)) {
+		if (StringUtils.isBlank(phrase)) {
 			phrase = "%"; // match all
 		}
 		
@@ -1531,7 +1531,7 @@ public class HibernateConceptDAO implements ConceptDAO {
 	        List<ConceptClass> requireClasses, List<ConceptClass> excludeClasses, List<ConceptDatatype> requireDatatypes,
 	        List<ConceptDatatype> excludeDatatypes, Concept answersToConcept, Integer start, Integer size)
 	        throws DAOException {
-		if (StringUtils.isWhitespace(phrase)) {
+		if (StringUtils.isBlank(phrase)) {
 			phrase = "%"; // match all
 		}
 		

@@ -146,7 +146,7 @@ public class HibernateProviderDAO implements ProviderDAO {
 	 * @return Criteria represents the hibernate criteria to search
 	 */
 	private Criteria prepareProviderCriteria(String name) {
-		if (StringUtils.isWhitespace(name)) {
+		if (StringUtils.isBlank(name)) {
 			name = "%";
 		}
 		

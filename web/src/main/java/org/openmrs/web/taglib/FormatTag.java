@@ -309,7 +309,7 @@ public class FormatTag extends TagSupport {
 				providers += getProviderName(provider);
 			}
 			
-			if (providers != null){
+			if (providers != null) {
 				sb.append(providers);
 			}
 		}
@@ -399,9 +399,9 @@ public class FormatTag extends TagSupport {
 	 * @param unTrimmedArray the un trimmed array.
 	 * @return the trimmed array.
 	 */
-	private String[] trimStringArray(String[] unTrimmedArray){
+	private String[] trimStringArray(String[] unTrimmedArray) {
 		String[] trimmedArray = new String[unTrimmedArray.length];
-		for (int index = 0; index < unTrimmedArray.length; index++){
+		for (int index = 0; index < unTrimmedArray.length; index++) {
 			trimmedArray[index] = unTrimmedArray[index].trim();
 		}
 		

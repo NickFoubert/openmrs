@@ -246,7 +246,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Encounter> getEncounters(String query, Integer start, Integer length, boolean includeVoided) {
-		if (StringUtils.isWhitespace(query)) {
+		if (StringUtils.isBlank(query)) {
 			return Collections.emptyList();
 		}
 		

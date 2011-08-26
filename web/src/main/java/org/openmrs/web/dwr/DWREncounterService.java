@@ -335,7 +335,8 @@ public class DWREncounterService {
 	 * @throws APIException
 	 * @since 1.9
 	 */
-	public EncounterListItem addProviderToEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId) throws APIException {
+	public EncounterListItem addProviderToEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId)
+	        throws APIException {
 		if (encounterId == null)
 			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.error.encounterIdCannotBeNull"));
 		
@@ -345,7 +346,8 @@ public class DWREncounterService {
 			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.noMatchesFound",
 			    new Object[] { encounterId }, Context.getLocale()));
 		
-		encounter.addProvider(encounterService.getEncounterRole(encounterRoleId), Context.getProviderService().getProvider(providerId));
+		encounter.addProvider(encounterService.getEncounterRole(encounterRoleId), Context.getProviderService().getProvider(
+		    providerId));
 		encounterService.saveEncounter(encounter);
 		
 		return encounter == null ? null : new EncounterListItem(encounter);
@@ -360,7 +362,8 @@ public class DWREncounterService {
 	 * @throws APIException
 	 * @since 1.9
 	 */
-	public EncounterListItem removeProviderFromEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId) throws APIException {
+	public EncounterListItem removeProviderFromEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId)
+	        throws APIException {
 		if (encounterId == null)
 			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.error.encounterIdCannotBeNull"));
 		
@@ -370,7 +373,8 @@ public class DWREncounterService {
 			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.noMatchesFound",
 			    new Object[] { encounterId }, Context.getLocale()));
 		
-		encounter.removeProvider(encounterService.getEncounterRole(encounterRoleId), Context.getProviderService().getProvider(providerId));
+		encounter.removeProvider(encounterService.getEncounterRole(encounterRoleId), Context.getProviderService()
+		        .getProvider(providerId));
 		encounterService.saveEncounter(encounter);
 		
 		return encounter == null ? null : new EncounterListItem(encounter);
