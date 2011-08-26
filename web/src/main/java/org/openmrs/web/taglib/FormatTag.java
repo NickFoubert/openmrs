@@ -16,6 +16,7 @@ package org.openmrs.web.taglib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -295,7 +296,7 @@ public class FormatTag extends TagSupport {
 	private void printEncounterProviders(StringBuilder sb, Map<EncounterRole, Set<Provider>> eps) {
 		if (eps != null) {
 			
-			List<Provider> providerList = getDisplayEncounterProviders(eps);
+			LinkedHashSet<Provider> providerList = getDisplayEncounterProviders(eps);
 			
 			String providers = null;
 			for (Provider provider : providerList) {
@@ -322,7 +323,7 @@ public class FormatTag extends TagSupport {
 	 */
 	private String getProviderName(Provider provider) {
 		if (provider.getPerson() != null)
-			return provider.getPerson().getPersonName().toString();
+			return provider.getPerson().getPersonName().getFullName();
 		else
 			return provider.getName();
 	}
@@ -334,18 +335,17 @@ public class FormatTag extends TagSupport {
 	 * @param eps the encounter providers to filter.
 	 * @return the filtered encounter providers.
 	 */
-	private List<Provider> getDisplayEncounterProviders(Map<EncounterRole, Set<Provider>> encounterProviders) {
+	private LinkedHashSet<Provider> getDisplayEncounterProviders(Map<EncounterRole, Set<Provider>> encounterProviders) {
 		String encounterRoles = Context.getAdministrationService().getGlobalProperty(
 		    OpenmrsConstants.GP_DASHBOARD_PROVIDER_DISPLAY_ENCOUNTER_ROLES, null);
 		
 		if (!StringUtils.hasText(encounterRoles)) {
 			
 			//we do not filter if user has not yet set the global property.
-			List<Provider> allProviders = new ArrayList<Provider>();
+			LinkedHashSet<Provider> allProviders = new LinkedHashSet<Provider>();
 			
-			Set<EncounterRole> roles = encounterProviders.keySet();
-			for (EncounterRole encounterRole : roles) {
-				allProviders.addAll(encounterProviders.get(encounterRole));
+			for (Set<Provider> providers : encounterProviders.values()) {
+				allProviders.addAll(providers);
 			}
 			
 			return allProviders;
@@ -362,8 +362,8 @@ public class FormatTag extends TagSupport {
 	 * @param rolesArray the roles string array.
 	 * @return a filtered list of providers.
 	 */
-	private List<Provider> filterProviders(Map<EncounterRole, Set<Provider>> encounterProviders, String[] rolesArray) {
-		List<Provider> filteredProviders = new ArrayList<Provider>();
+	private LinkedHashSet<Provider> filterProviders(Map<EncounterRole, Set<Provider>> encounterProviders, String[] rolesArray) {
+		LinkedHashSet<Provider> filteredProviders = new LinkedHashSet<Provider>();
 		
 		Set<EncounterRole> roles = encounterProviders.keySet();
 		for (EncounterRole encounterRole : roles) {

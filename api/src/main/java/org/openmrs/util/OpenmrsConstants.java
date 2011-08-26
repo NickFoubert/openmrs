@@ -1233,11 +1233,11 @@ public final class OpenmrsConstants {
 		                "Specifies how patient names are matched while searching patient. Valid values are 'ANYWHERE' or 'START'. Defaults to start if missing or invalid value is present."));
 		
 		props
-        .add(new GlobalProperty(
-        		GP_DASHBOARD_PROVIDER_DISPLAY_ENCOUNTER_ROLES,
-                "",
-                "Specifies a comma separated list of encounter roles whose providers to display under the encounter tab of the patient dashbaord."));
-
+		        .add(new GlobalProperty(
+		                GP_DASHBOARD_PROVIDER_DISPLAY_ENCOUNTER_ROLES,
+		                "",
+		                "A comma-separated list of encounter roles (by name or id). Providers with these roles in an encounter will be displayed on the encounter tab of the patient dashboard."));
+		
 		for (GlobalProperty gp : ModuleFactory.getGlobalProperties()) {
 			props.add(gp);
 		}
