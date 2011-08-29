@@ -36,10 +36,19 @@
 <div class="box">
 	<form method="post">
 		
-		<div class="box" >
-		
 		<table cellpadding="3" cellspacing="0">
 		
+			<tr>
+				<th><spring:message code="Provider.identifier"/></th>
+				<td colspan="4">
+					<spring:bind path="provider.identifier">			
+						<input type="text" name="${status.expression}" size="10" 
+							   value="${status.value}" />
+					   
+						<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
+					</spring:bind>
+				</td>
+			</tr>
 			<tr>
 				<th><spring:message code="Provider.person"/></th>
 				<td>
@@ -48,16 +57,7 @@
 						<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 					</spring:bind>
 				</td>
-			</tr>
-		 </table>		
-		</div>
-		<br/>&nbsp;&nbsp;&nbsp;<spring:message code="general.or"></spring:message>
-		<br/>
-		<br/>
-		<div class="box">		
-		<table cellpadding="3" cellspacing="0">
-		
-			<tr>
+				<td>&nbsp;&nbsp;&nbsp;<spring:message code="general.or" />&nbsp;&nbsp;&nbsp;</td>
 				<th><spring:message code="Provider.name"/></th>
 				<td>
 					<spring:bind path="provider.name">			
@@ -68,20 +68,9 @@
 					</spring:bind>
 				</td>
 			</tr>
-			<tr>
-				<th><spring:message code="Provider.identifier"/></th>
-				<td>
-					<spring:bind path="provider.identifier">			
-						<input type="text" name="${status.expression}" size="10" 
-							   value="${status.value}" />
-					   
-						<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if> 
-					</spring:bind>
-				</td>
-			</tr>
 		
 		</table>
-		</div>
+		
 		<br/>
 	
 	<input type="hidden" name="phrase" value='<request:parameter name="phrase" />'/>

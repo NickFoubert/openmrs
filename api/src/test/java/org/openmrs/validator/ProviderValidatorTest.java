@@ -27,8 +27,6 @@ import org.openmrs.test.BaseContextSensitiveTest;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 
-import java.util.Date;
-
 public class ProviderValidatorTest extends BaseContextSensitiveTest {
 	
 	private Provider provider;
@@ -51,10 +49,44 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderValidator#validate(Object,Errors)
+	 * @verifies be invalid if identifier is not set
+	 */
+	@Test
+	public void validate_shouldBeInvalidIfIdentifierIsNotSet() throws Exception {
+		//given
+		provider.setIdentifier(null);
+		
+		//when
+		providerValidator.validate(provider, errors);
+		
+		//then
+		Assert.assertTrue(errors.hasFieldErrors("identifier"));
+		Assert.assertEquals("Provider.error.identifier.required", errors.getFieldError("identifier").getCode());
+	}
+	
+	/**
+	 * @see ProviderValidator#validate(Object,Errors)
+	 * @verifies be valid if identifier is set
+	 */
+	@Test
+	public void validate_shouldBeValidIfIdentifierIsSet() throws Exception {
+		//given
+		provider.setIdentifier("id");
+		
+		//when
+		providerValidator.validate(provider, errors);
+		
+		//then
+		Assert.assertFalse(errors.hasFieldErrors("identifier"));
+	}
+	
+	/**
+	 * @see ProviderValidator#validate(Object,Errors)
 	 * @verifies be invalid if provider is retired and the retired reason is not mentioned
 	 */
 	@Test
 	public void validate_shouldBeInvalidIfProviderIsRetiredAndTheRetiredReasonIsNotMentioned() throws Exception {
+		provider.setIdentifier("id");
 		provider.setRetired(true);
 		provider.setPerson(new Person());
 		
@@ -74,85 +106,76 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see ProviderValidator#validate(Object,Errors)
-	 * @verifies be invalid if person is not set
+	 * @verifies be invalid if person or name is not set
 	 */
 	@Test
-	public void validate_shouldBeInvalidIfPersonIsNotSet() throws Exception {
+	public void validate_shouldBeInvalidIfPersonOrNameIsNotSet() throws Exception {
+		//given
+		provider.setIdentifier("id");
+		provider.setPerson(null);
+		provider.setName(null);
+		
+		//when
 		providerValidator.validate(provider, errors);
 		
+		//then
 		Assert.assertTrue(errors.hasErrors());
-		Assert.assertTrue(errors.hasFieldErrors("person"));
-		Assert.assertEquals("Provider.error.person.required", errors.getFieldError("person").getCode());
-		
-		errors = new BindException(provider, "provider");
-		
+		Assert.assertTrue(errors.hasFieldErrors("name"));
+		Assert.assertEquals("Provider.error.personOrName.required", errors.getFieldError("name").getCode());
+	}
+	
+	/**
+	 * @see ProviderValidator#validate(Object,Errors)
+	 * @verifies be invalid if both person and name are set
+	 */
+	@Test
+	public void validate_shouldBeInvalidIfBothPersonAndNameAreSet() throws Exception {
+		//given
+		provider.setIdentifier("id");
 		provider.setPerson(new Person(1));
+		provider.setName("1");
+		
+		//when
 		providerValidator.validate(provider, errors);
 		
+		//then
+		Assert.assertTrue(errors.hasErrors());
+		Assert.assertTrue(errors.hasFieldErrors("name"));
+		Assert.assertEquals("Provider.error.personOrName.required", errors.getFieldError("name").getCode());
+	}
+	
+	/**
+	 * @see ProviderValidator#validate(Object,Errors)
+	 * @verifies be valid if only name is set
+	 */
+	@Test
+	public void validate_shouldBeValidIfOnlyNameIsSet() throws Exception {
+		//given
+		provider.setIdentifier("id");
+		provider.setName("1");
+		
+		//when
+		providerValidator.validate(provider, errors);
+		
+		//then
 		Assert.assertFalse(errors.hasErrors());
 	}
 	
 	/**
 	 * @see ProviderValidator#validate(Object,Errors)
-	 * @verifies be invalid if provider details are not set
+	 * @verifies be valid if only person is set
 	 */
 	@Test
-	public void validate_shouldBeInvalidIfProviderDetailsAreNotSet() throws Exception {
-		providerValidator.validate(provider, errors);
-		
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertTrue(errors.hasFieldErrors("person"));
-		Assert.assertEquals("Provider.error.person.required", errors.getFieldError("person").getCode());
-		
-		errors = new BindException(provider, "provider");
-		
-		provider.setName("Provider");
-		providerValidator.validate(provider, errors);
-		
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertEquals("Provider.error.name.identifier.required", errors.getFieldError("name").getCode());
-		
-		providerValidator.validate(provider, errors);
-		
-		errors = new BindException(provider, "provider");
-		provider.setIdentifier("identifier");
-		provider.setName(null);
-		providerValidator.validate(provider, errors);
-		
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertEquals("Provider.error.name.identifier.required", errors.getFieldError("name").getCode());
-		
-		errors = new BindException(provider, "provider");
-		provider.setIdentifier("identifier");
-		provider.setName("name");
-		providerValidator.validate(provider, errors);
-		
-		Assert.assertFalse(errors.hasErrors());
-		
-	}
-	
-	/**
-	 * @see ProviderValidator#validate(Object,Errors)
-	 * @verifies be invalid if both provider details and person are set
-	 */
-	@Test
-	public void validate_shouldBeInvalidIfBothProviderDetailsAndPersonAreSet() throws Exception {
+	public void validate_shouldBeValidIfOnlyPersonIsSet() throws Exception {
+		//given
+		provider.setIdentifier("id");
 		provider.setPerson(new Person(1));
-		provider.setName("provider name");
 		
+		//when
 		providerValidator.validate(provider, errors);
 		
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertEquals("Provider.error.person.required", errors.getFieldError("person").getCode());
-		
-		errors = new BindException(provider, "provider");
-		
-		provider.setName(null);
-		provider.setIdentifier("identifier");
-		providerValidator.validate(provider, errors);
-		
-		Assert.assertTrue(errors.hasErrors());
-		Assert.assertEquals("Provider.error.person.required", errors.getFieldError("person").getCode());
+		//then
+		Assert.assertFalse(errors.hasErrors());
 	}
 	
 	/**
@@ -185,5 +208,4 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 		attr.setSerializedValue(serializedValue);
 		return attr;
 	}
-	
 }

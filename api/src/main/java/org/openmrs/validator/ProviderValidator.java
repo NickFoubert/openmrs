@@ -58,10 +58,13 @@ public class ProviderValidator implements Validator {
 	 * @param errors Errors
 	 * @see org.springframework.validation.Validator#validate(java.lang.Object,
 	 *      org.springframework.validation.Errors)
+	 * @should be invalid if identifier is not set
+	 * @should be valid if identifier is set
 	 * @should be invalid if provider is retired and the retired reason is not mentioned
-	 * @should be invalid if person is not set
-	 * @should be invalid if provider details are not set
-	 * @should be invalid if both provider details and person are set
+	 * @should be invalid if person or name is not set
+	 * @should be invalid if both person and name are set
+	 * @should be valid if only person is set
+	 * @should be valid if only name is set
 	 * @should reject a provider if it has fewer than min occurs of an attribute
 	 * @should reject a provider if it has more than max occurs of an attribute
 	 */
@@ -73,11 +76,14 @@ public class ProviderValidator implements Validator {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type " + Provider.class);
 		
 		Provider provider = (Provider) obj;
-		if ((provider.getPerson() != null && hasProviderDetails(provider))
-		        || (provider.getPerson() == null && !hasProviderDetails(provider))) {
-			errors.rejectValue("person", "Provider.error.person.required");
-		} else if ((hasProviderDetails(provider) && !hasBothNameAndIdentifier(provider))) {
-			errors.rejectValue("name", "Provider.error.name.identifier.required");
+		
+		if (StringUtils.isEmpty(provider.getIdentifier())) {
+			errors.rejectValue("identifier", "Provider.error.identifier.required");
+		}
+		
+		if ((provider.getPerson() != null && StringUtils.isNotEmpty(provider.getName()))
+		        || (provider.getPerson() == null && StringUtils.isEmpty(provider.getName()))) {
+			errors.rejectValue("name", "Provider.error.personOrName.required");
 		}
 		
 		if (provider.isRetired() && StringUtils.isEmpty(provider.getRetireReason())) {
@@ -114,13 +120,5 @@ public class ProviderValidator implements Validator {
 				}
 			}
 		}
-	}
-	
-	private boolean hasBothNameAndIdentifier(Provider provider) {
-		return StringUtils.isNotEmpty(provider.getName()) && StringUtils.isNotEmpty(provider.getIdentifier());
-	}
-	
-	private boolean hasProviderDetails(Provider provider) {
-		return StringUtils.isNotEmpty(provider.getName()) || StringUtils.isNotEmpty(provider.getIdentifier());
 	}
 }

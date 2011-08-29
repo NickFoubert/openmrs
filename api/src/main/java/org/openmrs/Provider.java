@@ -13,9 +13,6 @@
  */
 package org.openmrs;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.openmrs.attribute.Customizable;
-
 /**
  * Represents a person who may provide care to a patient during an encounter
  *
