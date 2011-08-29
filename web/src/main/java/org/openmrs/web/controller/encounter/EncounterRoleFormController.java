@@ -96,7 +96,7 @@ public class EncounterRoleFormController {
 				EncounterService service = Context.getEncounterService();
 				String message = retireEncounterRole(encounterRole, service);
 				session.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message);
-				return showForm(encounterRole.getEncounterRoleId());
+				return showEncounterList();
 			}
 		}
 		
