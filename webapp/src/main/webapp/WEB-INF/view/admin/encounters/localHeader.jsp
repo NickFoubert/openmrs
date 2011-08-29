@@ -17,7 +17,7 @@
 		</li>
 	</openmrs:hasPrivilege>
     <openmrs:hasPrivilege privilege="Manage Encounter Roles">
-		<li>
+		<li <c:if test='<%= request.getRequestURI().contains("encounterRole") %>'>class="active"</c:if>>
 			<a href="${pageContext.request.contextPath}/admin/encounters/encounterRole.list">
 				<spring:message code="EncounterRole.manage"/>
 			</a>
