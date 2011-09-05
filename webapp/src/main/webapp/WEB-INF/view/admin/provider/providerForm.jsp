@@ -68,9 +68,22 @@
 					</spring:bind>
 				</td>
 			</tr>
-		
+
+            <c:if test="${ not empty providerAttributeTypes }">
+    			<tr valign="top">
+    			    <th class="visitLabel"><spring:message code="Provider.attributes" /></th>
+	               	<td>
+			            <table>
+			                <c:forEach var="attrType" items="${ providerAttributeTypes }">
+			                   <openmrs_tag:attributesForType attributeType="${ attrType }" customizable="${ provider }" formFieldNamePrefix="attribute.${ attrType.providerAttributeTypeId }"/>
+			                </c:forEach>
+			            </table>
+			        </td>
+			    </tr>
+			</c:if>
+
 		</table>
-		
+
 		<br/>
 	
 	<input type="hidden" name="phrase" value='<request:parameter name="phrase" />'/>

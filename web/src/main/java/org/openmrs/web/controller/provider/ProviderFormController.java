@@ -1,24 +1,27 @@
 package org.openmrs.web.controller.provider;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
+import org.openmrs.ProviderAttribute;
+import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.attribute.handler.AttributeHandler;
 import org.openmrs.propertyeditor.PersonEditor;
 import org.openmrs.validator.ProviderValidator;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.ServletException;
+import java.util.Iterator;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/provider/provider.form")
@@ -32,10 +35,11 @@ public class ProviderFormController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String onSubmit(HttpSession session, @RequestParam(required = false) String saveProviderButton,
+	public String onSubmit(WebRequest request, @RequestParam(required = false) String saveProviderButton,
 	        @RequestParam(required = false) String retireProviderButton,
 	        @RequestParam(required = false) String unretireProviderButton, @ModelAttribute("provider") Provider provider,
-	        BindingResult errors) throws Exception {
+	        BindingResult errors, ModelMap model) throws Exception {
+		handleAttributeParameteres(request, provider, model);
 		new ProviderValidator().validate(provider, errors);
 		
 		if (!errors.hasErrors()) {
@@ -53,7 +57,7 @@ public class ProviderFormController {
 					message = "Provider.unretired";
 				}
 				
-				session.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message);
+				request.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message, WebRequest.SCOPE_SESSION);
 				return showForm(provider.getProviderId());
 			}
 		}
@@ -73,6 +77,11 @@ public class ProviderFormController {
 		return provider;
 	}
 	
+	@ModelAttribute("providerAttributeTypes")
+	public List<ProviderAttributeType> getProviderAttributeTypes() throws Exception {
+		return Context.getProviderService().getAllProviderAttributeTypes();
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showForm() {
 		return "admin/provider/providerForm";
@@ -81,4 +90,37 @@ public class ProviderFormController {
 	public String showForm(Integer providerId) {
 		return "redirect:provider.form?providerId=" + providerId;
 	}
+	
+	//TODO This method is copied from VisitFormController. Need to find a common place to reuse this code.
+	private void handleAttributeParameteres(WebRequest request, Provider provider, ModelMap model) {
+		// manually handle the attribute parameters
+		for (ProviderAttributeType providerAttributeType : (List<ProviderAttributeType>) model.get("providerAttributeTypes")) {
+			if (providerAttributeType.getMaxOccurs() == null || providerAttributeType.getMaxOccurs() != 1)
+				throw new RuntimeException("For now only attributes with maxOccurs=1 are supported");
+			AttributeHandler<?> handler = Context.getAttributeService().getHandler(providerAttributeType);
+			// look for parameters starting with attribute.${ providerAttributeType.id }
+			for (Iterator<String> iter = request.getParameterNames(); iter.hasNext();) {
+				String paramName = iter.next();
+				if (paramName.startsWith("attribute." + providerAttributeType.getId())) {
+					String paramValue = request.getParameter(paramName);
+					if (StringUtils.hasText(paramValue)) {
+						handler.deserialize(paramValue);
+						//handler.validate(realValue);
+						setAttribute(provider, providerAttributeType, paramValue);
+					} else {
+						for (ProviderAttribute providerAttribute : provider.getActiveAttributes(providerAttributeType))
+							providerAttribute.setVoided(true);
+					}
+				}
+			}
+		}
+	}
+	
+	private void setAttribute(Provider provider, ProviderAttributeType providerAttributeType, String paramValue) {
+		ProviderAttribute providerAttribute = new ProviderAttribute();
+		providerAttribute.setAttributeType(providerAttributeType);
+		providerAttribute.setSerializedValue(paramValue);
+		provider.setAttribute(providerAttribute);
+	}
+	
 }
