@@ -58,7 +58,7 @@ public class ProviderFormController {
 				}
 				
 				request.setAttribute(WebConstants.OPENMRS_MSG_ATTR, message, WebRequest.SCOPE_SESSION);
-				return showForm(provider.getProviderId());
+				return "admin/provider/index";
 			}
 		}
 		
