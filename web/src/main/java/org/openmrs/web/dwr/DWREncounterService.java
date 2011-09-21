@@ -21,7 +21,9 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.Location;
+import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
@@ -335,7 +337,7 @@ public class DWREncounterService {
 	 * @throws APIException
 	 * @since 1.9
 	 */
-	public EncounterListItem addProviderToEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId)
+	public ProviderListItem addProviderToEncounter(Integer encounterId, Integer encounterRoleId, Integer providerId)
 	        throws APIException {
 		if (encounterId == null)
 			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.error.encounterIdCannotBeNull"));
@@ -346,11 +348,15 @@ public class DWREncounterService {
 			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.noMatchesFound",
 			    new Object[] { encounterId }, Context.getLocale()));
 		
-		encounter.addProvider(encounterService.getEncounterRole(encounterRoleId), Context.getProviderService().getProvider(
-		    providerId));
+		Provider provider = Context.getProviderService().getProvider(providerId);
+		EncounterRole encounterRole = encounterService.getEncounterRole(encounterRoleId);
+		if (encounter.getProvidersByRole(encounterRole).contains(provider))
+			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.error.duplicateProviderEncounterRole"));
+		
+		encounter.addProvider(encounterRole, provider);
 		encounterService.saveEncounter(encounter);
 		
-		return encounter == null ? null : new EncounterListItem(encounter);
+		return encounter == null ? null : new ProviderListItem(provider);
 	}
 	
 	/**

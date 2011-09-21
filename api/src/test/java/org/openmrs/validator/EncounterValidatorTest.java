@@ -16,7 +16,9 @@ package org.openmrs.validator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.test.Verifies;
 import org.springframework.validation.BindException;
@@ -53,5 +55,20 @@ public class EncounterValidatorTest {
 		Errors errors = new BindException(encounter, "encounter");
 		new EncounterValidator().validate(encounter, errors);
 		Assert.assertTrue(errors.hasFieldErrors("patient"));
+	}
+	
+	/**
+	 * @see {@link EncounterValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should fail if provider is more than once for the same encounter role", method = "validate(Object,Errors)")
+	public void validate_shouldFailIfProviderIsMoreThanOnceForTheSameEncounterRole() throws Exception {
+		Encounter encounter = new Encounter();
+		encounter.setPatient(new Patient(2));
+		encounter.addProvider(new EncounterRole(1), new Provider(1));
+		encounter.addProvider(new EncounterRole(1), new Provider(1));
+		Errors errors = new BindException(encounter, "encounter");
+		new EncounterValidator().validate(encounter, errors);
+		Assert.assertTrue(errors.hasFieldErrors("providersByRoles"));
 	}
 }

@@ -155,15 +155,15 @@
 		var encounterRoleId = document.getElementById("encounterRole").value;
 		var providerId = document.getElementById("providerId_id").value;
 		
-		DWREncounterService.addProviderToEncounter(${encounter.encounterId}, encounterRoleId, providerId, function(encounterObj) {
-			if(encounterObj){
-				addProviderRow(encounterObj);
+		DWREncounterService.addProviderToEncounter(${encounter.encounterId}, encounterRoleId, providerId, function(providerObj) {
+			if(providerObj){
+				addProviderRow(providerObj);
 			}else
 				alert('<spring:message code="Encounter.provider.failedToAddProvider"/>');
 		});
 	}
 	
-	function addProviderRow(encounterObj){
+	function addProviderRow(providerObj){
 		var refElement = document.getElementById("addNewProviderTemplate");
 		
 		var tr = document.createElement("tr");
@@ -176,6 +176,10 @@
 		td = document.createElement("td");
 		tr.appendChild(td);
 		td.innerHTML = document.getElementById("providerId_id_selection").value.trim();
+		
+		td = document.createElement("td");
+		tr.appendChild(td);
+		td.innerHTML = providerObj.identifier;
 		
 		td = document.createElement("td");
 		tr.appendChild(td);
@@ -352,11 +356,12 @@
 	<table cellspacing="0" cellpadding="2" width="98%" id="providers">
 		<tr id="providersListingHeaderRow">
 			<th><spring:message code="Role.role"/></th>
-			<th><spring:message code="general.name"/></th>
+			<th><spring:message code="Provider.name"/></th>
+			<th><spring:message code="Provider.identifier"/></th>
 		</tr>
 		<c:forEach items="${encounter.providersByRoles}" var="providerRole">
 			<c:forEach items="${providerRole.value}" var="provider">
-				<tr><td>${providerRole.key.name}</td><td>${provider}</td><td><input type="button" value='<spring:message code="general.remove"/>' class="smallButton" onClick="removeProvider(this, ${providerRole.key.encounterRoleId}, ${provider.providerId})" /></td></tr>
+				<tr><td>${providerRole.key.name}</td><td>${provider}</td><td>${provider.identifier}</td><td><input type="button" value='<spring:message code="general.remove"/>' class="smallButton" onClick="removeProvider(this, ${providerRole.key.encounterRoleId}, ${provider.providerId})" /></td></tr>
 			</c:forEach>
 		</c:forEach>
 		<tr id="addNewProviderTemplate" style="display:none;">

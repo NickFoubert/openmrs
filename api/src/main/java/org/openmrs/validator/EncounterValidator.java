@@ -13,9 +13,16 @@
  */
 package org.openmrs.validator;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
+import org.openmrs.Provider;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.APIException;
 import org.springframework.validation.Errors;
@@ -70,6 +77,21 @@ public class EncounterValidator implements Validator {
 			if (encounter.getVisit() != null && !encounter.getVisit().getPatient().equals(encounter.getPatient())) {
 				errors.rejectValue("visit", "Encounter.visit.patients.dontMatch",
 				    "The patient for the encounter and visit should be the same");
+			}
+			
+			Map<Integer, EncounterRole> encounterMap = new HashMap<Integer, EncounterRole>();
+			
+			Map<EncounterRole, Set<Provider>> providers = encounter.getProvidersByRoles();
+			for (Entry<EncounterRole, Set<Provider>> entry : providers.entrySet()) {
+				EncounterRole encounterRole = entry.getKey();
+				
+				if (encounterMap.containsKey(encounterRole.getEncounterRoleId()) ) {
+					errors.rejectValue("providersByRoles", "Encounter.error.duplicateProviderEncounterRole",
+				    "Provider cannot be added more than once for the same encounter role");
+					break;
+				}
+				
+				encounterMap.put(encounterRole.getEncounterRoleId(), encounterRole);
 			}
 		}
 	}
