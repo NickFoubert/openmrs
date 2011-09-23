@@ -85,9 +85,9 @@ public class EncounterValidator implements Validator {
 			for (Entry<EncounterRole, Set<Provider>> entry : providers.entrySet()) {
 				EncounterRole encounterRole = entry.getKey();
 				
-				if (encounterMap.containsKey(encounterRole.getEncounterRoleId()) ) {
+				if (encounterMap.containsKey(encounterRole.getEncounterRoleId())) {
 					errors.rejectValue("providersByRoles", "Encounter.error.duplicateProviderEncounterRole",
-				    "Provider cannot be added more than once for the same encounter role");
+					    "Provider cannot be added more than once for the same encounter role");
 					break;
 				}
 				

@@ -351,7 +351,8 @@ public class DWREncounterService {
 		Provider provider = Context.getProviderService().getProvider(providerId);
 		EncounterRole encounterRole = encounterService.getEncounterRole(encounterRoleId);
 		if (encounter.getProvidersByRole(encounterRole).contains(provider))
-			throw new APIException(Context.getMessageSourceService().getMessage("Encounter.error.duplicateProviderEncounterRole"));
+			throw new APIException(Context.getMessageSourceService().getMessage(
+			    "Encounter.error.duplicateProviderEncounterRole"));
 		
 		encounter.addProvider(encounterRole, provider);
 		encounterService.saveEncounter(encounter);
