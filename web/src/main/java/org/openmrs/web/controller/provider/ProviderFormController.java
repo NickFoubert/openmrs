@@ -1,5 +1,10 @@
 package org.openmrs.web.controller.provider;
 
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
@@ -16,12 +21,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
-
-import javax.servlet.ServletException;
-import java.util.Iterator;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/provider/provider.form")
@@ -37,8 +42,18 @@ public class ProviderFormController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String onSubmit(WebRequest request, @RequestParam(required = false) String saveProviderButton,
 	        @RequestParam(required = false) String retireProviderButton,
-	        @RequestParam(required = false) String unretireProviderButton, @ModelAttribute("provider") Provider provider,
+	        @RequestParam(required = false) String unretireProviderButton,
+	        @RequestParam(required = false) boolean linkToPerson, @ModelAttribute("provider") Provider provider,
 	        BindingResult errors, ModelMap model) throws Exception {
+		
+		//For existing providers, switch between linking to person or use name
+		if (provider.getProviderId() != null) {
+			if (linkToPerson)
+				provider.setName(null);
+			else
+				provider.setPerson(null);
+		}
+		
 		handleAttributeParameteres(request, provider, model);
 		new ProviderValidator().validate(provider, errors);
 		

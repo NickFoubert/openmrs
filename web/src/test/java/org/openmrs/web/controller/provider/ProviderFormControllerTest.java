@@ -1,6 +1,9 @@
 package org.openmrs.web.controller.provider;
 
+import java.util.Arrays;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
@@ -11,8 +14,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindException;
 import org.springframework.web.context.request.ServletWebRequest;
-
-import java.util.Arrays;
 
 /**
  * The contents of this file are subject to the OpenMRS Public License
@@ -38,7 +39,8 @@ public class ProviderFormControllerTest extends BaseWebContextSensitiveTest {
 	/**
 	 * @verifies not void or change attributeList if the attribute values are same
 	 * @see org.openmrs.web.controller.provider.ProviderFormController#onSubmit(org.springframework.web.context.request.WebRequest,
-	 * String, String, String, org.openmrs.Provider, org.springframework.validation.BindingResult, org.springframework.ui.ModelMap)
+	 *      String, String, String, org.openmrs.Provider,
+	 *      org.springframework.validation.BindingResult, org.springframework.ui.ModelMap)
 	 */
 	@Test
 	public void onSubmit_shouldNotVoidOrChangeAttributeListIfTheAttributeValuesAreSame() throws Exception {
@@ -52,7 +54,7 @@ public class ProviderFormControllerTest extends BaseWebContextSensitiveTest {
 		BindException errors = new BindException(provider, "provider");
 		ProviderFormController providerFormController = (ProviderFormController) applicationContext
 		        .getBean("providerFormController");
-		providerFormController.onSubmit(mockWebRequest, "save", null, null, provider, errors,
+		providerFormController.onSubmit(mockWebRequest, "save", null, null, true, provider, errors,
 		    createModelMap(providerAttributeType));
 		Assert.assertFalse(((ProviderAttribute) (provider.getAttributes().toArray()[0])).getVoided());
 		Assert.assertEquals(1, provider.getAttributes().size());
@@ -62,7 +64,8 @@ public class ProviderFormControllerTest extends BaseWebContextSensitiveTest {
 	/**
 	 * @verifies set attributes to void if the values is not set
 	 * @see org.openmrs.web.controller.provider.ProviderFormController#onSubmit(org.springframework.web.context.request.WebRequest,
-	 * String, String, String, org.openmrs.Provider, org.springframework.validation.BindingResult, org.springframework.ui.ModelMap)
+	 *      String, String, String, org.openmrs.Provider,
+	 *      org.springframework.validation.BindingResult, org.springframework.ui.ModelMap)
 	 */
 	@Test
 	public void onSubmit_shouldSetAttributesToVoidIfTheValueIsNotSet() throws Exception {
@@ -77,7 +80,7 @@ public class ProviderFormControllerTest extends BaseWebContextSensitiveTest {
 		BindException errors = new BindException(provider, "provider");
 		ProviderFormController visitFormController = (ProviderFormController) applicationContext
 		        .getBean("providerFormController");
-		visitFormController.onSubmit(mockWebRequest, "save", null, null, provider, errors,
+		visitFormController.onSubmit(mockWebRequest, "save", null, null, true, provider, errors,
 		    createModelMap(providerAttributeType));
 		Assert.assertEquals(1, provider.getAttributes().size());
 		Assert.assertTrue(((ProviderAttribute) (provider.getAttributes().toArray()[0])).isVoided());

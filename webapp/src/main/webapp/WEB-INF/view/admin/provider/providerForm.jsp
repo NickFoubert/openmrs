@@ -9,6 +9,20 @@
 <openmrs:htmlInclude file="/scripts/dojoConfig.js" />
 <openmrs:htmlInclude file="/scripts/dojo/dojo.js" />
 
+<script type="text/javascript">
+function toggleProviderDetails(){
+	
+	$j('.providerDetails').toggle();
+	
+	if($j('#providerName').is(":visible"))
+		$j('#linkToPerson').removeAttr('checked');
+	else
+		$j('#linkToPerson').attr('checked', 'checked');
+		
+		
+}
+</script>
+
 <style>
 	#table th { text-align: left; }
 	td.fieldNumber { 
@@ -38,6 +52,8 @@
 		
 		<table cellpadding="3" cellspacing="0">
 		
+			<c:choose>
+			<c:when test="${provider.providerId == null}">
 			<tr>
 				<th><spring:message code="Provider.identifier"/></th>
 				<td colspan="4">
@@ -68,6 +84,54 @@
 					</spring:bind>
 				</td>
 			</tr>
+			</c:when>
+			<c:otherwise>
+			<tr>
+				<td colspan="5">
+				<fieldset>
+					<legend>
+						<span class="providerDetails" <c:if test="${provider.person != null}">style="display:none"</c:if>>
+							<spring:message code="Provider.notLinkedToPerson"/>
+						</span>
+						<span class="providerDetails" <c:if test="${provider.person == null}">style="display:none"</c:if>>
+							<spring:message code="Provider.linkedToPerson"/>
+						</span>
+					</legend>
+					<table cellpadding="3" cellspacing="3">
+						<tr>
+							<th><spring:message code="Provider.identifier"/></th>
+							<td>
+								<form:input path="provider.identifier" size="10" />
+								<form:errors path="provider.identifier" cssClass="error" />
+							</td>
+						</tr>
+						<tr>
+							<th><spring:message code="Provider.name"/></th>
+							<td>
+								<div class="providerDetails" <c:if test="${provider.person != null}">style="display:none"</c:if>>
+								<form:input id="providerName" path="provider.name" /> <form:errors path="provider.name" cssClass="error" /> <spring:message code="general.or" /> 
+								<a href="javascript:void(0)" onclick="toggleProviderDetails()"> <spring:message code="Provider.linkToPerson"/></a>
+					  			</div>
+					  			<div class="providerDetails" <c:if test="${provider.person == null}">style="display:none"</c:if>>
+								${provider.person.personName} 
+								<span <c:if test="${provider.person != null}">style="display:none"</c:if>>
+									<spring:bind path="provider.person">
+									<openmrs_tag:personField formFieldName="${status.expression}" initialValue="${status.value}" />
+									<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>	
+									</spring:bind>
+								</span>
+								<a href="javascript:void(0)" onclick="toggleProviderDetails()">(<spring:message code="Provider.unLinkFromPerson"/>)</a>
+					 			</div>
+					 			<input id="linkToPerson" name="linkToPerson" type="checkbox" value="true" style="display:none" 
+					 				<c:if test="${provider.person != null}">checked="checked"</c:if> />
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+				</td>
+			</tr>
+			</c:otherwise>
+			</c:choose>
 
             <c:if test="${ not empty providerAttributeTypes }">
     			<tr valign="top">

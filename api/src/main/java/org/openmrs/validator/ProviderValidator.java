@@ -77,12 +77,12 @@ public class ProviderValidator implements Validator {
 		
 		Provider provider = (Provider) obj;
 		
-		if (StringUtils.isEmpty(provider.getIdentifier())) {
+		if (StringUtils.isBlank(provider.getIdentifier())) {
 			errors.rejectValue("identifier", "Provider.error.identifier.required");
 		}
 		
-		if ((provider.getPerson() != null && StringUtils.isNotEmpty(provider.getName()))
-		        || (provider.getPerson() == null && StringUtils.isEmpty(provider.getName()))) {
+		if ((provider.getPerson() != null && StringUtils.isNotBlank(provider.getName()))
+		        || (provider.getPerson() == null && StringUtils.isBlank(provider.getName()))) {
 			errors.rejectValue("name", "Provider.error.personOrName.required");
 		}
 		
