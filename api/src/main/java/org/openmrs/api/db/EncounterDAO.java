@@ -25,7 +25,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.User;
+import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.EncounterService;
@@ -73,7 +73,7 @@ public interface EncounterDAO {
 	 *      boolean)
 	 */
 	public List<Encounter> getEncounters(Patient patient, Location location, Date fromDate, Date toDate,
-	        Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<User> providers,
+	        Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<Provider> providers,
 	        Collection<VisitType> visitTypes, Collection<Visit> visits, boolean includeVoided);
 	
 	/**
@@ -190,9 +190,9 @@ public interface EncounterDAO {
 	public Integer getCountOfEncounters(String query, boolean includeVoided);
 	
 	/**
-	 * @see EncounterService#getEncountersByVisit(Visit)
+	 * @see EncounterService#getEncountersByVisit(Visit, boolean)
 	 */
-	public List<Encounter> getEncountersByVisit(Visit visit);
+	public List<Encounter> getEncountersByVisit(Visit visit, boolean includeVoided);
 	
 	/**
 	 * Saves an encounter role

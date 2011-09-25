@@ -367,7 +367,7 @@ public class ObsServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * Uses the OpenmrsUtil.lastSecondOfDay(Date) method to get all observations for a given day
+	 * Uses the OpenmrsUtil.getLastMomentOfDay(Date) method to get all observations for a given day
 	 * 
 	 * @throws Exception
 	 */
@@ -381,7 +381,7 @@ public class ObsServiceTest extends BaseContextSensitiveTest {
 		Date sd = df.parse("2006-02-13");
 		Date ed = df.parse("2006-02-13");
 		List<Obs> obs = os.getObservations(null, null, null, null, null, null, null, null, null, sd, OpenmrsUtil
-		        .lastSecondOfDay(ed), false);
+		        .getLastMomentOfDay(ed), false);
 		assertEquals(1, obs.size());
 	}
 	
@@ -720,7 +720,7 @@ public class ObsServiceTest extends BaseContextSensitiveTest {
 		
 		Obs obs = obsService.getObs(7);
 		
-		Assert.assertEquals(new Concept(5089), obs.getConcept());
+		Assert.assertEquals(5089, obs.getConcept().getId().intValue());
 	}
 	
 	/**

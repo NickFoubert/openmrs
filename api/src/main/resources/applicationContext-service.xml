@@ -224,6 +224,14 @@
                     <key><value>TextHandler</value></key>
                     <bean class="org.openmrs.obs.handler.TextHandler"/>
                 </entry>
+                 <entry>
+                    <key><value>BinaryDataHandler</value></key>
+                    <bean class="org.openmrs.obs.handler.BinaryDataHandler"/>
+                </entry>
+                 <entry>
+                    <key><value>BinaryStreamHandler</value></key>
+                    <bean class="org.openmrs.obs.handler.BinaryStreamHandler"/>
+                </entry>
             </map>
         </property>
 	</bean>
@@ -715,6 +723,7 @@
 	<!--  **************************  VALIDATOR CONFIGURATION  *************************  -->
 	<!--  Configuration for all openmrs validators                                        -->
 	
+	<bean id="personValidator" class="org.openmrs.validator.PersonValidator" />
 	<bean id="patientValidator" class="org.openmrs.validator.PatientValidator" />
 	<bean id="locationValidator" class="org.openmrs.validator.LocationValidator"/>
 	<bean id="personNameValidator" class="org.openmrs.validator.PersonNameValidator" />
@@ -744,6 +753,7 @@
 	<bean id="visitAttributeTypeValidator" class="org.openmrs.validator.VisitAttributeTypeValidator" />
 	<bean id="providerAttributeTypeValidator" class="org.openmrs.validator.ProviderAttributeTypeValidator" />	
 	<bean id="encounterValidator" class="org.openmrs.validator.EncounterValidator" />
+	<bean id="locationAttributeTypeValidator" class="org.openmrs.validator.LocationAttributeTypeValidator" />
 	<bean id="providerValidator" class="org.openmrs.validator.ProviderValidator" />
 
 	<!--  ************************ END VALIDATOR CONFIGURATION  ************************  -->

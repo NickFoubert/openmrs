@@ -13,6 +13,7 @@
  */
 package org.openmrs.validator;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.Provider;
+import org.openmrs.Visit;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.APIException;
 import org.springframework.validation.Errors;
@@ -77,6 +79,20 @@ public class EncounterValidator implements Validator {
 			if (encounter.getVisit() != null && !encounter.getVisit().getPatient().equals(encounter.getPatient())) {
 				errors.rejectValue("visit", "Encounter.visit.patients.dontMatch",
 				    "The patient for the encounter and visit should be the same");
+			}
+			
+			Visit visit = encounter.getVisit();
+			Date encounterDateTime = encounter.getEncounterDatetime();
+			if (visit != null && encounterDateTime != null) {
+				if (visit.getStartDatetime() != null && encounterDateTime.before(visit.getStartDatetime())) {
+					errors.rejectValue("encounterDatetime", "Encounter.datetimeShouldBeInVisitDatesRange",
+					    "The encounter datetime should be between the visit start and stop dates.");
+				}
+				
+				if (visit.getStopDatetime() != null && encounterDateTime.after(visit.getStopDatetime())) {
+					errors.rejectValue("encounterDatetime", "Encounter.datetimeShouldBeInVisitDatesRange",
+					    "The encounter datetime should be between the visit start and stop dates.");
+				}
 			}
 			
 			Map<Integer, EncounterRole> encounterMap = new HashMap<Integer, EncounterRole>();

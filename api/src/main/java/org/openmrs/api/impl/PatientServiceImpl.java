@@ -141,6 +141,25 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		return dao.getPatient(patientId);
 	}
 	
+	@Override
+	public Patient getPatientOrPromotePerson(Integer patientOrPersonId) {
+		Patient patient = null;
+		try {
+			patient = getPatient(patientOrPersonId);
+		}
+		catch (ClassCastException ex) {
+			// If the id refers to Person not Patient, it sometimes will cause class cast exception
+			// We will attempt to retrieve the Person and promote to Patient
+		}
+		if (patient == null) {
+			Person toPromote = Context.getPersonService().getPerson(patientOrPersonId);
+			if (toPromote != null) {
+				patient = new Patient(toPromote);
+			}
+		}
+		return patient;
+	}
+	
 	/**
 	 * @see #savePatient(Patient)
 	 * @deprecated replaced by #savePatient(Patient)
@@ -336,11 +355,6 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	 * @see org.openmrs.api.PatientService#voidPatient(org.openmrs.Patient, java.lang.String)
 	 */
 	public Patient voidPatient(Patient patient, String reason) throws APIException {
-		
-		// TODO should we move voided attributes from the patient up to the person?
-		// voiding a patient portion of a person and keeping the user portion doesn't
-		// seem like a necessary goal
-		
 		if (patient == null)
 			return null;
 		

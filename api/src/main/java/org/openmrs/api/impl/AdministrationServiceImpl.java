@@ -45,6 +45,7 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.ImplementationId;
 import org.openmrs.Location;
 import org.openmrs.MimeType;
+import org.openmrs.OpenmrsObject;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
@@ -760,12 +761,6 @@ public class AdministrationServiceImpl extends BaseOpenmrsService implements Adm
 	public List<GlobalProperty> saveGlobalProperties(List<GlobalProperty> props) throws APIException {
 		log.debug("saving a list of global properties");
 		
-		// delete all properties not in this new list
-		for (GlobalProperty gp : getAllGlobalProperties()) {
-			if (!props.contains(gp))
-				purgeGlobalProperty(gp);
-		}
-		
 		// add all of the new properties
 		for (GlobalProperty prop : props) {
 			if (prop.getProperty() != null && prop.getProperty().length() > 0) {
@@ -1200,4 +1195,21 @@ public class AdministrationServiceImpl extends BaseOpenmrsService implements Adm
 		return String.valueOf(bytes / ONE_KILO_BYTE / ONE_KILO_BYTE) + " MB";
 	}
 	
+	/**
+	 * @see org.openmrs.api.AdministrationService#purgeGlobalProperties(java.util.List)
+	 */
+	@Override
+	public void purgeGlobalProperties(List<GlobalProperty> globalProperties) throws APIException {
+		for (GlobalProperty globalProperty : globalProperties) {
+			Context.getAdministrationService().purgeGlobalProperty(globalProperty);
+		}
+	}
+	
+	/**
+	 * @see AdministrationService#getMaximumPropertyLength(Class, String)
+	 */
+	@Override
+	public int getMaximumPropertyLength(Class<? extends OpenmrsObject> aClass, String fieldName) {
+		return dao.getMaximumPropertyLength(aClass, fieldName);
+	}
 }

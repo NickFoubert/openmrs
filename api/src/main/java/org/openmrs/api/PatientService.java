@@ -38,6 +38,11 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * <pre>
  * 
+ * 
+ * 
+ * 
+ * 
+ * 
  * List&lt;Patient&gt; patients = Context.getPatientService().getAllPatients();
  * </pre>
  * 
@@ -93,6 +98,18 @@ public interface PatientService extends OpenmrsService {
 	@Authorized( { PrivilegeConstants.VIEW_PATIENTS })
 	@Transactional(readOnly = true)
 	public Patient getPatient(Integer patientId) throws APIException;
+	
+	/**
+	 * Get patient by internal identifier. If this id is for an existing person then instantiates a
+	 * new patient from that person, copying over all the fields.
+	 * 
+	 * @param patientOrPersonId
+	 * @return a new unsaved patient or null if person or patient is not found
+	 * @throws APIException
+	 */
+	@Authorized( { PrivilegeConstants.VIEW_PATIENTS })
+	@Transactional(readOnly = true)
+	Patient getPatientOrPromotePerson(Integer patientOrPersonId) throws APIException;
 	
 	/**
 	 * Get patient by universally unique identifier.
@@ -234,7 +251,8 @@ public interface PatientService extends OpenmrsService {
 	public List<Patient> getPatientsByName(String name, boolean includeVoided) throws APIException;
 	
 	/**
-	 * Void patient record (functionally delete patient from system)
+	 * Void patient record (functionally delete patient from system). Voids Person and retires
+	 * Users.
 	 * 
 	 * @param patient patient to be voided
 	 * @param reason reason for voiding patient
@@ -243,17 +261,21 @@ public interface PatientService extends OpenmrsService {
 	 * @should void all patient identifiers associated with given patient
 	 * @should return voided patient with given reason
 	 * @should return null when patient is null
+	 * @should void person
+	 * @should retire users
 	 */
 	@Authorized( { PrivilegeConstants.DELETE_PATIENTS })
 	public Patient voidPatient(Patient patient, String reason) throws APIException;
 	
 	/**
-	 * Unvoid patient record
+	 * Unvoid patient record. Unvoids Person as well.
 	 * 
 	 * @param patient patient to be revived
 	 * @return the revived Patient
 	 * @should unvoid given patient
 	 * @should return unvoided patient
+	 * @should unvoid person
+	 * @should not unretire users
 	 */
 	@Authorized( { PrivilegeConstants.DELETE_PATIENTS })
 	public Patient unvoidPatient(Patient patient) throws APIException;

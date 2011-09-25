@@ -211,14 +211,25 @@ public interface VisitService extends OpenmrsService {
 	/**
 	 * Gets the visits matching the specified arguments
 	 * 
-	 * @param visitTypes a list of visit types to match against
-	 * @param locations a list of locations to match against
-	 * @param indications a list of indication concepts to match against
-	 * @param minStartDatetime the minimum visit start date to match against
-	 * @param maxStartDatetime the maximum visit start date to match against
-	 * @param minEndDatetime the minimum visit end date to match against
-	 * @param maxEndDatetime the maximum visit end date to match against
-	 * @param includeVoided specifies if voided visits should also be returned
+	 * @param visitTypes
+	 *            a list of visit types to match against
+	 * @param locations
+	 *            a list of locations to match against
+	 * @param indications
+	 *            a list of indication concepts to match against
+	 * @param minStartDatetime
+	 *            the minimum visit start date to match against
+	 * @param maxStartDatetime
+	 *            the maximum visit start date to match against
+	 * @param minEndDatetime
+	 *            the minimum visit end date to match against
+	 * @param maxEndDatetime
+	 *            the maximum visit end date to match against
+	 * @param includeInactive
+	 *            if false, the min/maxEndDatetime parameters are ignored and
+	 *            only open visits are returned
+	 * @param includeVoided
+	 *            specifies if voided visits should also be returned
 	 * @return a list of visits
 	 * @see #getActiveVisitsByPatient(Patient)
 	 * @throws APIException
@@ -236,8 +247,8 @@ public interface VisitService extends OpenmrsService {
 	@Authorized(PrivilegeConstants.VIEW_VISITS)
 	public List<Visit> getVisits(Collection<VisitType> visitTypes, Collection<Patient> patients,
 	        Collection<Location> locations, Collection<Concept> indications, Date minStartDatetime, Date maxStartDatetime,
-	        Date minEndDatetime, Date maxEndDatetime, Map<VisitAttributeType, Object> attributeValues, boolean includeVoided)
-	        throws APIException;
+	        Date minEndDatetime, Date maxEndDatetime, Map<VisitAttributeType, Object> attributeValues,
+	        boolean includeInactive, boolean includeVoided) throws APIException;
 	
 	/**
 	 * Gets all unvoided visits for the specified patient
@@ -252,16 +263,32 @@ public interface VisitService extends OpenmrsService {
 	public List<Visit> getVisitsByPatient(Patient patient) throws APIException;
 	
 	/**
-	 * Gets all active unvoided visits for the specified patient i.e visits whose end date is null
-	 * 
+	 * Convenience method that delegates to getVisitsByPatient(patient, false, false)
+	 *
 	 * @param patient the patient whose visits to get
 	 * @return a list of visits
 	 * @throws APIException
-	 * @should return all unvoided active visits for the specified patient
 	 */
 	@Transactional(readOnly = true)
 	@Authorized(PrivilegeConstants.VIEW_VISITS)
 	public List<Visit> getActiveVisitsByPatient(Patient patient) throws APIException;
+	
+	/**
+	 * Gets all visits for the specified patient
+	 * 
+	 * @param patient the patient whose visits to get
+	 * @param includeInactive
+	 * @param includeVoided
+	 * @return a list of visits
+	 * @throws APIException
+	 * @should return all active unvoided visits for the specified patient
+	 * @should return all unvoided visits for the specified patient
+	 * @should return all active visits for the specified patient
+	 */
+	@Transactional(readOnly = true)
+	@Authorized(PrivilegeConstants.VIEW_VISITS)
+	public List<Visit> getVisitsByPatient(Patient patient, boolean includeInactive, boolean includeVoided)
+	        throws APIException;
 	
 	/**
 	 * @return all {@link VisitAttributeType}s
@@ -295,7 +322,7 @@ public interface VisitService extends OpenmrsService {
 	 * Creates or updates the given visit attribute type in the database
 	 * 
 	 * @param visitAttributeType
-	 * @return the visitAttribute created/saved
+	 * @return the VisitAttributeType created/saved
 	 * @should create a new visit attribute type
 	 * @should edit an existing visit attribute type
 	 */
@@ -316,7 +343,7 @@ public interface VisitService extends OpenmrsService {
 	 * Restores a visit attribute type that was previous retired in the database
 	 * 
 	 * @param visitAttributeType
-	 * @return the visitAttribute unretired
+	 * @return the VisitAttributeType unretired
 	 * @should unretire a retired visit attribute type
 	 */
 	@Authorized(PrivilegeConstants.MANAGE_VISIT_ATTRIBUTE_TYPES)

@@ -11,27 +11,25 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs;
+package org.openmrs.validator;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.openmrs.test.Verifies;
+import org.openmrs.LocationAttributeType;
+import org.openmrs.annotation.Handler;
 
 /**
- * Tests the {@link ConceptNumeric} object
+ * Validates attributes on the {@link LocationAttributeType} object.
+ * 
+ * @since 1.9
  */
-public class ConceptNumericTest {
+@Handler(supports = { LocationAttributeType.class }, order = 50)
+public class LocationAttributeTypeValidator extends BaseAttributeTypeValidator<LocationAttributeType> {
 	
 	/**
-	 * @see {@link ConceptNumeric#equals(Object)}
+	 * @see org.springframework.validation.Validator#supports(java.lang.Class)
 	 */
-	@Test
-	@Verifies(value = "should not return true if obj is concept", method = "equals(Object)")
-	public void equals_shouldNotReturnTrueIfObjIsConcept() throws Exception {
-		ConceptNumeric cn = new ConceptNumeric(123);
-		Concept c = new Concept(123);
-		
-		Assert.assertNotSame(c, cn);
-		Assert.assertNotSame(cn, c);
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return LocationAttributeType.class.isAssignableFrom(clazz);
 	}
+	
 }

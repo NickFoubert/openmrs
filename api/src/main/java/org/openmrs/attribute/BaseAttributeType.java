@@ -85,5 +85,4 @@ public abstract class BaseAttributeType<OwningType extends Customizable<?>> exte
 	public void setDatatype(String datatype) {
 		this.datatype = datatype;
 	}
-	
 }

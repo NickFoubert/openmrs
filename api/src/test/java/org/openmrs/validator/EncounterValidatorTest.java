@@ -13,6 +13,8 @@
  */
 package org.openmrs.validator;
 
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.Encounter;
@@ -20,6 +22,8 @@ import org.openmrs.EncounterRole;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
+import org.openmrs.api.context.Context;
+import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.test.Verifies;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -27,7 +31,7 @@ import org.springframework.validation.Errors;
 /**
  * Contains methods for testing {@link EncounterValidator#validate(Object, Errors)}
  */
-public class EncounterValidatorTest {
+public class EncounterValidatorTest extends BaseContextSensitiveTest {
 	
 	/**
 	 * @see {@link EncounterValidator#validate(Object,Errors)}
@@ -55,6 +59,49 @@ public class EncounterValidatorTest {
 		Errors errors = new BindException(encounter, "encounter");
 		new EncounterValidator().validate(encounter, errors);
 		Assert.assertTrue(errors.hasFieldErrors("patient"));
+	}
+	
+	/**
+	 * @see {@link EncounterValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should fail if encounter dateTime is before visit startDateTime", method = "validate(Object,Errors)")
+	public void validate_shouldFailIfEncounterDateTimeIsBeforeVisitStartDateTime() throws Exception {
+		Visit visit = Context.getVisitService().getVisit(1);
+		
+		Encounter encounter = Context.getEncounterService().getEncounter(3);
+		visit.setPatient(encounter.getPatient());
+		encounter.setVisit(visit);
+		
+		//Set encounter dateTime to before the visit startDateTime.
+		Date date = new Date(visit.getStartDatetime().getTime() - 1);
+		encounter.setEncounterDatetime(date);
+		
+		Errors errors = new BindException(encounter, "encounter");
+		new EncounterValidator().validate(encounter, errors);
+		Assert.assertEquals(true, errors.hasFieldErrors("encounterDatetime"));
+	}
+	
+	/**
+	 * @see {@link EncounterValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should fail if encounter dateTime is after visit stopDateTime", method = "validate(Object,Errors)")
+	public void validate_shouldFailIfEncounterDateTimeIsAfterVisitStopDateTime() throws Exception {
+		Visit visit = Context.getVisitService().getVisit(1);
+		
+		Encounter encounter = Context.getEncounterService().getEncounter(3);
+		visit.setPatient(encounter.getPatient());
+		encounter.setVisit(visit);
+		
+		//Set encounter dateTime to after the visit stopDateTime.
+		visit.setStopDatetime(new Date());
+		Date date = new Date(visit.getStopDatetime().getTime() + 1);
+		encounter.setEncounterDatetime(date);
+		
+		Errors errors = new BindException(encounter, "encounter");
+		new EncounterValidator().validate(encounter, errors);
+		Assert.assertEquals(true, errors.hasFieldErrors("encounterDatetime"));
 	}
 	
 	/**

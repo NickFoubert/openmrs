@@ -86,6 +86,7 @@ import org.openmrs.Drug;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Program;
@@ -546,12 +547,17 @@ public class OpenmrsUtil {
 	 */
 	public static void applyLogLevels() {
 		AdministrationService adminService = Context.getAdministrationService();
-		String logLevel = adminService.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_LOG_LEVEL);
-		String logClass = OpenmrsConstants.LOG_CLASS_DEFAULT;
+		String logLevel = adminService.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_LOG_LEVEL, "");
 		
-		// potentially have different levels here. only doing org.openmrs right
-		// now
-		applyLogLevel(logClass, logLevel);
+		String[] levels = logLevel.split(",");
+		for (String level : levels) {
+			String[] classAndLevel = level.split(":");
+			if (classAndLevel.length == 1)
+				applyLogLevel(OpenmrsConstants.LOG_CLASS_DEFAULT, logLevel);
+			else
+				applyLogLevel(classAndLevel[0].trim(), classAndLevel[1].trim());
+		}
+		
 	}
 	
 	/**
@@ -890,7 +896,9 @@ public class OpenmrsUtil {
 	 * 
 	 * @param date date to adjust
 	 * @return a date that is the last possible time in the day
+	 * @deprecated use {@link #getLastMomentOfDay(Date)}
 	 */
+	@Deprecated
 	public static Date lastSecondOfDay(Date date) {
 		if (date == null)
 			return null;
@@ -903,6 +911,47 @@ public class OpenmrsUtil {
 		c.set(Calendar.SECOND, 0);
 		c.add(Calendar.DAY_OF_MONTH, 1);
 		c.add(Calendar.SECOND, -1);
+		return c.getTime();
+	}
+	
+	/**
+	 * Gets the date having the last millisecond of a given day. Meaning that the hours, seconds, 
+	 * and milliseconds are the latest possible for that day.
+	 * 
+	 * @param day the day.
+	 * @return the date with the last millisecond of the day.
+	 */
+	public static Date getLastMomentOfDay(Date day) {
+		Calendar calender = Calendar.getInstance();
+		calender.setTime(day);
+		calender.set(Calendar.HOUR_OF_DAY, 23);
+		calender.set(Calendar.MINUTE, 59);
+		calender.set(Calendar.SECOND, 59);
+		calender.set(Calendar.MILLISECOND, 999);
+		
+		return calender.getTime();
+	}
+	
+	/**
+	 * Return a date that is the same day as the passed in date, but the hours and seconds are the
+	 * earliest possible for that day.
+	 * 
+	 * @param date date to adjust
+	 * @return a date that is the first possible time in the day
+	 * 
+	 * @since 1.9
+	 */
+	public static Date firstSecondOfDay(Date date) {
+		if (date == null)
+			return null;
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		
 		return c.getTime();
 	}
 	
@@ -1909,7 +1958,7 @@ public class OpenmrsUtil {
 	 * characters. Currently the load method expects the inputStream to point to a latin1 encoded
 	 * file. <br/>
 	 * NOTE: In Java 6, you will be able to pass the load() and store() methods a UTF-8
-	 * Reader/Writer object as an argument, making this method unnecesary.
+	 * Reader/Writer object as an argument, making this method unnecessary.
 	 * 
 	 * @deprecated use {@link #loadProperties(Properties, File)}
 	 * @param props the properties object to write into

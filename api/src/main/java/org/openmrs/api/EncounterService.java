@@ -25,11 +25,13 @@ import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.db.EncounterDAO;
+import org.openmrs.api.handler.EncounterVisitHandler;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +68,10 @@ public interface EncounterService extends OpenmrsService {
 	 * @should not overwrite dateCreated if non null
 	 * @should not overwrite obs and orders creator or dateCreated
 	 * @should cascade creator and dateCreated to orders
+	 * @should not assign encounter to visit if no handler is registered
+	 * @should not assign encounter to visit if the no assign handler is registered
+	 * @should assign encounter to visit if the assign to existing handler is registered
+	 * @should assign encounter to visit if the assign to existing or new handler is registered
 	 * @should cascade save encounter providers
 	 * @should cascade delete encounter providers
 	 */
@@ -206,7 +212,7 @@ public interface EncounterService extends OpenmrsService {
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_ENCOUNTERS })
 	public List<Encounter> getEncounters(Patient who, Location loc, Date fromDate, Date toDate,
-	        Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<User> providers,
+	        Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<Provider> providers,
 	        Collection<VisitType> visitTypes, Collection<Visit> visits, boolean includeVoided);
 	
 	/**
@@ -672,13 +678,39 @@ public interface EncounterService extends OpenmrsService {
 	 * Gets all encounters grouped within a given visit.
 	 * 
 	 * @param visit the visit.
+	 * @param includeVoided whether voided encounters should be returned
 	 * @return list of encounters in the given visit.
-	 * @should get encounters by visit
+	 * @should get active encounters by visit
+	 * @should include voided encounters when includeVoided is true
 	 * @since 1.9
 	 */
 	@Transactional(readOnly = true)
 	@Authorized( { PrivilegeConstants.VIEW_ENCOUNTERS })
-	List<Encounter> getEncountersByVisit(Visit visit);
+	List<Encounter> getEncountersByVisit(Visit visit, boolean includeVoided);
+	
+	/**
+	 * @return list of handlers for determining if an encounter should go into a
+	 *         visit. If none are found, an empty list.
+	 *         
+	 * @see EncounterVisitHandler
+	 * @since 1.9
+	 * @should return the no assignment handler
+	 * @should return the existing visit only assignment handler
+	 * @should return the existing or new visit assignment handler
+	 */
+	@Transactional(readOnly = true)
+	public List<EncounterVisitHandler> getEncounterVisitHandlers();
+	
+	/**
+	 * Gets the active handler for assigning visits to encounters.
+	 * 
+	 * @see EncounterVisitHandler
+	 * @since 1.9
+	 * @return the active handler class.
+	 * @throws APIException thrown if something goes wrong during the retrieval of the handler.
+	 */
+	@Transactional(readOnly = true)
+	public EncounterVisitHandler getActiveEncounterVisitHandler() throws APIException;
 	
 	/**
 	 * Saves a new encounter role or updates an existing encounter role.

@@ -40,7 +40,7 @@ import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.User;
+import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.api.EncounterService;
@@ -113,8 +113,9 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 *      java.util.Collection, boolean)
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<Encounter> getEncounters(Patient patient, Location location, Date fromDate, Date toDate,
-	        Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<User> providers,
+	        Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<Provider> providers,
 	        Collection<VisitType> visitTypes, Collection<Visit> visits, boolean includeVoided) {
 		
 		Criteria crit = sessionFactory.getCurrentSession().createCriteria(Encounter.class);
@@ -139,8 +140,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 		}
 		if (providers != null && providers.size() > 0) {
 			crit.createAlias("encounterProviders", "ep");
-			crit.createAlias("ep.provider", "epp");
-			crit.add(Expression.in("epp.person", providers));
+			crit.add(Expression.in("ep.provider", providers));
 		}
 		if (visitTypes != null && visitTypes.size() > 0) {
 			crit.createAlias("visit", "v");
@@ -363,10 +363,13 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Encounter> getEncountersByVisit(Visit visit) {
-		Criteria crit = sessionFactory.getCurrentSession().createCriteria(Encounter.class).createAlias("visit", "visit")
-		        .add(Expression.eq("visit", visit)).add(Expression.eq("voided", false)).addOrder(
-		            Order.asc("encounterDatetime"));
+	public List<Encounter> getEncountersByVisit(Visit visit, boolean includeVoided) {
+		Criteria crit = sessionFactory.getCurrentSession().createCriteria(Encounter.class)
+		        .add(Expression.eq("visit", visit));
+		if (!includeVoided) {
+			crit.add(Expression.eq("voided", false));
+		}
+		crit.addOrder(Order.asc("encounterDatetime"));
 		
 		return crit.list();
 	}

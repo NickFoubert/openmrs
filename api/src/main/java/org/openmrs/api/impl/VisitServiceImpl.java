@@ -157,7 +157,7 @@ public class VisitServiceImpl extends BaseOpenmrsService implements VisitService
 		Errors errors = new BindException(visit, "visit");
 		new VisitValidator().validate(visit, errors);
 		if (errors.hasErrors())
-			throw new APIException("Validation errors found");
+			throw new APIException("Validation errors found. " + errors);
 		
 		return dao.saveVisit(visit);
 	}
@@ -186,7 +186,7 @@ public class VisitServiceImpl extends BaseOpenmrsService implements VisitService
 		if (visit.getVisitId() == null)
 			return;
 		//TODO there is a ticket for adding includeVoided argument to getEncountersByVisit for this not to fail
-		if (Context.getEncounterService().getEncountersByVisit(visit).size() > 0)
+		if (Context.getEncounterService().getEncountersByVisit(visit, true).size() > 0)
 			throw new APIException(Context.getMessageSourceService().getMessage("Visit.purge.inUse", null,
 			    "Cannot purge a visit that has encounters associated to it", Context.getLocale()));
 		dao.deleteVisit(visit);
@@ -195,18 +195,18 @@ public class VisitServiceImpl extends BaseOpenmrsService implements VisitService
 	/**
 	 * @see org.openmrs.api.VisitService#getVisits(java.util.Collection, java.util.Collection,
 	 *      java.util.Collection, java.util.Collection, java.util.Date, java.util.Date,
-	 *      java.util.Date, java.util.Date, boolean)
+	 *      java.util.Date, java.util.Date, boolean, boolean)
 	 */
 	@Override
 	public List<Visit> getVisits(Collection<VisitType> visitTypes, Collection<Patient> patients,
 	        Collection<Location> locations, Collection<Concept> indications, Date minStartDatetime, Date maxStartDatetime,
-	        Date minEndDatetime, Date maxEndDatetime, Map<VisitAttributeType, Object> attributeValues, boolean includeVoided)
-	        throws APIException {
+	        Date minEndDatetime, Date maxEndDatetime, Map<VisitAttributeType, Object> attributeValues,
+	        boolean includeInactive, boolean includeVoided) throws APIException {
 		
 		Map<AttributeType, String> serializedAttributeValues = Context.getAttributeService().getSerializedAttributeValues(
 		    attributeValues);
 		return dao.getVisits(visitTypes, patients, locations, indications, minStartDatetime, maxStartDatetime,
-		    minEndDatetime, maxEndDatetime, serializedAttributeValues, true, includeVoided);
+		    minEndDatetime, maxEndDatetime, serializedAttributeValues, includeInactive, includeVoided);
 	}
 	
 	/**
@@ -219,20 +219,29 @@ public class VisitServiceImpl extends BaseOpenmrsService implements VisitService
 		if (patient == null || patient.getId() == null)
 			return Collections.EMPTY_LIST;
 		
-		return getVisits(null, Collections.singletonList(patient), null, null, null, null, null, null, null, false);
+		return getVisits(null, Collections.singletonList(patient), null, null, null, null, null, null, null, true, false);
 	}
 	
 	/**
 	 * @see org.openmrs.api.VisitService#getActiveVisitsByPatient(org.openmrs.Patient)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Visit> getActiveVisitsByPatient(Patient patient) throws APIException {
+		return getVisitsByPatient(patient, false, false);
+	}
+	
+	/**
+	 * @see org.openmrs.api.VisitService#getVisitsByPatient(org.openmrs.Patient, boolean, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Visit> getVisitsByPatient(Patient patient, boolean includeInactive, boolean includeVoided)
+	        throws APIException {
 		if (patient == null || patient.getId() == null)
 			return Collections.EMPTY_LIST;
 		
-		return dao.getVisits(null, Collections.singletonList(patient), null, null, null, null, null, null, null, false,
-		    false);
+		return dao.getVisits(null, Collections.singletonList(patient), null, null, null, null, null, null, null,
+		    includeInactive, includeVoided);
 	}
 	
 	/**
