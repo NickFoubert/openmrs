@@ -256,6 +256,10 @@
 				<version>3.2.5.ga-mod</version>
 				<exclusions>
 					<exclusion>
+						<groupId>asm</groupId>
+						<artifactId>asm</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>commons-logging</groupId>
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
@@ -274,9 +278,9 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.openmrs.liquibase</groupId>
+				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-core</artifactId>
-				<version>1.9.4-mod</version>
+				<version>2.0.1</version>
 			</dependency>
 
 			<dependency>
@@ -433,6 +437,18 @@
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
+				<groupId>postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>9.0-801.jdbc4</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.sourceforge.jtds</groupId>
+				<artifactId>jtds</artifactId>
+				<version>1.2.4</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
 				<version>1.5.0</version>
@@ -518,6 +534,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.2</version>
 					<configuration>
 						<archive>
 							<manifestEntries>
@@ -533,15 +550,10 @@
 						</execution>
 					</executions>
 				</plugin>
-				<!-- 
-					Using modified version of plugin with patch applied from issue:
-					http://jira.codehaus.org/browse/MOJO-1539
-					Allows building without svn using revisionOnScmFailure
-				-->
 				<plugin>
-					<groupId>org.openmrs.codehaus.mojo</groupId>
+					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>buildnumber-maven-plugin</artifactId>
-					<version>1.0-beta-4-mod</version>
+					<version>1.0</version>
 					<configuration>
 						<doCheck>false</doCheck>
 						<doUpdate>false</doUpdate>
@@ -620,7 +632,7 @@
 
 		<plugins>
 			<plugin>
-				<groupId>org.openmrs.codehaus.mojo</groupId>
+				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<executions>
 					<execution>
@@ -676,6 +688,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.6.1</version>
 				<configuration>
 					<docfilessubdirs>true</docfilessubdirs>
 					<bottom>&lt;em&gt;&lt;small&gt; Generated ${TIMESTAMP} NOTE - these libraries are in active
@@ -695,8 +708,9 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jxr-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
 			</plugin>
 		</plugins>
 	</reporting>
