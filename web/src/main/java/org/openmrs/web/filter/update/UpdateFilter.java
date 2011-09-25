@@ -34,7 +34,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import liquibase.ChangeSet;
+import liquibase.changelog.ChangeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +50,7 @@ import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.util.RoleConstants;
 import org.openmrs.util.Security;
 import org.openmrs.util.DatabaseUpdater.ChangeSetExecutorCallback;
+import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.Listener;
 import org.openmrs.web.filter.StartupFilter;
 import org.openmrs.web.filter.initialization.InitializationFilter;
@@ -248,7 +249,7 @@ public class UpdateFilter extends StartupFilter {
 		try {
 			connection = DatabaseUpdater.getConnection();
 			
-			String select = "select user_id, password, salt from users where (username = ? or system_id = ?) and retired = 0";
+			String select = "select user_id, password, salt from users where (username = ? or system_id = ?) and retired = '0'";
 			PreparedStatement statement = connection.prepareStatement(select);
 			statement.setString(1, usernameOrSystemId);
 			statement.setString(2, usernameOrSystemId);
@@ -274,7 +275,7 @@ public class UpdateFilter extends StartupFilter {
 			// we may not have upgraded User to have retired instead of voided yet, so if the query above fails, we try
 			// again the old way
 			try {
-				String select = "select user_id, password, salt from users where (username = ? or system_id = ?) and voided = 0";
+				String select = "select user_id, password, salt from users where (username = ? or system_id = ?) and voided = '0'";
 				PreparedStatement statement = connection.prepareStatement(select);
 				statement.setString(1, usernameOrSystemId);
 				statement.setString(2, usernameOrSystemId);
@@ -563,6 +564,7 @@ public class UpdateFilter extends StartupFilter {
 							 * @see org.openmrs.util.DatabaseUpdater.ChangeSetExecutorCallback#executing(liquibase.ChangeSet,
 							 *      int)
 							 */
+							@Override
 							public void executing(ChangeSet changeSet, int numChangeSetsToRun) {
 								addChangesetId(changeSet.getId());
 								setMessage(message);

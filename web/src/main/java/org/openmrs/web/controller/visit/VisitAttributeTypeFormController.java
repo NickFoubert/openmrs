@@ -41,6 +41,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * 
  * @since 1.9
  */
+@SuppressWarnings("deprecation")
 public class VisitAttributeTypeFormController extends SimpleFormController {
 	
 	/** Logger for this class and subclasses */
