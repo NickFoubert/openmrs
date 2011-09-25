@@ -16,161 +16,58 @@
 
 <script type="text/javascript">
 
-//Currently encounters can only be added to an existing visit
-<c:if test="${visit.visitId != null}">
-var visitEncountersCount = ${fn:length(visitEncounters)};
-var encountersToAddCount = ${fn:length(encountersToAdd)};
-var removeConfirmationMsg = '<spring:message code="Visit.confirm.removeMessage"/>';
-var addConfirmationMsg = '<spring:message code="Visit.confirm.addMessage"/>';
+var numberOfClonedElements = 0;
+var originalEncountersCount = ${fn:length(visitEncounters)};
 
-function addEncounterRow(encounterObj) {
+function addEncounter() {
+	var index = originalEncountersCount+numberOfClonedElements;
 	var row = document.getElementById('newEncounterRow');
 	var newrow = row.cloneNode(true);
-	newrow.style.display = '';	
-	newrow.id = 'encounter-' + encounterObj.encounterId;
-	row.parentNode.insertBefore(newrow, row);
-	var columns = newrow.getElementsByTagName("td");
-	$j(columns[0]).html(encounterObj.encounterDateString);
-	$j(columns[1]).html(encounterObj.encounterType);
-	$j(columns[2]).html(encounterObj.location);
-	$j(columns[3]).html(encounterObj.providerName);
-	
-	//set the attributes for the remove button
-	var inputs = columns[4].getElementsByTagName("input");
-	for (var x = 0; x < inputs.length; x++) {
-		var input = inputs[x];
-		if(inputs[x] && inputs[x].type == 'button') {
-			inputs[x].onclick = function(){
-				confirmAction(false, encounterObj.encounterId);
-			}
+	$j(newrow).show();	
+	newrow.id = '';
+	var inputs = newrow.getElementsByTagName("input");
+	for (var i = 0; i < inputs.length; i++) {
+		var input = inputs[i];
+		if(input && input.type == 'text' || input.type == 'hidden') {
+			input.id = input.id.replace('[x]', '[' + index + ']');
+			if(input.type == 'hidden')
+				input.name = 'encounterIds';
 		}
 	}
-	
-	encountersToAddCount--;
-	visitEncountersCount++;
-	
-	if(encountersToAddCount < 0)
-		encountersToAddCount = 0;
-	//no more encounters to add
-	if(encountersToAddCount == 0){
-		$j("#addEncounterRow").hide();
-		//hide the dropdown so that when the next encounter gets removed
-		//and the add encounter row is displayed, the drop down is not visible yet
-		$j(".addEncounterInputs").css("visibility", "hidden")
-	}
-	else if($j("#noneRow").is(":visible") == true){
-		//hide 'none' message row just in case this visit had no encounters
-		$j("#noneRow").hide();
-	}
-}
-
-function removeEncounterRow(encounterId){
-	var encounterRowToRemove = document.getElementById("encounter-"+encounterId);
-	encounterRowToRemove.parentNode.removeChild(encounterRowToRemove);
-		
-	visitEncountersCount--;
-	encountersToAddCount++;
-	
-	if(visitEncountersCount < 0)
-		visitEncountersCount = 0;
-	
-	if(visitEncountersCount > 0 && $j("#addEncounterRow").is(":visible") == false)
-		$j("#addEncounterRow").show();
-	
-	if(visitEncountersCount == 0)
-		$j("#noneRow").show();
-}
-
-function showAddEncounterDetails(){
-	//show the dropdown if it was previously hidden
-	$j(".addEncounterInputs").show();
-	$j(".addEncounterInputs").css("visibility", "visible")
-}
-
-function addEncounter(encounterId){
-	DWREncounterService.addEncounterToVisit(encounterId, ${visit.visitId}, function(encounterObj) {
-		if(encounterObj){
-			addEncounterRow(encounterObj);
-			optionObj = document.getElementById("encounterOption-"+encounterId);
-			optionObj.parentNode.removeChild(optionObj);
-		}else
-			alert('<spring:message code="Visit.failedToAddEncounter"/>');
+	row.parentNode.insertBefore(newrow, row);
+	numberOfClonedElements++;
+	// set up the autocomplete for selecting encounters to add
+	new AutoComplete('visitEncounters[' + index + ']-display', new CreateCallback({maxresults:100}).encounterCallback(), {
+		select: function(event, ui) {
+			jquerySelectEscaped('visitEncounters[' + index + ']').val(ui.item.object.encounterId);
+		},
+        placeholder:'<spring:message code="Encounter.search.placeholder" javaScriptEscape="true"/>'
 	});
 }
 
-function removeEncounter(encounterId){
-	DWREncounterService.removeEncounterFromVisit(encounterId, function(encounterObj) {
-		if(encounterObj){
-			removeEncounterRow(encounterId);
-			addEncounterOption(encounterObj);
-		}else
-			alert('<spring:message code="Visit.failedToRemoveEncounter"/>');
-	});	
-}
-
-function addEncounterOption(encounterObj){
-	var option =  '<option id="encounterOption-'+encounterObj.encounterId+'" value="'+encounterObj.encounterId+'">' + encounterObj.encounterType + 
-	' @' + encounterObj.location + ' | ' +encounterObj.encounterDateString + ' | ' + encounterObj.providerName + '</option>';
-	
-	$j("select#encounterSelect").append(option);
-}
-
-function confirmAction(isAddition, encounterId){
-	//If the user selected the first empty value in the drop down, ignore
-	if(isAddition && document.getElementById("encounterSelect").selectedIndex == 0)
-		return;
-	
-	var dialogElement = document.getElementById(isAddition ? "add-enc-confirmation" : "remove-enc-confirmation");
-	$j(dialogElement).html("<br/>"+(isAddition ? addConfirmationMsg: removeConfirmationMsg));
-	$j(dialogElement).addClass("visit-dialog-content");
-	
-	$j(dialogElement).dialog({
-		autoOpen: true,
-		resizable: false,
-		width:400,
-		height:200,
-		modal: true,
-		buttons: {
-				"<spring:message code="general.yes"/>": function() {
-							if(isAddition)
-								addEncounter(encounterId);
-							else
-								removeEncounter(encounterId);
-							
-							$j(this).dialog('close');
-						},
-				"<spring:message code="general.cancel"/>": function() {
-						if(isAddition)
-							document.getElementById("encounterSelect").selectedIndex = 0;
-					
-						$j(this).dialog('close');
-					}
-				}
-	});
-	$j('.ui-dialog-buttonpane').css('text-align', 'center');
+function removeEncounter(obj){
+	obj.parentNode.parentNode.parentNode.removeChild(obj.parentNode.parentNode);
 }
 
 $j(document).ready( function() {
 	$j("#delete-dialog").dialog({
 		autoOpen: false,
 		resizable: false,
-		width:450,
-		height:200,
+		width:'auto',
+		height:'auto',
 		modal: true
 	});
 	
 	$j("#purge-dialog").dialog({
 		autoOpen: false,
 		resizable: false,
-		width:400,
-		height:200,
+		width:'auto',
+		height:'auto',
 		modal: true
 	});
 	
 	$j("#purge-dialog").addClass("visit-dialog-content");
 });
-
-</c:if>
 
 </script>
 
@@ -314,17 +211,81 @@ $j(document).ready( function() {
 					</spring:bind>
 				</td>
 			</tr>
-            <c:if test="${ not empty visitAttributeTypes }">
+            <c:if test="${ not empty attributeTypes }">
     			<tr valign="top">
     			    <th class="visitLabel"><spring:message code="Visit.attributes" /></th>
 	               	<td>
+	               		<spring:bind path="activeAttributes">
+							<c:if test="${status.error}">
+								<span class="error">
+									<c:forEach var="err" items="${status.errorMessages}">
+										${ err }<br/>
+									</c:forEach>
+								</span>
+							</c:if>
+						</spring:bind>
 			            <table>
-			                <c:forEach var="attrType" items="${ visitAttributeTypes }">
-			                   <openmrs_tag:attributesForType attributeType="${ attrType }" customizable="${ visit }" formFieldNamePrefix="attribute.${ attrType.visitAttributeTypeId }"/>
+			                <c:forEach var="attrType" items="${ attributeTypes }">
+			                   <openmrs_tag:attributesForType attributeType="${ attrType }" customizable="${ visit }" formFieldNamePrefix="attribute.${ attrType.id }"/>
 			                </c:forEach>
 			            </table>
 			        </td>
 			    </tr>
+			</c:if>
+			<tr>
+				<th class="visitLabel" valign="top"><spring:message code="Visit.encounters" /></th>
+				<td valign="top">
+					<table id="encountersTable" cellpadding="3" cellspacing="3">
+						<tr>
+							<th><spring:message code="Encounter.datetime"/></th>
+							<th><spring:message code="Encounter.type"/></th>
+							<th><spring:message code="Encounter.location"/></th>
+							<th><spring:message code="Encounter.provider"/></th>
+							<th></th>
+						</tr>
+						<c:forEach items="${visitEncounters}" var="enc" varStatus="encStatus">
+						<tr id="encounter-${enc.encounterId}" style='background-color: whitesmoke'>
+							<td><openmrs:formatDate date="${enc.encounterDatetime}" type="small" /></td>
+							<td><openmrs:format encounterType="${enc.encounterType}" /></td>
+							<td><openmrs:format location="${enc.location}" /></td>
+							<td><openmrs:format person="${enc.provider}" /></td>
+							<td class="removeButtonColumn">
+								<input type="button" value='<spring:message code="general.remove"/>' class="smallButton" onclick="removeEncounter(this)" />
+								<input type="hidden" name="encounterIds" value="${enc.encounterId}" />
+							</td>
+						</tr>
+						</c:forEach>
+						<tr id="newEncounterRow" style="display:none;">
+							<td colspan="4">
+								<input type="text" id="visitEncounters[x]-display" size="30" />
+								<input type="hidden" id="visitEncounters[x]" name="encounterIds" />
+							</td>
+							<td class="removeButtonColumn">
+								<input type="button" value='<spring:message code="general.remove"/>' class="smallButton" onclick="removeEncounter(this)" />
+							</td>
+						</tr>
+					</table>
+					<input type="button" value='<spring:message code="Visit.addEncounter"/>' class="smallButton" onclick='addEncounter()' />
+					<br /><br />
+				</td>
+			</tr>
+			<c:if test="${visit.visitId != null}">
+			<c:if test="${visit.creator != null}">
+			<tr>
+				<th class="visitLabel"><spring:message code="general.createdBy" /></th>
+				<td>
+					${visit.creator.personName} - <openmrs:formatDate date="${visit.dateCreated}" type="long" />
+				</td>
+			</tr>
+			</c:if>
+			<c:if test="${visit.changedBy != null}">
+			<tr>
+				<th class="visitLabel"><spring:message code="general.changedBy" /></th>
+				<td>
+					${visit.changedBy.personName} - <openmrs:formatDate date="${visit.dateChanged}" type="long" />
+				</td>
+			</tr>
+			</c:if>
 			</c:if>
 			<tr>
 				<td colspan="2">
@@ -344,72 +305,6 @@ $j(document).ready( function() {
 			</tr>
         </table>
     </fieldset>
-    <br/>
-    <c:if test="${visit.visitId != null}">
-    <fieldset>
-		<legend><spring:message code="Visit.encounters" /></legend>
-		<table id="encountersTable" cellpadding="3" cellspacing="3">
-			<tr class="unremovable">
-				<th><spring:message code="Encounter.datetime"/></th>
-				<th><spring:message code="Encounter.type"/></th>
-				<th><spring:message code="Encounter.location"/></th>
-				<th><spring:message code="Encounter.provider"/></th>
-				<th></th>
-			</tr>
-			<c:forEach items="${visitEncounters}" var="enc" varStatus="encStatus">
-			<tr id="encounter-${enc.encounterId}" style='background-color: whitesmoke'>
-				<td><openmrs:formatDate date="${enc.encounterDatetime}" type="small" /></td>
-				<td><openmrs:format encounterType="${enc.encounterType}" /></td>
-				<td><openmrs:format location="${enc.location}" /></td>
-				<td><openmrs:format person="${enc.provider}" /></td>
-				<td class="removeButtonColumn">
-					<c:if test="${visit.voided == false}">
-						<input type="button" value='<spring:message code="general.remove"/>' class="smallButton" 
-							onclick="confirmAction(false, ${enc.encounterId})" />
-					</c:if>
-				</td>
-			</tr>
-			</c:forEach>
-			<tr id="newEncounterRow" style="display:none; background-color: whitesmoke">
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td class="removeButtonColumn">
-					<input type="button" value='<spring:message code="general.remove"/>' class="smallButton" />
-				</td>
-			</tr>
-			<tr id="noneRow" class="evenRow" <c:if test="${fn:length(visitEncounters) > 0}">style="display:none"</c:if>>
-				<td colspan="5" style="text-align: center;"><spring:message code="general.none"/></td>
-			</tr>
-		</table>
-		<c:if test="${visit.voided == false}">
-		<table  id="addEncounterRow" cellpadding="3" cellspacing="3" 
-			style='padding-top:6px<c:if test="${fn:length(encountersToAdd) == 0}">; display:none</c:if>'>
-			<tr>
-				<td>
-					<input type="button" value='<spring:message code="Visit.addEncounter"/>' class="smallButton" 
-						onclick='javascript:$j(".addEncounterInputs").css("visibility", "visible")' />
-				</td>
-				<td>
-					<select id="encounterSelect" class="addEncounterInputs" onchange="confirmAction(true, this.value)">
-						<option></option>
-						<c:forEach items="${encountersToAdd}" var="enc2" varStatus="enc2Status">
-							<option id="encounterOption-${enc2.encounterId}" value="${enc2.encounterId}">
-								<openmrs:format encounter="${enc2}" />
-							</option>
-						</c:forEach>
-					</select>
-				</td>
-				<td class="addEncounterInputs">
-					<input type="button" value='<spring:message code="general.done"/>' 
-						onclick='javascript:$j(".addEncounterInputs").css("visibility", "hidden")' />
-				</td>
-			</tr>
-		</table>
-		</c:if>
-	</fieldset>
-	</c:if>
 </form:form>
 
 
@@ -478,8 +373,5 @@ $j(document).ready( function() {
 	</tr>
 </table>
 </c:if>
-
-<div id="add-enc-confirmation" title="<spring:message code="Visit.confirm.addEncounter"/>"></div>
-<div id="remove-enc-confirmation" title="<spring:message code="Visit.confirm.removeEncounter"/>"></div>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

@@ -123,6 +123,21 @@ function CreateCallback(options) {
 	}}
 	
 	/**
+	 * Use this method if searching for concept reference terms
+	 * @param sourceElement (optional) the element whose value is the conceptSourceId for the source to search for terms
+	 */
+	this.conceptReferenceTermCallback = function(sourceElement) { var thisObject = this; return function(q, response) {
+		if (jQuery.trim(q).length == 0)
+			return response(false);
+		var sourceId = null;
+		if(sourceElement)
+			sourceId = sourceElement.value;
+		
+		thisObject.searchCounter += 1;
+		DWRConceptService.findBatchOfConceptReferenceTerms(q, sourceId, null, maxresults, false, thisObject.makeRows(q, response, thisObject.searchCounter, thisObject.displayConceptReferenceTerm));
+	}}
+	
+	/**
 	 * Use this method if searching for provider objects
 	 */
 	this.providerCallback = function() { var thisObject = this; return function(q, response) {
@@ -282,7 +297,10 @@ function CreateCallback(options) {
 		textShown += " " + enc.encounterType;
 		textShown += " - " + enc.personName;
 		textShown += " - " + enc.providerName;
-		textShown += " - " + enc.location;
+		
+		if (enc.location) {
+			textShown += " - " + enc.location;
+		}
 		
 		// highlight each search term in the results
 		textShown = highlightWords(textShown, origQuery);
@@ -316,4 +334,22 @@ function CreateCallback(options) {
 		
 		return textShown;
 	}
+	
+	// a 'private' method
+	// This is what maps each ConceptListItem or LocationListItem returned object to a name in the dropdown
+	this.displayConceptReferenceTerm = function(origQuery) { return function(item) {
+		// dwr sometimes puts strings into the results, just display those
+		if (typeof item == 'string')
+			return { label: item, value: "" };
+		
+		var textShown = " " + item.code+((item.name != null && item.name.trim() != '') ? " - "+item.name : "")+" ["+item.conceptSourceName+"]";
+		
+		// highlight each search term in the results
+		textShown = highlightWords(textShown, origQuery);
+		
+		var value = item.code;
+		textShown = "<span class='autocompleteresult'>" + textShown + "</span>";
+		
+		return { label: textShown, value: value, object: item};
+	}; };
 }

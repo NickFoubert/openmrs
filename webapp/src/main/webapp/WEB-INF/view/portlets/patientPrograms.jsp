@@ -69,11 +69,16 @@
 		var startDate = parseDate($('enrollmentDateElement').value);
 		var endDate = parseDate($('completionDateElement').value);
 		var locationId = $('programLocationElement').value;
-		currentProgramBeingEdited = null;
-		DWRProgramWorkflowService.updatePatientProgram(idToSave, startDate, endDate, locationId, function() {
+		var outcomeId = $('programOutcomeConceptElement').value;
+		if (endDate != '' && !$j('#editProgramOutcomeRow').is(':hidden') && outcomeId == '') {
+			alert("<spring:message code="PatientProgram.error.outcomeRequired" />");
+		} else {
+			currentProgramBeingEdited = null;
+			DWRProgramWorkflowService.updatePatientProgram(idToSave, startDate, endDate, locationId, outcomeId, function() {
 				hideLayer('editPatientProgramPopup');
 				refreshPage();
 			});
+		}
 	}
 	
 	function handleDeleteProgram() {
@@ -170,6 +175,8 @@
 	function showEditPatientProgramPopup(patientProgramId) {
 		hideLayer('editWorkflowPopup');
 		hideLayer('changedByTR');
+        hideLayer('editProgramOutcomeRow');
+        $j('#programOutcomeConceptElement').attr('disabled', true);
 		currentProgramBeingEdited = patientProgramId;
 		$('programNameElement').innerHTML = '<spring:message code="general.loading" javaScriptEscape="true"/>';
 		$('enrollmentDateElement').value = '';
@@ -179,6 +186,8 @@
 				$('programNameElement').innerHTML = program.name;
 				$('enrollmentDateElement').value = formatDate(program.dateEnrolledAsYmd);
 				$('completionDateElement').value = formatDate(program.dateCompletedAsYmd);
+                if (!isEmpty(program.dateCompletedAsYmd))
+                    $j('#programOutcomeConceptElement').attr('disabled', false);
 				
 				setEditPatientProgramPopupSelectedLocation(program.location.locationId);
 				
@@ -190,8 +199,28 @@
 					$('dateChangedElement').innerHTML = getDateString(program.dateChanged);
 					showLayer('changedByTR');
 				}
+                DWRProgramWorkflowService.getPossibleOutcomes(program.programId, function(listItems) {
+                    dwr.util.removeAllOptions('programOutcomeConceptElement');
+                    if (listItems.length != 0) {
+                        showLayer('editProgramOutcomeRow');
+                        dwr.util.addOptions('programOutcomeConceptElement', {'': '<spring:message code="Program.outcome.choose" javaScriptEscape="true"/>' }) ;
+                        dwr.util.addOptions('programOutcomeConceptElement', listItems, 'id', 'name');
+                        dwr.util.setValue('programOutcomeConceptElement', program.outcomeId);
+                    }
+                });
 			});
 	}
+
+    $j(function() {
+        $j('#completionDateElement').change(function() {
+            if (!isEmpty($j('#completionDateElement').val())) {
+                $j('#programOutcomeConceptElement').attr('disabled', false);
+            } else {
+                $j('#programOutcomeConceptElement').attr('disabled', true);
+                $j('#programOutcomeConceptElement').val("");
+            }
+        })
+    })
 </script>
 
 <div id="editPatientProgramPopup" style="position: absolute; background-color: #e0e0e0; z-index: 5; padding: 10px; border: 1px black dashed; display: none">
@@ -206,13 +235,13 @@
 				<select name="locationId" id="programLocationElement">
 					<option value=""><spring:message code="Program.location.choose"/></option>
 					<c:forEach var="location" items="${model.locations}">
-						<c:if test="${!location.retired}">						
-							<option value="${location.locationId}">${location.displayString}</option>						
+						<c:if test="${!location.retired}">
+							<option value="${location.locationId}">${location.displayString}</option>
 						</c:if>
 					</c:forEach>
 					<c:forEach var="location" items="${model.locations}">
-						<c:if test="${location.retired}">						
-							<option value="${location.locationId}">${location.displayString} (<spring:message code="general.retired"/>)</option>						
+						<c:if test="${location.retired}">
+							<option value="${location.locationId}">${location.displayString} (<spring:message code="general.retired"/>)</option>
 						</c:if>
 					</c:forEach>
 				</select>
@@ -225,6 +254,12 @@
 		<tr>
 			<td><spring:message code="Program.dateCompleted"/>:</td>
 			<td><input type="text" id="completionDateElement" size="10" onfocus="showCalendar(this)" /></td>
+		</tr>
+        <tr id="editProgramOutcomeRow">
+			<td><spring:message code="Program.outcome"/>:</td>
+			<td>
+				<select name="outcomeConceptId" id="programOutcomeConceptElement"/>
+			</td>
 		</tr>
 		<tr>
 			<td><spring:message code="general.createdBy" />:</td><td><span id="createdByElement"></span>&nbsp;<spring:message code="general.onDate" />&nbsp;<span id="dateCreatedElement"></span></td>
@@ -287,6 +322,7 @@
 				<td><spring:message code="Program.location"/></td>
 				<td><spring:message code="Program.dateCompleted"/></td>
 				<td><spring:message code="Program.state"/></td>
+				<td><spring:message code="Program.outcome"/></td>
 			</tr>
 			<c:set var="bgColor" value="whitesmoke" />
 			<c:forEach var="program" items="${model.patientPrograms}">
@@ -308,7 +344,7 @@
 							<openmrs:formatDate date="${program.dateEnrolled}" type="medium" />
 						</td>
 						<td align="left" valign="top">
-							${program.location}
+							<openmrs:format location="${program.location}"/>
 						</td>
 						<td align="left" valign="top">
 							
@@ -355,6 +391,17 @@
 								</c:forEach>
 							</table>
 						</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty program.outcome}">
+                                    <openmrs:format concept="${program.outcome}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <i>(<spring:message code="general.none" />)</i>
+                                </c:otherwise>
+                            </c:choose>
+
+                        </td>
 					</tr>
 				</c:if>
 			</c:forEach>

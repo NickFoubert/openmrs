@@ -55,7 +55,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td><spring:message code="FormField.minOccurs"/></td>
+		<td><spring:message code="AttributeType.minOccurs"/></td>
 		<td>
 			<spring:bind path="visitAttributeType.minOccurs">
 				<input type="text" name="minOccurs" value="${status.value}" size="10" />
@@ -64,7 +64,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td><spring:message code="FormField.maxOccurs"/></td>
+		<td><spring:message code="AttributeType.maxOccurs"/></td>
 		<td>
 			<spring:bind path="visitAttributeType.maxOccurs">
 				<input type="text" name="maxOccurs" value="${status.value}" size="10" />
@@ -91,6 +91,7 @@
 		<td>
 			<spring:bind path="visitAttributeType.handlerConfig">
 				<textarea name="handlerConfig" rows="3" cols="40" >${status.value}</textarea>
+				<c:if test="${status.errorMessage != ''}"><span class="error">${status.errorMessage}</span></c:if>
 			</spring:bind>
 		</td>
 	</tr>
