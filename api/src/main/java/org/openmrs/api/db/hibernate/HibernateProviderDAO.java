@@ -33,6 +33,7 @@ import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
+import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.ProviderDAO;
 import org.openmrs.attribute.AttributeType;
 
@@ -248,6 +249,22 @@ public class HibernateProviderDAO implements ProviderDAO {
 	@Override
 	public void deleteProviderAttributeType(ProviderAttributeType providerAttributeType) {
 		getSession().delete(providerAttributeType);
+	}
+	
+	/**
+	 * @see org.openmrs.api.db.ProviderDAO#getProviderByIdentifier(java.lang.String)
+	 */
+	@Override
+	public boolean isProviderIdentifierUnique(Provider provider) throws DAOException {
+		
+		Criteria criteria = getSession().createCriteria(Provider.class);
+		criteria.add(Restrictions.eq("identifier", provider.getIdentifier()));
+		criteria.add(Restrictions.eq("retired", false));
+		if (provider.getProviderId() != null)
+			criteria.add(Restrictions.not(Restrictions.eq("providerId", provider.getProviderId())));
+		criteria.setProjection(Projections.countDistinct("providerId"));
+		
+		return (Integer) criteria.uniqueResult() == 0;
 	}
 	
 }

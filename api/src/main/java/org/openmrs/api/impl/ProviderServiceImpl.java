@@ -22,10 +22,14 @@ import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.ProviderDAO;
 import org.openmrs.attribute.AttributeType;
+import org.openmrs.validator.ProviderValidator;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 
 /**
  * Default implementation of the {@link ProviderService}. This class should not be used on its own.
@@ -96,6 +100,12 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	 */
 	@Override
 	public Provider saveProvider(Provider provider) {
+		//This should be done via AOP
+		Errors errors = new BindException(provider, "provider");
+		new ProviderValidator().validate(provider, errors);
+		if (errors.hasErrors())
+			throw new APIException(Context.getMessageSourceService().getMessage("error.foundValidationErrors"));
+		
 		return dao.saveProvider(provider);
 	}
 	
@@ -194,7 +204,8 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	}
 	
 	/**
-	 * @see org.openmrs.api.ProviderService#retireProviderAttributeType(org.openmrs.ProviderAttributeType, java.lang.String)
+	 * @see org.openmrs.api.ProviderService#retireProviderAttributeType(org.openmrs.ProviderAttributeType,
+	 *      java.lang.String)
 	 */
 	@Override
 	public ProviderAttributeType retireProviderAttributeType(ProviderAttributeType providerAttributeType, String reason) {
@@ -215,5 +226,13 @@ public class ProviderServiceImpl extends BaseOpenmrsService implements ProviderS
 	@Override
 	public void purgeProviderAttributeType(ProviderAttributeType providerAttributeType) {
 		dao.deleteProviderAttributeType(providerAttributeType);
+	}
+	
+	/**
+	 * @see org.openmrs.api.ProviderService#isProviderIdentifierUnique(Provider)
+	 */
+	@Override
+	public boolean isProviderIdentifierUnique(Provider provider) throws APIException {
+		return dao.isProviderIdentifierUnique(provider);
 	}
 }

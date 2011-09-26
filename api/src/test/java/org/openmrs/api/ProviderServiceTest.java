@@ -38,6 +38,7 @@ import org.openmrs.ProviderAttribute;
 import org.openmrs.ProviderAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
+import org.openmrs.test.Verifies;
 
 /**
  * This test class (should) contain tests for all of the ProviderService
@@ -49,6 +50,8 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	private static final String PROVIDERS_INITIAL_XML = "org/openmrs/api/include/ProviderServiceTest-initial.xml";
 	
 	private static final String PROVIDER_ATTRIBUTE_TYPES_XML = "org/openmrs/api/include/ProviderServiceTest-providerAttributes.xml";
+	
+	private static final String OTHERS_PROVIDERS_XML = "org/openmrs/api/include/ProviderServiceTest-otherProviders.xml";
 	
 	private ProviderService service;
 	
@@ -204,6 +207,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void getProviders_shouldFetchProviderWithGivenNameWithCaseInSensitive() throws Exception {
 		Provider provider = new Provider();
+		provider.setIdentifier("unique");
 		provider.setName("Catherin");
 		service.saveProvider(provider);
 		assertEquals(1, service.getProviders("Cath", 0, null, null).size());
@@ -307,6 +311,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void saveProvider_shouldSaveAProviderWithProviderNameAlone() throws Exception {
 		Provider provider = new Provider();
+		provider.setIdentifier("unique");
 		provider.setName("Provider9");
 		service.saveProvider(provider);
 		Assert.assertNotNull(provider.getId());
@@ -323,6 +328,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void saveProvider_shouldSaveAProviderWithPersonAlone() throws Exception {
 		Provider provider = new Provider();
+		provider.setIdentifier("unique");
 		Person person = Context.getPersonService().getPerson(new Integer(999));
 		provider.setPerson(person);
 		service.saveProvider(provider);
@@ -423,6 +429,7 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		//given
 		Person person = Context.getPersonService().getPerson(999);
 		Provider provider = new Provider();
+		provider.setIdentifier("unique");
 		provider.setPerson(person);
 		provider = service.saveProvider(provider);
 		
@@ -448,5 +455,35 @@ public class ProviderServiceTest extends BaseContextSensitiveTest {
 		
 		//then
 		Assert.assertEquals(allProviders.size(), providers.size());
+	}
+	
+	/**
+	 * @see {@link ProviderService#isProviderIdentifierUnique(Provider)}
+	 */
+	@Test
+	@Verifies(value = "should return false if the identifier is a duplicate", method = "isProviderIdentifierUnique(Provider)")
+	public void isProviderIdentifierUnique_shouldReturnFalseIfTheIdentifierIsADuplicate() throws Exception {
+		executeDataSet(OTHERS_PROVIDERS_XML);
+		Provider duplicateProvider = service.getProvider(200);
+		
+		Provider existingProviderToEdit = service.getProvider(1);
+		existingProviderToEdit.setIdentifier(duplicateProvider.getIdentifier());
+		Assert.assertFalse(service.isProviderIdentifierUnique(duplicateProvider));
+	}
+	
+	/**
+	 * @see {@link ProviderService#isProviderIdentifierUnique(Provider)}
+	 */
+	@Test
+	@Verifies(value = "should return true if the identifier is unique among unretired providers", method = "isProviderIdentifierUnique(Provider)")
+	public void isProviderIdentifierUnique_shouldReturnTrueIfTheIdentifierIsUniqueAmongUnretiredProviders() throws Exception {
+		executeDataSet(OTHERS_PROVIDERS_XML);
+		//lets test with a duplicate name of a retired provider
+		Provider duplicateRetiredProvider = service.getProvider(201);
+		Assert.assertTrue(duplicateRetiredProvider.isRetired());
+		
+		Provider duplicateProvider = service.getProvider(1);
+		duplicateProvider.setIdentifier(duplicateRetiredProvider.getIdentifier());
+		Assert.assertTrue(service.isProviderIdentifierUnique(duplicateProvider));
 	}
 }

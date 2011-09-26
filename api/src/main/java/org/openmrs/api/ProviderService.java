@@ -250,4 +250,17 @@ public interface ProviderService extends OpenmrsService {
 	 */
 	public void purgeProviderAttributeType(ProviderAttributeType providerAttributeType);
 	
+	/**
+	 * Checks if the identifier for the specified provider is unique
+	 * 
+	 * @param provider the provider whose identifier to check
+	 * @return true if the identifier is unique otherwise false
+	 * @throws APIException
+	 * @should return false if the identifier is a duplicate
+	 * @should return true if the identifier is unique among unretired providers
+	 */
+	@Transactional(readOnly = true)
+	@Authorized( { PrivilegeConstants.VIEW_PROVIDERS })
+	public boolean isProviderIdentifierUnique(Provider provider) throws APIException;
+	
 }

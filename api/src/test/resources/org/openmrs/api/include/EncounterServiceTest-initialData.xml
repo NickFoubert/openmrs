@@ -48,9 +48,9 @@
   
   <form form_id="1" name="Basic Form" version="0.1" build="0" published="0" description="Test form" creator="1" date_created="2005-08-07 00:00:00.0" changed_by="1" date_changed="2007-10-24 14:51:53.0" retired="false"  uuid="2a45c87e-e43d-42ff-83c7-e70a229fa99d"/>
   
-  <provider provider_id="1" name="physician" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c2299800-cca9-11e0-9572-0800200c9a66" />
-  <provider provider_id="2" person_id="1"  creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="04df6c50-772c-42d5-88ba-5a582957afa8" />
-  <provider provider_id="3" person_id="3"  creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="6f763a67-2bd1-451c-93b9-95caeb36cc24" />
+  <provider provider_id="1" name="physician" identifier="1" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c2299800-cca9-11e0-9572-0800200c9a66" />
+  <provider provider_id="2" person_id="1" identifier="2"  creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="04df6c50-772c-42d5-88ba-5a582957afa8" />
+  <provider provider_id="3" person_id="3" identifier="3"  creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="6f763a67-2bd1-451c-93b9-95caeb36cc24" />
   
   <!-- A voided encounter with the same patient id as encounter#1. must come before encounter#1 so that the extra columns are picked up by dbunit -->
   <encounter encounter_id="2" encounter_type="1" form_id="1" encounter_datetime="2008-01-01 00:00:00.0" patient_id="3" location_id="1" creator="1" date_created="2008-02-01 00:00:00.0" voided="1" voided_by="1" date_voided="2008-02-01 00:00:00.0" void_reason="Because" uuid="33d70956-b359-452a-b3da-b69c8ab459ce"/>

@@ -25,13 +25,15 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.attribute.AttributeType;
 
 /**
- * Data  Access function for  Provider
+ * Data Access function for Provider
+ * 
  * @since 1.9
  */
 public interface ProviderDAO {
 	
 	/**
 	 * Gets all Providers
+	 * 
 	 * @param includeRetired - whether or not to include retired Provider
 	 */
 	List<Provider> getAllProviders(boolean includeRetired);
@@ -65,19 +67,15 @@ public interface ProviderDAO {
 	public Collection<Provider> getProvidersByPerson(Person person);
 	
 	/**
-	 * 
-	 *
 	 * @param name
 	 * @param serializedAttributeValues
-	 *@param start
-	 * @param length   @return List of  Providers
+	 * @param start
+	 * @param length @return List of Providers
 	 */
 	public List<Provider> getProviders(String name, Map<AttributeType, String> serializedAttributeValues, Integer start,
 	        Integer length);
 	
 	/**
-	 * 
-	 * 
 	 * @param name
 	 * @return Count of providers satisfying the given query
 	 */
@@ -119,4 +117,9 @@ public interface ProviderDAO {
 	 * @see ProviderService#getProviderAttributeByUuid(String)
 	 */
 	ProviderAttribute getProviderAttributeByUuid(String uuid);
+	
+	/**
+	 * @see ProviderService#isProviderIdentifierUnique(Provider)
+	 */
+	public boolean isProviderIdentifierUnique(Provider provider) throws DAOException;
 }

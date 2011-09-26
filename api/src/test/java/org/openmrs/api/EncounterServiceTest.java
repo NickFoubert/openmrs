@@ -1630,10 +1630,12 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		
 		Provider provider = new Provider();
 		provider.setName("provider");
+		provider.setIdentifier("id1");
 		provider = Context.getProviderService().saveProvider(provider);
 		
 		Provider provider2 = new Provider();
-		provider.setName("provider2");
+		provider2.setName("provider2");
+		provider2.setIdentifier("id2");
 		provider2 = Context.getProviderService().saveProvider(provider2);
 		
 		encounter.addProvider(role, provider);
@@ -1677,10 +1679,12 @@ public class EncounterServiceTest extends BaseContextSensitiveTest {
 		
 		Provider provider = new Provider();
 		provider.setName("provider");
+		provider.setIdentifier("id1");
 		provider = Context.getProviderService().saveProvider(provider);
 		
 		Provider provider2 = new Provider();
-		provider.setName("provider2");
+		provider2.setName("provider2");
+		provider2.setIdentifier("id2");
 		provider2 = Context.getProviderService().saveProvider(provider2);
 		
 		encounter.addProvider(role, provider);

@@ -24,6 +24,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
+import org.openmrs.test.Verifies;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 
@@ -37,7 +38,9 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 	
 	private ProviderService providerService;
 	
-	private static final String PROVIDER_ATTRIBUTE_TYPES_XML = "org/openmrs/api/include/ProviderServiceTest-providerAttributes.xml";;
+	private static final String PROVIDER_ATTRIBUTE_TYPES_XML = "org/openmrs/api/include/ProviderServiceTest-providerAttributes.xml";
+	
+	private static final String OTHERS_PROVIDERS_XML = "org/openmrs/api/include/ProviderServiceTest-otherProviders.xml";
 	
 	@Before
 	public void setup() throws Exception {
@@ -207,5 +210,86 @@ public class ProviderValidatorTest extends BaseContextSensitiveTest {
 		attr.setAttributeType(providerService.getProviderAttributeType(1));
 		attr.setSerializedValue(serializedValue);
 		return attr;
+	}
+	
+	/**
+	 * @see {@link ProviderValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should fail if an identifier for an existing provider is changed to a duplicate value", method = "validate(Object,Errors)")
+	public void validate_shouldFailIfAnIdentifierForAnExistingProviderIsChangedToADuplicateValue() throws Exception {
+		executeDataSet(OTHERS_PROVIDERS_XML);
+		Provider duplicateProvider = providerService.getProvider(200);
+		
+		Provider existingProviderToEdit = providerService.getProvider(1);
+		existingProviderToEdit.setIdentifier(duplicateProvider.getIdentifier());
+		
+		providerValidator.validate(existingProviderToEdit, errors);
+		Assert.assertTrue(errors.hasFieldErrors("identifier"));
+	}
+	
+	/**
+	 * @see {@link ProviderValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should pass for a duplicate identifier if the existing provider is retired", method = "validate(Object,Errors)")
+	public void validate_shouldPassForADuplicateIdentifierIfTheExistingProviderIsRetired() throws Exception {
+		executeDataSet(OTHERS_PROVIDERS_XML);
+		Provider duplicateRetiredProvider = providerService.getProvider(201);
+		Assert.assertTrue(duplicateRetiredProvider.isRetired());
+		
+		Provider provider = providerService.getProvider(1);
+		provider.setIdentifier(duplicateRetiredProvider.getIdentifier());
+		
+		providerValidator.validate(provider, errors);
+		Assert.assertFalse(errors.hasErrors());
+	}
+	
+	/**
+	 * @see {@link ProviderValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should pass if an identifier for an existing provider is changed to a unique value", method = "validate(Object,Errors)")
+	public void validate_shouldPassIfAnIdentifierForAnExistingProviderIsChangedToAUniqueValue() throws Exception {
+		Provider existingProviderToEdit = providerService.getProvider(1);
+		existingProviderToEdit.setIdentifier("unique");
+		
+		providerValidator.validate(existingProviderToEdit, errors);
+		Assert.assertFalse(errors.hasErrors());
+	}
+	
+	/**
+	 * @see {@link ProviderValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should pass if the provider we are validating has a duplicate identifier and is retired", method = "validate(Object,Errors)")
+	public void validate_shouldPassIfTheProviderWeAreValidatingHasADuplicateIdentifierAndIsRetired() throws Exception {
+		executeDataSet(OTHERS_PROVIDERS_XML);
+		Provider duplicateProvider = providerService.getProvider(1);
+		Assert.assertFalse(duplicateProvider.isRetired());
+		
+		Provider providerToValidate = providerService.getProvider(201);
+		Assert.assertTrue(providerToValidate.isRetired());
+		providerToValidate.setIdentifier(duplicateProvider.getIdentifier());
+		
+		providerValidator.validate(providerToValidate, errors);
+		Assert.assertFalse(errors.hasErrors());
+	}
+	
+	/**
+	 * @see {@link ProviderValidator#validate(Object,Errors)}
+	 */
+	@Test
+	@Verifies(value = "should reject a duplicate identifier for a new provide", method = "validate(Object,Errors)")
+	public void validate_shouldRejectADuplicateIdentifierForANewProvide() throws Exception {
+		Provider duplicateProvider = providerService.getProvider(1);
+		Assert.assertFalse(duplicateProvider.isRetired());
+		
+		Provider provider = new Provider();
+		provider.setIdentifier(duplicateProvider.getIdentifier());
+		provider.setName("name");
+		
+		providerValidator.validate(provider, errors);
+		Assert.assertTrue(errors.hasFieldErrors("identifier"));
 	}
 }
