@@ -5635,7 +5635,7 @@
 				<constraints nullable="true" />
 			</column>
 			<column name="name" type="varchar(255)"></column>
-			<column name="identifier" type="varchar(255)"></column>
+			<column name="identifier" type="varchar(255)"><constraints nullable="false" /></column>
 			<column name="creator" type="int">
 				<constraints nullable="false" />
 			</column>
